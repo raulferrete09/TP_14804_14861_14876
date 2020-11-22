@@ -33,7 +33,7 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/main_et_email"
+            android:id="@+id/login_et_email"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
@@ -46,7 +46,7 @@
             android:textColorHint="@color/colorSigninSignup"/>
 
         <EditText
-            android:id="@+id/main_et_password"
+            android:id="@+id/login_et_password"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
@@ -137,7 +137,6 @@
                 android:text="Sign Up"
                 android:textColor="@color/colorAccent"
                 android:textStyle="bold"/>
-
 
         </LinearLayout>
     </LinearLayout>
