@@ -11,22 +11,25 @@ import com.google.firebase.auth.FirebaseUser
 
 class LoginActivity : AppCompatActivity() {
     var auth : FirebaseAuth? = null
-    var login_btn_signin = findViewById<Button>(R.id.login_btn_signin)
-    var login_et_email = findViewById<EditText>(R.id.login_et_email)
-    var login_et_password = findViewById<EditText>(R.id.login_et_password)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        var login_btn_signin = findViewById<Button>(R.id.login_btn_signin)
+
         auth = FirebaseAuth.getInstance()
-        login_btn_signin.setOnClickListener{
+        login_btn_signin.setOnClickListener {
             signinAndSignup()
         }
+
     }
     fun signinAndSignup(){
+        val login_et_email = findViewById<EditText>(R.id.login_et_email)
+        val login_et_password = findViewById<EditText>(R.id.login_et_password)
         auth?.createUserWithEmailAndPassword(login_et_email.text.toString(),login_et_password.text.toString())
             ?.addOnCompleteListener {
-                    task ->
+            task ->
                 if(task.isSuccessful){
                     //Creating a user account
                     moveMainPage(task.result?.user)
@@ -40,9 +43,11 @@ class LoginActivity : AppCompatActivity() {
             }
     }
     fun signinEmail(){
+        val login_et_email = findViewById<EditText>(R.id.login_et_email)
+        val login_et_password = findViewById<EditText>(R.id.login_et_password)
         auth?.signInWithEmailAndPassword(login_et_email.text.toString(),login_et_password.text.toString())
             ?.addOnCompleteListener {
-                    task ->
+            task ->
                 if(task.isSuccessful){
                     //Login
                     moveMainPage(task.result?.user)
