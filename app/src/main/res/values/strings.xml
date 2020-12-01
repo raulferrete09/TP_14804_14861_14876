@@ -10,6 +10,9 @@
     <string name="signout_success">Signout success</string>
     <string name="signout_fail">Signout fail</string>
     <string name="signout_fail_null">Please enter your email and password</string>
+    <string name="facebook_app_id">1347451195604086</string>
+    <string name="fb_login_protocol_scheme">fb1347451195604086</string>
+
 
     <!-- Bottom Navigation View -->
     <string name="home">home</string>
