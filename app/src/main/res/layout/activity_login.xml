@@ -59,14 +59,16 @@
             android:background="@drawable/login_et"/>
 
         <TextView
+            android:id="@+id/login_tv_forgpass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:clickable="true"
-            android:textColor="@color/colorSigninSignup"
             android:text="Forget Password?"
+            android:textColor="@color/colorSigninSignup"
             android:textSize="14sp"
             android:textStyle="bold" />
 

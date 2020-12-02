@@ -45,7 +45,7 @@ class LoginActivity : AppCompatActivity() {
     lateinit var login_tv_signup: TextView
     lateinit var login_et_email:EditText
     lateinit var login_et_password:EditText
-
+    lateinit var login_tv_forgpass:TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -56,6 +56,7 @@ class LoginActivity : AppCompatActivity() {
         login_tv_signup = findViewById<TextView>(R.id.login_tv_signup)
         login_et_email = findViewById<EditText>(R.id.login_et_email)
         login_et_password = findViewById<EditText>(R.id.login_et_password)
+        login_tv_forgpass = findViewById<TextView>(R.id.login_tv_forgpass)
 
         auth = FirebaseAuth.getInstance()
 
@@ -71,6 +72,9 @@ class LoginActivity : AppCompatActivity() {
         login_tv_signup.setOnClickListener {
             signupaccount()
         }
+        login_tv_forgpass.setOnClickListener {
+            forgetpassword()
+        }
 
         var gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken("1082061836398-n5ovmh9vjckaqrm68r3omcl2pvbgvu9d.apps.googleusercontent.com") //values.xml
@@ -84,6 +88,10 @@ class LoginActivity : AppCompatActivity() {
 
     fun signupaccount(){
         startActivity(Intent(this,SignUpActivity::class.java))
+    }
+
+    fun forgetpassword(){
+        startActivity(Intent(this,ForgotPasswordActivity::class.java))
     }
 
     fun printHashKey() {
