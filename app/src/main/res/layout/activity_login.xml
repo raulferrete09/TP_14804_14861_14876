@@ -130,13 +130,14 @@
                 android:text="DON'T HAVE AN ACCOUNT?"/>
 
             <TextView
+                android:id="@+id/login_tv_signup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="20dp"
                 android:text="Sign Up"
                 android:textColor="@color/colorAccent"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
         </LinearLayout>
     </LinearLayout>
