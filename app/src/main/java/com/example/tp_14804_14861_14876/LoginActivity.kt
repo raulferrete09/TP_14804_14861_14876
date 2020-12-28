@@ -75,7 +75,6 @@ class LoginActivity : AppCompatActivity() {
         login_tv_forgpass.setOnClickListener {
             forgetpassword()
         }
-
         var gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken("1082061836398-n5ovmh9vjckaqrm68r3omcl2pvbgvu9d.apps.googleusercontent.com") //values.xml
                 .requestEmail()
