@@ -48,6 +48,10 @@
 
     <!-- Toolbar -->
     <string name="back">Back</string>
+    <string name="about_disconnected">Make up your internet to access this part of the application.</string>
+    <string name="about_connected">Yes, you are online, the internet connection is available.</string>
+    <string name="connected">connected</string>
+    <string name="disconnected">disconnected</string>
 
     <!-- etc -->
     <item name="visible" type="id" />

@@ -3,15 +3,21 @@
     package="com.example.tp_14804_14861_14876">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="HVAC"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ForgotPasswordActivity"></activity>
+        <activity android:name=".NetworkConnectionActivity"></activity>
+        <activity android:name=".NetworkConnect" />
+        <activity android:name=".NetwokConnection" />
+        <activity android:name=".NetworkConnection" />
+        <activity android:name=".NetworkConnections" />
+        <activity android:name=".ForgotPasswordActivity" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".LoginActivity">
