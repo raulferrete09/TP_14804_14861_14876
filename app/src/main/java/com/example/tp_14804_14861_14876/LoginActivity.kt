@@ -2,11 +2,13 @@ package com.example.tp_14804_14861_14876
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Base64
 import android.util.Log
 import android.view.View
@@ -58,43 +60,80 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        var q = 1
+
+
+        val cm = baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        val networkInfo= cm.activeNetworkInfo
+        /*val builder = AlertDialog.Builder(this)
+        builder.setTitle("Error")
+        builder.setMessage("An authentication error has occurred")
+        builder.setPositiveButton("Accept",null)
+        val dialog: AlertDialog =builder.create()
+        dialog.show()*/
+        if(networkInfo != null && networkInfo.isConnected) {
+            startActivity(Intent(this, MainActivity::class.java))
+        } else {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("No internet connection")
+            builder.setMessage("Please choose the type of internet connection you want.")
+            val dialog: AlertDialog = builder.create()
+            builder.setPositiveButton("Wifi", { dialogInterface: DialogInterface, i: Int ->
+                startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
+            })
+            builder.setNegativeButton("Mobile Data", { dialogInterface: DialogInterface, i: Int ->
+                startActivity(Intent(Settings.ACTION_DATA_USAGE_SETTINGS))
+            })
+            builder.setNeutralButton("Cancel", { dialogInterface: DialogInterface, i: Int -> })
+            builder.show()
+        }
         //layoutDisconnected = findViewById<LinearLayout>(R.id.layoutDisconnected)
         //layoutConnected = findViewById<LinearLayout>(R.id.layoutConnected)
 
-        val networkConnection  = NetworkConnection(applicationContext)
+        /*val networkConnection  = NetworkConnection(applicationContext)
         networkConnection.observe(this, Observer { isConnected ->
             if(isConnected) {
-                Toast.makeText(baseContext,"Connected Network",Toast.LENGTH_SHORT).show()
 
             } else {
-                showAlert()
+
                 //startActivity(Intent(this,NetworkConnectionActivity::class.java))
 
             }
-        })
+        })*/
 
         /*val cm = baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         val networkInfo= cm.activeNetworkInfo
 
         if(networkInfo != null && networkInfo.isConnected){
+            //startActivity(Intent(this,MainActivity::class.java))
 
             //you have connected to the internet
 
-            if(networkInfo.type == ConnectivityManager.TYPE_WIFI){
+            /*if(networkInfo.type == ConnectivityManager.TYPE_WIFI){
                 Toast.makeText(baseContext,"Connected via WIFI Network",Toast.LENGTH_SHORT).show()
             }
             if(networkInfo.type == ConnectivityManager.TYPE_MOBILE){
                 Toast.makeText(baseContext,"Connected via MOBLIE Network",Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this,LoginActivity::class.java))
+                //startActivity(Intent(this,LoginActivity::class.java))
 
-            }
+            }*/
 
         }else{
-            Toast.makeText(baseContext,"No Internet Connection",Toast.LENGTH_SHORT).show()
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("No internet connection")
+            builder.setMessage("Please choose the type of internet connection you want.")
+            builder.setPositiveButton("Wifi",{ dialogInterface: DialogInterface, i: Int ->
+                startActivity(Intent( Settings.ACTION_WIFI_SETTINGS))
+            })
+            builder.setNegativeButton("Mobile Data",{ dialogInterface: DialogInterface, i: Int ->
+                startActivity(Intent( Settings.ACTION_DATA_USAGE_SETTINGS))
+            })
+            builder.setNeutralButton("Cancel",{ dialogInterface: DialogInterface, i: Int -> })
+            builder.show()
+            //Toast.makeText(baseContext,"No Internet Connection",Toast.LENGTH_SHORT).show()
 
-            startActivity(Intent(this,NetworkConnectionActivity::class.java))
+            //startActivity(Intent( Settings.ACTION_NETWORK_OPERATOR_SETTINGS))
         }*/
         //isNetworkAvailable()
 
@@ -108,6 +147,9 @@ class LoginActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
+        /*login_btn_signin.setOnClickListener {
+            signinAndSignup()
+        }*/
         login_btn_signin.setOnClickListener {
             signinAndSignup()
         }
@@ -132,14 +174,44 @@ class LoginActivity : AppCompatActivity() {
         callbackManager = CallbackManager.Factory.create()
     }
     //NFDt/SXshxmq1FhkMKa3tkEgyDI=
-
     fun showAlert(){
-        val builder = AlertDialog.Builder(this)
+        val cm = baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        val networkInfo= cm.activeNetworkInfo
+        /*val builder = AlertDialog.Builder(this)
         builder.setTitle("Error")
         builder.setMessage("An authentication error has occurred")
         builder.setPositiveButton("Accept",null)
         val dialog: AlertDialog =builder.create()
-        dialog.show()
+        dialog.show()*/
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("No internet connection")
+        builder.setMessage("Please choose the type of internet connection you want.")
+        val dialog: AlertDialog =builder.create()
+        builder.setPositiveButton("Wifi",{ dialogInterface: DialogInterface, i: Int ->
+            while(true){
+            startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
+                if(networkInfo != null && networkInfo.isConnected){
+                Toast.makeText(baseContext,"No Internet Connection",Toast.LENGTH_SHORT).show()
+                    finish()
+                break
+            }
+            }
+            })
+        builder.setNegativeButton("Mobile Data",{ dialogInterface: DialogInterface, i: Int ->
+            startActivity(Intent( Settings.ACTION_DATA_USAGE_SETTINGS))
+            while(true){
+                if(networkInfo != null && networkInfo.isConnected){
+                    Toast.makeText(baseContext,"No Internet Connection",Toast.LENGTH_SHORT).show()
+                    finish()
+                    break
+                }
+            }
+        })
+        builder.setNeutralButton("Cancel",{ dialogInterface: DialogInterface, i: Int -> })
+        builder.show()
+
     }
 
     fun signupaccount(){
