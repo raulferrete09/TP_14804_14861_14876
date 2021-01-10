@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/record_audio_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="37dp"
+        android:text="Record Audio App"
+        android:textColor="@color/design_default_color_primary_dark"
+        android:textSize="40dp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteX="44dp" />
+
+    <Chronometer
+        android:id="@+id/timer_chromo_counter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="220dp"
+        android:textSize="64sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/record_audio_tv" />
+
+    <Button
+        android:id="@+id/btn_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="160dp"
+        android:layout_marginTop="376dp"
+        android:text="START"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/record_audio_tv" />
+
+    //android:onClick="play"
+
+    <Button
+        android:id="@+id/btn_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="576dp"
+        android:layout_marginEnd="12dp"
+        android:text="PLAY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/record_audio_tv" />
+
+    <TextView
+        android:id="@+id/timer_tv_counter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="156dp"
+        android:gravity="center"
+        android:text="TextView"
+        app:layout_constraintTop_toBottomOf="@+id/record_audio_tv"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="-12dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

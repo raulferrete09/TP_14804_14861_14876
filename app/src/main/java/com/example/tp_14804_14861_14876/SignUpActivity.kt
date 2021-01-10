@@ -24,7 +24,6 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
 
-        baseContext.registerReceiver(ConnectionReceiver(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         ReceiverConnection.instance.setConnectionListener(this)
 
         signup_et_name = findViewById<EditText>(R.id.signup_et_name)
