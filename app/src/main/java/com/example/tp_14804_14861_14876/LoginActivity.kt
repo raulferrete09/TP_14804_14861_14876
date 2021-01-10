@@ -2,9 +2,12 @@ package com.example.tp_14804_14861_14876
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Base64
 import android.util.Log
 import android.widget.Button
@@ -34,7 +37,7 @@ import java.util.*
 //import com.facebook.appevents.AppEventsLogger;
 
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity(),ConnectionReceiver.ConnectionReceiverListener {
     var auth : FirebaseAuth? = null
     var googleSignInClient: GoogleSignInClient? = null
     var GOOGLE_LOGIN_CODE = 12502
@@ -46,6 +49,7 @@ class LoginActivity : AppCompatActivity() {
     lateinit var login_et_email:EditText
     lateinit var login_et_password:EditText
     lateinit var login_tv_forgpass:TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -57,6 +61,9 @@ class LoginActivity : AppCompatActivity() {
         login_et_email = findViewById<EditText>(R.id.login_et_email)
         login_et_password = findViewById<EditText>(R.id.login_et_password)
         login_tv_forgpass = findViewById<TextView>(R.id.login_tv_forgpass)
+
+        baseContext.registerReceiver(ConnectionReceiver(),IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+        ReceiverConnection.instance.setConnectionListener(this)
 
         auth = FirebaseAuth.getInstance()
 
@@ -82,8 +89,17 @@ class LoginActivity : AppCompatActivity() {
         googleSignInClient = GoogleSignIn.getClient(this,gso)
         //printHashKey()
         callbackManager = CallbackManager.Factory.create()
+
     }
     //NFDt/SXshxmq1FhkMKa3tkEgyDI=
+
+    override fun onNetworkConnectionChanged(isConnected: Boolean) {
+        if(!isConnected){
+            var alert = Alert()
+            val builder = AlertDialog.Builder(this)
+            alert.showAlert(builder,this)
+        }
+    }
 
     fun signupaccount(){
         startActivity(Intent(this,SignUpActivity::class.java))

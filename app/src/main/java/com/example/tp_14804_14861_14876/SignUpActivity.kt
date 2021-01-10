@@ -2,6 +2,8 @@ package com.example.tp_14804_14861_14876
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -9,7 +11,7 @@ import android.widget.EditText
 import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
 
-class SignUpActivity : AppCompatActivity() {
+class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverListener {
 
     lateinit var signup_et_name: EditText
     lateinit var signup_et_surname: EditText
@@ -21,6 +23,9 @@ class SignUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
+
+        baseContext.registerReceiver(ConnectionReceiver(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+        ReceiverConnection.instance.setConnectionListener(this)
 
         signup_et_name = findViewById<EditText>(R.id.signup_et_name)
         signup_et_surname = findViewById<EditText>(R.id.signup_et_surname)
@@ -59,5 +64,13 @@ class SignUpActivity : AppCompatActivity() {
         val dialog: AlertDialog =builder.create()
         dialog.show()
     }
+    override fun onNetworkConnectionChanged(isConnected: Boolean) {
+        if(!isConnected){
+            var alert = Alert()
+            val builder = AlertDialog.Builder(this)
+            alert.showAlert(builder,this)
+        }
+    }
+
 
 }
