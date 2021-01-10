@@ -4,63 +4,53 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".RecordAudioActivity">
 
-    <TextView
-        android:id="@+id/record_audio_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="37dp"
-        android:text="Record Audio App"
-        android:textColor="@color/design_default_color_primary_dark"
-        android:textSize="40dp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteX="44dp" />
+    //android:onClick="play"
 
     <Chronometer
         android:id="@+id/timer_chromo_counter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="220dp"
-        android:textSize="64sp"
+        android:layout_marginTop="112dp"
+        android:textSize="44sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/record_audio_tv" />
+        app:layout_constraintTop_toBottomOf="@+id/info_tv" />
 
     <Button
-        android:id="@+id/btn_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="160dp"
-        android:layout_marginTop="376dp"
-        android:text="START"
+        android:id="@+id/record_btn_start"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="68dp"
+        android:background="@drawable/record_btn_stopped"
+        android:contentDescription="TODO"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/record_audio_tv" />
-
-    //android:onClick="play"
+        app:layout_constraintTop_toBottomOf="@+id/timer_chromo_counter" />
 
     <Button
-        android:id="@+id/btn_play"
+        android:id="@+id/record_btn_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="576dp"
-        android:layout_marginEnd="12dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center"
         android:text="PLAY"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/record_audio_tv" />
+        app:layout_constraintTop_toBottomOf="@+id/record_btn_start" />
 
     <TextView
-        android:id="@+id/timer_tv_counter"
+        android:id="@+id/info_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="156dp"
+        android:layout_marginTop="136dp"
         android:gravity="center"
-        android:text="TextView"
-        app:layout_constraintTop_toBottomOf="@+id/record_audio_tv"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="-12dp" />
+        android:text="Press the mic button \n to start recording"
+        android:textSize="18sp"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp" />"
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
