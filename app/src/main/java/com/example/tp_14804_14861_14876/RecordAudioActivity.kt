@@ -3,7 +3,6 @@ package com.example.tp_14804_14861_14876
 import android.Manifest
 import android.app.AlertDialog
 import android.content.pm.PackageManager
-import android.media.Image
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Bundle
@@ -18,7 +17,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.time.milliseconds
 
 class RecordAudioActivity : AppCompatActivity(),ConnectionReceiver.ConnectionReceiverListener {
     lateinit var record_btn_start: Button
@@ -85,15 +83,18 @@ class RecordAudioActivity : AppCompatActivity(),ConnectionReceiver.ConnectionRec
 
             filenametext.setText("\"Recording, File Saved : " + name + "_" + timeStamp + ".mp3");
 
+            timer_chromo_counter.setBase(SystemClock.elapsedRealtime())
+            timer_chromo_counter.start()
+
             val timer = object : CountDownTimer(10000, 1000) {
                 override fun onTick(millisUntilFinished: Long) {
-                    timer_chromo_counter.text = counter.toString()
+                    //timer_chromo_counter.text = counter.toString()
                     counter++
                 }
 
                 override fun onFinish() {
                     mr.stop()
-
+                    timer_chromo_counter.stop()
                     filenametext.setText("Recording Stopped, File Saved : " + name + "_" + timeStamp + ".mp3");
                     timer_chromo_counter.text = "Finished"
                     record_btn_start.setBackground(resources.getDrawable(R.drawable.record_btn_stopped, null))
