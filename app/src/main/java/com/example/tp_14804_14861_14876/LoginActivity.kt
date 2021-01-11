@@ -8,12 +8,11 @@ import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.util.Base64
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -42,6 +41,7 @@ class LoginActivity : AppCompatActivity(),ConnectionReceiver.ConnectionReceiverL
     var googleSignInClient: GoogleSignInClient? = null
     var GOOGLE_LOGIN_CODE = 12502
     var callbackManager : CallbackManager? = null
+    var misshowpass = false
     lateinit var login_btn_signin:Button
     lateinit var login_btn_gmail:Button
     lateinit var login_btn_facebook:Button
@@ -49,6 +49,7 @@ class LoginActivity : AppCompatActivity(),ConnectionReceiver.ConnectionReceiverL
     lateinit var login_et_email:EditText
     lateinit var login_et_password:EditText
     lateinit var login_tv_forgpass:TextView
+    lateinit var password_iv_show: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +62,7 @@ class LoginActivity : AppCompatActivity(),ConnectionReceiver.ConnectionReceiverL
         login_et_email = findViewById<EditText>(R.id.login_et_email)
         login_et_password = findViewById<EditText>(R.id.login_et_password)
         login_tv_forgpass = findViewById<TextView>(R.id.login_tv_forgpass)
+        password_iv_show = findViewById<ImageView>(R.id.password_iv_show)
 
         baseContext.registerReceiver(ConnectionReceiver(),IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         ReceiverConnection.instance.setConnectionListener(this)
@@ -82,6 +84,11 @@ class LoginActivity : AppCompatActivity(),ConnectionReceiver.ConnectionReceiverL
         login_tv_forgpass.setOnClickListener {
             forgetpassword()
         }
+        password_iv_show.setOnClickListener {
+            misshowpass = !misshowpass
+            showPassword(misshowpass)
+        }
+        showPassword(misshowpass)
         var gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken("1082061836398-n5ovmh9vjckaqrm68r3omcl2pvbgvu9d.apps.googleusercontent.com") //values.xml
                 .requestEmail()
@@ -232,6 +239,16 @@ class LoginActivity : AppCompatActivity(),ConnectionReceiver.ConnectionReceiverL
             startActivity(Intent(this,MainActivity::class.java))
             finish()
         }
+    }
+    fun showPassword(isShow:Boolean) {
+        if (isShow){
+            login_et_password.transformationMethod = HideReturnsTransformationMethod.getInstance()
+            password_iv_show.setImageResource(R.drawable.ic_hide_password)
+        } else {
+            login_et_password.transformationMethod = PasswordTransformationMethod.getInstance()
+            password_iv_show.setImageResource(R.drawable.ic_show_password)
+        }
+        login_et_password.setSelection(login_et_password.text.toString().length)
     }
 
 }
