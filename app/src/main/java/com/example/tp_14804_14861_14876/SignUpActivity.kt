@@ -3,9 +3,12 @@ package com.example.tp_14804_14861_14876
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.widget.Button
@@ -13,11 +16,13 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
+import java.util.regex.Pattern
 
 class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverListener {
 
     var misshowpass = false
     var misshowconfirmpass = false
+    var validationpassword: String? = "false"
     lateinit var signup_et_name: EditText
     lateinit var signup_et_surname: EditText
     lateinit var signup_et_email: EditText
@@ -27,7 +32,6 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
     lateinit var password_iv_show: ImageView
     lateinit var password_iv_confirmshow: ImageView
     lateinit var signup_et_confirmepassword: EditText
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,19 +49,34 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
         password_iv_confirmshow = findViewById<ImageView>(R.id.password_iv_confirmshow)
         signup_et_confirmepassword = findViewById<EditText>(R.id.signup_et_confirmepassword)
 
+
+        signup_et_password.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                val pass = signup_et_password.text.toString()
+                validationpassword = validatePassword(pass)
+            }
+
+            override fun afterTextChanged(s: Editable) {}
+        })
         signup_tv_signin.setOnClickListener{
             ToLoginPage()
         }
         signup_btn_signup.setOnClickListener{
             if(signup_et_name.text.isNotEmpty() && signup_et_surname.text.isNotEmpty()
-                && signup_et_email.text.isNotEmpty() && signup_et_password.text.isNotEmpty()&& signup_et_confirmepassword.text.isNotEmpty() && (signup_et_confirmepassword.getText().toString() == signup_et_password.getText().toString())){
-                FirebaseAuth.getInstance().createUserWithEmailAndPassword(signup_et_email.text.toString()
-                    , signup_et_password.text.toString()).addOnCompleteListener{
-                    if(it.isSuccessful){
-                        ToLoginPage()
-                    }else{
-                        showAlert()
+                && signup_et_email.text.isNotEmpty() && signup_et_password.text.isNotEmpty()
+                && signup_et_confirmepassword.text.isNotEmpty()
+                && (signup_et_confirmepassword.getText().toString() == signup_et_password.getText().toString()))
+            {
+                if(validationpassword == "false") {
+                    FirebaseAuth.getInstance().createUserWithEmailAndPassword(signup_et_email.text.toString()
+                        , signup_et_password.text.toString()).addOnCompleteListener{
+                        if(it.isSuccessful){
+                            ToLoginPage()
+                        }
                     }
+                } else {
+                        showAlert()
                 }
             }
         }
@@ -79,7 +98,7 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
     fun showAlert(){
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Error")
-        builder.setMessage("An authentication error has occurred")
+        builder.setMessage("An authentication error has occurred. Please choose a password with 8 or more characters including uppercase, lowercase and digits.")
         builder.setPositiveButton("Accept",null)
         val dialog: AlertDialog =builder.create()
         dialog.show()
@@ -113,6 +132,21 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
             alert.showAlert(builder,this)
         }
     }
+    fun validatePassword(password: String): String? {
+        val upperCase = Pattern.compile("[A-Z]")
+        val lowerCase = Pattern.compile("[a-z]")
+        val digitCase = Pattern.compile("[0-9]")
+        var validate: String = "false"
+        if (lowerCase.matcher(password).find()
+            && upperCase.matcher(password).find()
+            && digitCase.matcher(password).find()
+            && password.length >= 8) {
+            validate = "false"
+        } else {
+            validate = "true"
+        }
+        return validate
 
+        }
 
 }
