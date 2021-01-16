@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RecordFragment">
+
+
+    <Chronometer
+        android:id="@+id/timer_chromo_counter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="132dp"
+        android:textSize="44sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/info_tv" />
+
+    <Button
+        android:id="@+id/record_btn_start"
+        android:layout_width="179dp"
+        android:layout_height="179dp"
+        android:layout_marginTop="64dp"
+        android:background="@drawable/record_btn_stopped"
+        android:contentDescription="TODO"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timer_chromo_counter"
+        app:layout_constraintVertical_bias="0.14" />
+
+    <Button
+        android:id="@+id/record_btn_list"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:background="@drawable/recorder_list_btn"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/record_btn_start"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/record_btn_start"
+        app:layout_constraintTop_toTopOf="@+id/record_btn_start" />
+
+    <TextView
+        android:id="@+id/info_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="188dp"
+        android:gravity="center"
+        android:text="Press the mic button \n to start recording"
+        android:textSize="18sp"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="-16dp" />"
+</androidx.constraintlayout.widget.ConstraintLayout>
