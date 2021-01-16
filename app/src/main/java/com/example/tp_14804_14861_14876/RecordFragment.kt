@@ -14,6 +14,8 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -33,6 +35,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
     var navController: NavController? = null
     var isRecording = true
     var counter = 0
+    var auth : FirebaseAuth? = null
 
 
     lateinit var mr: MediaRecorder
@@ -93,7 +96,6 @@ class RecordFragment : Fragment(), View.OnClickListener {
         timer_chromo_counter = view.findViewById<Chronometer>(R.id.timer_chromo_counter)
         filenametext = view.findViewById<TextView>(R.id.info_tv)
 
-
         record_btn_list.setOnClickListener(this)
         record_btn_start.setOnClickListener(this)
 
@@ -130,12 +132,17 @@ class RecordFragment : Fragment(), View.OnClickListener {
                     )
                     isRecording = true
                 }
-
         }
 
     }
 
     private fun startRecording() {
+
+        //Firebase info
+        auth = FirebaseAuth.getInstance()
+        val user: FirebaseUser? = auth?.currentUser
+        val name:String? = user?.displayName
+
         mr = MediaRecorder()
         record_btn_start.isEnabled = false
         record_btn_list.isEnabled = false
@@ -143,7 +150,8 @@ class RecordFragment : Fragment(), View.OnClickListener {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         //Get app external directory path
         //name -> path = User + timeStamp + ".mp3"
-        val path = requireActivity().getExternalFilesDir("/")!!.toString() + "/" + timeStamp + ".mp3"
+        val pathname = name + "_" + timeStamp + ".mp3"
+        val path = requireActivity().getExternalFilesDir("/")!!.toString() + "/" + pathname
 
         mr.setAudioSource(MediaRecorder.AudioSource.MIC)
         mr.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
@@ -153,7 +161,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
         mr.prepare()
         mr.start()
 
-        filenametext.text = "\"Recording, File Saved : " + timeStamp + ".mp3";
+        filenametext.text = "\"Recording, File Saved : " + pathname;
 
         timer_chromo_counter.base = SystemClock.elapsedRealtime()
         timer_chromo_counter.start()
@@ -168,7 +176,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
             override fun onFinish() {
                 mr.stop()
                 timer_chromo_counter.stop()
-                filenametext.text = "Recording Stopped, File Saved : " + timeStamp + ".mp3";
+                filenametext.text = "Recording Stopped, File Saved : " + pathname;
                 timer_chromo_counter.text = "Finished"
                 record_btn_start.background = resources.getDrawable(
                         R.drawable.record_btn_stopped,

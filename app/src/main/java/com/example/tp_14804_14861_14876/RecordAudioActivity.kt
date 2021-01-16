@@ -18,12 +18,21 @@ import com.google.firebase.auth.FirebaseUser
 import java.text.SimpleDateFormat
 import java.util.*
 
-class RecordAudioActivity : AppCompatActivity() {
+class RecordAudioActivity : AppCompatActivity(),ConnectionReceiver.ConnectionReceiverListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_record_audio)
 
+        //Internet Connection
+        ReceiverConnection.instance.setConnectionListener(this)
+    }
 
+    override fun onNetworkConnectionChanged(isConnected: Boolean) {
+        if(!isConnected){
+            var alert = Alert()
+            val builder = AlertDialog.Builder(this)
+            alert.showAlert(builder,this)
+        }
     }
 }
