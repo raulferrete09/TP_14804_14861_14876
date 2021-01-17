@@ -11,6 +11,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -18,11 +19,12 @@ import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
 import java.util.regex.Pattern
 
-class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverListener {
+class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverListener, View.OnClickListener {
 
     var misshowpass = false
     var misshowconfirmpass = false
     var validationpassword: String? = "false"
+    var x:Int = 0
     lateinit var signup_et_name: EditText
     lateinit var signup_et_surname: EditText
     lateinit var signup_et_email: EditText
@@ -59,27 +61,17 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
 
             override fun afterTextChanged(s: Editable) {}
         })
-        signup_tv_signin.setOnClickListener{
+        /*signup_tv_signin.setOnClickListener{
             ToLoginPage()
-        }
-        signup_btn_signup.setOnClickListener{
-            if(signup_et_name.text.isNotEmpty() && signup_et_surname.text.isNotEmpty()
-                && signup_et_email.text.isNotEmpty() && signup_et_password.text.isNotEmpty()
-                && signup_et_confirmepassword.text.isNotEmpty()
-                && (signup_et_confirmepassword.getText().toString() == signup_et_password.getText().toString()))
-            {
-                if(validationpassword == "false") {
-                    FirebaseAuth.getInstance().createUserWithEmailAndPassword(signup_et_email.text.toString()
-                        , signup_et_password.text.toString()).addOnCompleteListener{
-                        if(it.isSuccessful){
-                            ToLoginPage()
-                        }
-                    }
-                } else {
-                        showAlert()
-                }
-            }
-        }
+        }*/
+
+        signup_et_name.setOnClickListener(this)
+        signup_et_surname.setOnClickListener(this)
+        signup_et_email.setOnClickListener(this)
+        signup_et_password.setOnClickListener(this)
+        signup_et_confirmepassword.setOnClickListener(this)
+        signup_btn_signup.setOnClickListener(this)
+
         password_iv_show.setOnClickListener {
             misshowpass = !misshowpass
             showPassword(misshowpass)
@@ -95,14 +87,66 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
         startActivity(Intent(this,LoginActivity::class.java))
     }
 
-    fun showAlert(){
+    override fun onClick(v: View?) {
+        when (v!!.id) {
+            R.id.signup_btn_signup ->
+                if(signup_et_name.text.isNotEmpty() && signup_et_surname.text.isNotEmpty()
+                        && signup_et_email.text.isNotEmpty() && signup_et_password.text.isNotEmpty()
+                        && signup_et_confirmepassword.text.isNotEmpty()
+                        && (signup_et_confirmepassword.text.toString() == signup_et_password.text.toString())
+                        && validationpassword == "false") {
+                    FirebaseAuth.getInstance().createUserWithEmailAndPassword(signup_et_email.text.toString(), signup_et_password.text.toString()).addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            ToLoginPage()
+                        }
+                    }
+                }else {
+                    when {
+                        signup_et_name.text.isEmpty() -> {
+                            x = 1
+                            showAlert(x)
+                        }
+                        signup_et_surname.text.isEmpty() -> {
+                            x = 2
+                            showAlert(x)
+                        }
+                        signup_et_email.text.isEmpty() -> {
+                            x = 3
+                            showAlert(x)
+                        }
+                        signup_et_password.text.isEmpty() -> {
+                            x = 4
+                            showAlert(x)
+                        }
+                        ((signup_et_confirmepassword.text.isEmpty()) || (signup_et_confirmepassword.text.toString() != signup_et_password.text.toString()))-> {
+                            x = 5
+                            showAlert(x)
+                        }
+                        ((signup_et_confirmepassword.text.toString() == signup_et_password.text.toString()) && (validationpassword != "false"))  -> {
+                            x = 6
+                            showAlert(x)
+                    }
+                }
+            }
+        }
+    }
+
+    fun showAlert(x:Int){
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Error")
-        builder.setMessage("An authentication error has occurred. Please choose a password with 8 or more characters including uppercase, lowercase and digits.")
+        when(x) {
+            1 -> builder.setMessage("An authentication error has occurred. Please define a name.")
+            2 -> builder.setMessage("An authentication error has occurred. Please define a surname.")
+            3 -> builder.setMessage("An authentication error has occurred. Please define a email.")
+            4 -> builder.setMessage("An authentication error has occurred. Please define password.")
+            5 -> builder.setMessage("An authentication error has occurred. Passwords do not match.")
+            6 -> builder.setMessage("An password verification error has occurred. Please choose a password with 8 or more characters including uppercase, lowercase and digits.")
+        }
         builder.setPositiveButton("Accept",null)
         val dialog: AlertDialog =builder.create()
         dialog.show()
     }
+
     fun showPassword(isShow:Boolean) {
         if (isShow){
             signup_et_password.transformationMethod = HideReturnsTransformationMethod.getInstance()
@@ -146,7 +190,5 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
             validate = "true"
         }
         return validate
-
-        }
-
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.tp_14804_14861_14876
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.os.Bundle
@@ -9,7 +10,9 @@ import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.Chronometer
+import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -43,6 +46,9 @@ class RecordFragment : Fragment(), View.OnClickListener {
     lateinit var record_btn_start: Button
     lateinit var timer_chromo_counter: Chronometer
     lateinit var filenametext: TextView
+    lateinit var back_btn_arrow: Button
+
+    lateinit var intent:Intent
 
 
 
@@ -95,9 +101,12 @@ class RecordFragment : Fragment(), View.OnClickListener {
         record_btn_start = view.findViewById<Button>(R.id.record_btn_start)
         timer_chromo_counter = view.findViewById<Chronometer>(R.id.timer_chromo_counter)
         filenametext = view.findViewById<TextView>(R.id.info_tv)
+        back_btn_arrow = view.findViewById<Button>(R.id.back_btn_arrow)
+
 
         record_btn_list.setOnClickListener(this)
         record_btn_start.setOnClickListener(this)
+        back_btn_arrow.setOnClickListener(this)
 
         //Check permission
         if (ActivityCompat.checkSelfPermission(
@@ -117,7 +126,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(v: View) {
-
+        intent = Intent(activity, MainActivity::class.java)
         record_btn_start.isEnabled = true
         when (v.id) {
             R.id.record_btn_list ->
@@ -132,6 +141,8 @@ class RecordFragment : Fragment(), View.OnClickListener {
                     )
                     isRecording = true
                 }
+            R.id.back_btn_arrow ->
+                startActivity(intent)
         }
 
     }
@@ -146,6 +157,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
         mr = MediaRecorder()
         record_btn_start.isEnabled = false
         record_btn_list.isEnabled = false
+        back_btn_arrow.isEnabled = false
 
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         //Get app external directory path
@@ -184,10 +196,12 @@ class RecordFragment : Fragment(), View.OnClickListener {
                 )
                 record_btn_start.isEnabled = true
                 record_btn_list.isEnabled = true
+                back_btn_arrow.isEnabled = true
                 counter = 0
             }
         }
         timer.start()
+
     }
     private fun stopRecording() {
         //Stop Timer, very obvious
