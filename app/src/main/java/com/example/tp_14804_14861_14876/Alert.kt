@@ -26,7 +26,6 @@ class Alert: AppCompatActivity() {
                 e.printStackTrace()
             }
         }
-        builder.setNeutralButton("Cancel", { dialogInterface: DialogInterface, i: Int -> choose=0 })
         val dialog: AlertDialog = builder.create()
         dialog.show()
     }

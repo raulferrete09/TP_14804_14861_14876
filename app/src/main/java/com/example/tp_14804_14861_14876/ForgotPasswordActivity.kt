@@ -19,7 +19,6 @@ class ForgotPasswordActivity : AppCompatActivity(),ConnectionReceiver.Connection
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_forgot_password)
 
-        baseContext.registerReceiver(ConnectionReceiver(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         ReceiverConnection.instance.setConnectionListener(this)
 
         auth = FirebaseAuth.getInstance()

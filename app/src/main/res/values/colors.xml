@@ -7,6 +7,10 @@
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorDivision">#e0e0e0</color>
     <color name="colorNavIcon">#1d1d1d</color>
+    <color name="gray">#AEAEAE</color>
+    <color name="grayDark">#838383</color>
+
+
 
     <color name="colorSigninSignup">#252427</color>
     <color name="colorGoogleSignIn">#d34836</color>
