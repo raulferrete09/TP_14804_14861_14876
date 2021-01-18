@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="STORAGAE">
+        <menu>
+            <item android:title="Photos"
+                android:id="@+id/photo"
+                android:icon="@drawable/photo_icon" />
+            <item android:title="Audios"
+                android:id="@+id/audios"
+                android:icon="@drawable/audio_icon" />
+        </menu>
+    </item>
+    <item android:title="SENSOR DATA">
+        <menu>
+            <item android:title="@string/mic_sound"
+                android:id="@+id/mic"
+                android:icon="@drawable/mic_icon" />
+            <item android:title="Temperature"
+                android:id="@+id/temperature"
+                android:icon="@drawable/temperature_icon" />
+            <item android:title="Accelerometer"
+                android:id="@+id/accelerometer"
+                android:icon="@drawable/vibration_icon" />
+        </menu>
+    </item>
+
+    <item android:title="APP">
+        <menu>
+            <item android:title="Settings"
+                android:icon="@drawable/settings_icon" />
+            <item android:title="Log Out"
+                android:icon="@drawable/logout_icon" />
+        </menu>
+    </item>
+
+</menu>

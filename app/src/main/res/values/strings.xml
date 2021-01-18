@@ -52,6 +52,12 @@
     <!-- etc -->
     <item name="visible" type="id" />
     <item name="masked" type="id" />
-    <!-- TODO: Remove or change this placeholder text -->
+    
+    <!-- MainActivity -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="my_files">My Files</string>
+    <string name="mic_sound">Record Audio</string>
+    <string name="openNavDrawer">Navigation Drawer Open</string>
+    <string name="closeNavDrawer">Navigation Drawer Close</string>
+    
 </resources>
