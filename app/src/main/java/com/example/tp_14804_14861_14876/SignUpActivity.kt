@@ -61,10 +61,6 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
 
             override fun afterTextChanged(s: Editable) {}
         })
-        /*signup_tv_signin.setOnClickListener{
-            ToLoginPage()
-        }*/
-
         signup_et_name.setOnClickListener(this)
         signup_et_surname.setOnClickListener(this)
         signup_et_email.setOnClickListener(this)
@@ -79,6 +75,9 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
         password_iv_confirmshow.setOnClickListener {
             misshowconfirmpass = !misshowconfirmpass
             showconfirmPassword(misshowconfirmpass)
+        }
+        signup_tv_signin.setOnClickListener{
+            ToLoginPage()
         }
 
     }

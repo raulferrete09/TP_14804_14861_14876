@@ -60,6 +60,6 @@ dependencies {
 
     //image loading library
     implementation 'com.squareup.picasso:picasso:2.71828'
-    compile 'jp.wasabeef:picasso-transformations:2.1.0'
+    implementation 'jp.wasabeef:picasso-transformations:2.1.0'
 
 }
