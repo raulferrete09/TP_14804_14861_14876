@@ -209,20 +209,26 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
     }
 
     fun signinAndSignup(){
-        auth?.createUserWithEmailAndPassword(login_et_email.text.toString(),login_et_password.text.toString())
-            ?.addOnCompleteListener {
-            task ->
-                if(task.isSuccessful){
-                    //Creating a user account
-                    moveMainPage(task.result?.user)
-                }else if(task.exception?.message.isNullOrEmpty()){
-                    //Show the error message
-                    Toast.makeText(this,task.exception?.message,Toast.LENGTH_LONG).show()
-                }else{
-                    //Login if you have account
-                    signinEmail()
+        if(login_et_email.text.toString().isNotEmpty() && login_et_password.text.toString().isNotEmpty()) {
+            auth?.createUserWithEmailAndPassword(
+                login_et_email.text.toString(),
+                login_et_password.text.toString()
+            )
+                ?.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        //Creating a user account
+                        moveMainPage(task.result?.user)
+                    } else if (task.exception?.message.isNullOrEmpty()) {
+                        //Show the error message
+                        Toast.makeText(this, task.exception?.message, Toast.LENGTH_LONG).show()
+                    } else {
+                        //Login if you have account
+                        signinEmail()
+                    }
                 }
-            }
+        } else {
+            showAlert()
+        }
     }
     fun signinEmail(){
         auth?.signInWithEmailAndPassword(login_et_email.text.toString(),login_et_password.text.toString())
@@ -252,6 +258,14 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
             password_iv_show.setImageResource(R.drawable.ic_show_password)
         }
         login_et_password.setSelection(login_et_password.text.toString().length)
+    }
+    fun showAlert(){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Error")
+        builder.setMessage("An authentication error has occurred. Please set an email and/or password")
+        builder.setPositiveButton("Accept",null)
+        val dialog: AlertDialog =builder.create()
+        dialog.show()
     }
 
 }

@@ -12,6 +12,7 @@ class Alert: AppCompatActivity() {
         var choose:Int = 0
         builder.setTitle("No internet connection")
         builder.setMessage("Please choose the type of internet connection you want.")
+        builder.setCancelable(false)
         builder.setPositiveButton("Wifi") { dialogInterface: DialogInterface, i: Int ->
             try {
                 context.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
