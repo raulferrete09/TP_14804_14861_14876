@@ -20,6 +20,7 @@ import com.example.tp_14804_14861_14876.Utils.ReceiverConnection
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
 
 
     var auth : FirebaseAuth? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,12 +82,13 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
 
         //Firebase info
         auth = FirebaseAuth.getInstance()
-        val user: FirebaseUser? = auth?.currentUser
+        val user = auth?.currentUser
         val name:String? = user?.displayName
-        val id:String? = user?.uid
+        val id= user?.uid
         var photo = user?.photoUrl
 
         user_tv_name.text = name
+        println(name)
         user_tv_id.text = id
 
         // rounded corner image

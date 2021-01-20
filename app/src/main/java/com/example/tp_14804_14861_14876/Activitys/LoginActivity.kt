@@ -31,6 +31,7 @@ import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.*
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.*
@@ -53,6 +54,9 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
     lateinit var login_et_password:EditText
     lateinit var login_tv_forgpass:TextView
     lateinit var password_iv_show: ImageView
+    private lateinit var database: FirebaseDatabase
+    private lateinit var referance: DatabaseReference
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +70,8 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
         login_et_password = findViewById<EditText>(R.id.login_et_password)
         login_tv_forgpass = findViewById<TextView>(R.id.login_tv_forgpass)
         password_iv_show = findViewById<ImageView>(R.id.password_iv_show)
+        database = FirebaseDatabase.getInstance()
+        referance = database.getReference("Users")
 
         baseContext.registerReceiver(ConnectionReceiver(),IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         ReceiverConnection.instance.setConnectionListener(this)
@@ -137,8 +143,8 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
     fun googleLogin() {
         var signInIntent = googleSignInClient?.signInIntent
         startActivityForResult(signInIntent,GOOGLE_LOGIN_CODE)
-
     }
+
     fun facebookLogin(){
         LoginManager.getInstance()
                 .logInWithReadPermissions(this, Arrays.asList("public_profile","email"))
@@ -160,6 +166,7 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
 
                 })
     }
+
     fun handleFacebookAccessToken(token : AccessToken?){
         var credential = FacebookAuthProvider.getCredential(token?.token!!)
         auth?.signInWithCredential(credential)
@@ -169,6 +176,7 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
 
                         //Third step
                         //Login
+
                         moveMainPage(task.result?.user)
                     }else{
                         //Show the error message
@@ -185,7 +193,6 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
             //result é através do SHA (canto superior direito GRADLE -> Tasks -> Android -> run signingReport)
             if (result != null) {
                 if(result.isSuccess) {
-                    
                     var account = result.signInAccount
                     firebaseAuthWithGoogle(account)
                 }
@@ -237,6 +244,7 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
                 if(task.isSuccessful){
                     //Login
                     moveMainPage(task.result?.user)
+
                 }else{
                     //Show the error message
                     Toast.makeText(this,task.exception?.message,Toast.LENGTH_LONG).show()
@@ -245,7 +253,10 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
     }
     fun moveMainPage(user:FirebaseUser?){
         if(user != null){
+
             startActivity(Intent(this, MainActivity::class.java))
+            //sendData()
+            readData()
             finish()
         }
     }
@@ -266,6 +277,39 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
         builder.setPositiveButton("Accept",null)
         val dialog: AlertDialog =builder.create()
         dialog.show()
+    }
+
+    private fun sendData(){
+        val person = auth?.currentUser
+        val uid = person?.uid
+        var name = person?.displayName
+        var email = person?.email
+        var map = mutableMapOf<String,String?>()
+
+        map["name"]=name
+        map["email"]=email
+        database.reference
+            .child("users")
+            .child("$uid")
+            .setValue(map)
+
+    }
+
+    fun readData(){
+        val person = auth?.currentUser
+        val uid = person?.uid
+        database.reference.child("users").child("$uid").addListenerForSingleValueEvent(object :
+            ValueEventListener{
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                var map = p0.value as Map<String, Any>
+                var name = map["name"].toString()
+                println(name)
+            }
+        })
     }
 
 }

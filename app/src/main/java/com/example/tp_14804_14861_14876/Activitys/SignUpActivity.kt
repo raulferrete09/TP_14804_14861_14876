@@ -18,6 +18,9 @@ import com.example.tp_14804_14861_14876.Utils.Alert
 import com.example.tp_14804_14861_14876.Utils.ConnectionReceiver
 import com.example.tp_14804_14861_14876.Utils.ReceiverConnection
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import java.util.regex.Pattern
 
 class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverListener, View.OnClickListener {
@@ -26,6 +29,9 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
     var misshowconfirmpass = false
     var validationpassword: String? = "false"
     var x:Int = 0
+    var auth : FirebaseAuth? = null
+    private lateinit var database: FirebaseDatabase
+    private lateinit var referance: DatabaseReference
     lateinit var signup_et_name: EditText
     lateinit var signup_et_surname: EditText
     lateinit var signup_et_email: EditText
@@ -51,7 +57,9 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
         password_iv_show = findViewById<ImageView>(R.id.password_iv_show)
         password_iv_confirmshow = findViewById<ImageView>(R.id.password_iv_confirmshow)
         signup_et_confirmepassword = findViewById<EditText>(R.id.signup_et_confirmepassword)
-
+        database = FirebaseDatabase.getInstance()
+        referance = database.getReference("Users")
+        auth = FirebaseAuth.getInstance()
 
         signup_et_password.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -84,8 +92,27 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
     }
 
     private fun ToLoginPage() {
+        sendData()
         startActivity(Intent(this, LoginActivity::class.java))
     }
+
+    private fun sendData() {
+        val user = auth?.currentUser
+        val uid = user?.uid
+        var map = mutableMapOf<String,String?>()
+        var name = signup_et_name.text.toString() + " " + signup_et_surname.text.toString()
+        map["name"]=name
+        map["email"]=signup_et_email.text.toString().trim()
+        database.reference
+            .child("users")
+            .child("$uid")
+            .setValue(map)
+        val profileUpdates = UserProfileChangeRequest.Builder()
+            .setDisplayName("$name")
+            .build()
+        user!!.updateProfile(profileUpdates)
+    }
+
 
     override fun onClick(v: View?) {
         when (v!!.id) {
