@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.SystemClock
@@ -13,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Chronometer
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -21,6 +23,7 @@ import com.example.tp_14804_14861_14876.Activitys.MainActivity
 import com.example.tp_14804_14861_14876.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -55,7 +58,8 @@ class RecordFragment : Fragment(), View.OnClickListener {
     lateinit var audioListFragment: AudioListFragment
     lateinit var transaction: FragmentTransaction
 
-
+    lateinit var bytes: ByteArray
+    lateinit var base64: String
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -194,6 +198,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
                 counter++
             }
 
+            @RequiresApi(Build.VERSION_CODES.O)
             override fun onFinish() {
                 mr.stop()
                 timer_chromo_counter.stop()
@@ -207,6 +212,13 @@ class RecordFragment : Fragment(), View.OnClickListener {
                 record_btn_list.isEnabled = true
                 back_btn_arrow.isEnabled = true
                 counter = 0
+
+                /*bytes = File(pathname).readBytes()
+                base64 = Base64.getEncoder().encodeToString(bytes)
+                //println(base64)
+                var map = mutableMapOf<String,Any>()
+                map["mp3 file"] = base64
+                println(map)*/
             }
         }
         timer.start()

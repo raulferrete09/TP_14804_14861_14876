@@ -58,10 +58,11 @@
             android:layout_margin="32dp"
             android:clickable="true"
             android:src="@drawable/ic_add_file"
-            app:backgroundTint="#93939A"
+            android:tint="@color/colorWhite"
+            app:backgroundTint="@color/red"
             app:fabSize="normal"
             app:icon="@drawable/ic_add_file"
-            app:maxImageSize="38dp"
+            app:maxImageSize="30dp"
             app:rippleColor="@color/colorPrimaryDark" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

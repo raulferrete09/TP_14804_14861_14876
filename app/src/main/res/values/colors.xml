@@ -9,7 +9,7 @@
     <color name="colorNavIcon">#1d1d1d</color>
     <color name="gray">#AEAEAE</color>
     <color name="grayDark">#838383</color>
-
+    <color name="red">#EA1043</color>
 
 
     <color name="colorSigninSignup">#252427</color>
@@ -17,4 +17,5 @@
     <color name="colorGoogleSignInPressed">#b02513</color>
     <color name="colorEmailSignIn">#009688</color>
     <color name="colorEmailSignInPressed">#004D40</color>
+    <color name="transparent">#00FFFFFF</color>
 </resources>
