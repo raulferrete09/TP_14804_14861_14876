@@ -1,4 +1,4 @@
-package com.example.tp_14804_14861_14876
+package com.example.tp_14804_14861_14876.Activitys
 
 import android.app.AlertDialog
 import android.content.Intent
@@ -7,12 +7,15 @@ import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.Settings
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.util.Base64
 import android.util.Log
 import android.widget.*
+import com.example.tp_14804_14861_14876.R
+import com.example.tp_14804_14861_14876.Utils.Alert
+import com.example.tp_14804_14861_14876.Utils.ConnectionReceiver
+import com.example.tp_14804_14861_14876.Utils.ReceiverConnection
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -36,7 +39,7 @@ import java.util.*
 //import com.facebook.appevents.AppEventsLogger;
 
 
-class LoginActivity : AppCompatActivity(),ConnectionReceiver.ConnectionReceiverListener {
+class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverListener {
     var auth : FirebaseAuth? = null
     var googleSignInClient: GoogleSignInClient? = null
     var GOOGLE_LOGIN_CODE = 12502
@@ -109,11 +112,11 @@ class LoginActivity : AppCompatActivity(),ConnectionReceiver.ConnectionReceiverL
     }
 
     fun signupaccount(){
-        startActivity(Intent(this,SignUpActivity::class.java))
+        startActivity(Intent(this, SignUpActivity::class.java))
     }
 
     fun forgetpassword(){
-        startActivity(Intent(this,ForgotPasswordActivity::class.java))
+        startActivity(Intent(this, ForgotPasswordActivity::class.java))
     }
 
     fun printHashKey() {
@@ -236,7 +239,7 @@ class LoginActivity : AppCompatActivity(),ConnectionReceiver.ConnectionReceiverL
     }
     fun moveMainPage(user:FirebaseUser?){
         if(user != null){
-            startActivity(Intent(this,MainActivity::class.java))
+            startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
     }

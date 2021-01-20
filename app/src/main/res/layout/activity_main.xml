@@ -4,115 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".MainActivity"
+    tools:context=".Activitys.MainActivity"
     android:id="@+id/drawer_layout">
 
-    <RelativeLayout
+    <include
+        android:id="@+id/include"
+        layout="@layout/drawable_toolbal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/audio_list_view"
-            android:layout_width="wrap_content"
-            android:layout_height="333dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="301dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginBottom="97dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="156dp"
-            android:layout_height="51dp"
-            android:layout_marginTop="5dp"
-            app:srcCompat="@drawable/hvac_logo"
-            app:tint="@color/gray"/>
-    </RelativeLayout>
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/image_layout_HVAC"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/dashboard_infomation"
-            app:layout_constraintTop_toTopOf="@+id/appBarLayout">
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:id="@+id/button_layout_submission"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/add_btn_submission"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="bottom|end"
-                android:layout_margin="32dp"
-                android:clickable="true"
-                android:src="@drawable/ic_add_file"
-                app:backgroundTint="#93939A"
-                app:fabSize="normal"
-                app:icon="@drawable/ic_add_file"
-                app:maxImageSize="38dp"
-                app:rippleColor="@color/colorPrimaryDark" />
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/appBarLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:foregroundTint="#BC1A1A"
-            tools:ignore="MissingConstraints">
-
-        </com.google.android.material.appbar.AppBarLayout>
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/main_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            tools:ignore="MissingConstraints" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@+id/image_layout_HVAC">
-        <include
-            layout="@layout/dashboard_ok_nok_information"
-            tools:layout_editor_absoluteX="200dp"
-            tools:layout_editor_absoluteY="200dp" />
-
-    </RelativeLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+        android:layout_height="match_parent" />
 
     <com.google.android.material.navigation.NavigationView
-        android:id="@+id/nav_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
         app:menu="@menu/nav_menu"
-        app:headerLayout="@layout/nav_header_layout">
-
-    </com.google.android.material.navigation.NavigationView>
+        android:id="@+id/nav_view"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/nav_header_layout"
+        />
 
 </androidx.drawerlayout.widget.DrawerLayout>

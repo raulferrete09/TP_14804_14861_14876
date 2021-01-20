@@ -1,17 +1,20 @@
-package com.example.tp_14804_14861_14876
+package com.example.tp_14804_14861_14876.Activitys
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.content.IntentFilter
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import com.example.tp_14804_14861_14876.Activitys.LoginActivity
+import com.example.tp_14804_14861_14876.R
+import com.example.tp_14804_14861_14876.Utils.Alert
+import com.example.tp_14804_14861_14876.Utils.ConnectionReceiver
+import com.example.tp_14804_14861_14876.Utils.ReceiverConnection
 import com.google.firebase.auth.FirebaseAuth
 
 
-class ForgotPasswordActivity : AppCompatActivity(),ConnectionReceiver.ConnectionReceiverListener {
+class ForgotPasswordActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverListener {
     var auth : FirebaseAuth? = null
     lateinit var  fp_et_email: EditText
 
@@ -46,7 +49,7 @@ class ForgotPasswordActivity : AppCompatActivity(),ConnectionReceiver.Connection
     }
 
     fun ReturnMain(){
-        startActivity(Intent(this,LoginActivity::class.java))
+        startActivity(Intent(this, LoginActivity::class.java))
     }
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {

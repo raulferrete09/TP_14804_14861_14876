@@ -1,4 +1,4 @@
-package com.example.tp_14804_14861_14876
+package com.example.tp_14804_14861_14876.Utils
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.tp_14804_14861_14876.R
 import java.io.File
 
 class AudioListAdapter : RecyclerView.Adapter<AudioListAdapter.AudioViewHolder> {
@@ -14,7 +15,7 @@ class AudioListAdapter : RecyclerView.Adapter<AudioListAdapter.AudioViewHolder> 
     private var onItemListClick: onItemList_Click
 
 
-    constructor(allFiles: Array<File>, onItemListClick: AudioListAdapter.onItemList_Click?) {
+    constructor(allFiles: Array<File>, onItemListClick: onItemList_Click?) {
         this.allFiles = allFiles
         this.onItemListClick = onItemListClick!!
     }

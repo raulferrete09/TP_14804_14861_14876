@@ -1,10 +1,7 @@
-package com.example.tp_14804_14861_14876
+package com.example.tp_14804_14861_14876.Activitys
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.content.IntentFilter
-import android.graphics.Color
-import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -16,6 +13,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import com.example.tp_14804_14861_14876.R
+import com.example.tp_14804_14861_14876.Utils.Alert
+import com.example.tp_14804_14861_14876.Utils.ConnectionReceiver
+import com.example.tp_14804_14861_14876.Utils.ReceiverConnection
 import com.google.firebase.auth.FirebaseAuth
 import java.util.regex.Pattern
 
@@ -83,7 +84,7 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
     }
 
     private fun ToLoginPage() {
-        startActivity(Intent(this,LoginActivity::class.java))
+        startActivity(Intent(this, LoginActivity::class.java))
     }
 
     override fun onClick(v: View?) {

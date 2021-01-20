@@ -1,4 +1,4 @@
-package com.example.tp_14804_14861_14876
+package com.example.tp_14804_14861_14876.Fragments
 
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -13,9 +13,10 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.tp_14804_14861_14876.Utils.AudioListAdapter
+import com.example.tp_14804_14861_14876.R
+import com.example.tp_14804_14861_14876.Utils.TimeAgo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -171,7 +172,7 @@ class AudioListFragment : Fragment(), AudioListAdapter.onItemList_Click {
     private fun pauseAudio() {
         mediaPlayer.pause()
         player_btn_play.background = requireActivity().resources.getDrawable(
-                R.drawable.player_play_btn,
+            R.drawable.player_play_btn,
                 null
         )
         player_tv_headername.text = "Paused"
@@ -181,7 +182,7 @@ class AudioListFragment : Fragment(), AudioListAdapter.onItemList_Click {
     private fun resumeAudio() {
         mediaPlayer.start()
         player_btn_play.background = requireActivity().resources.getDrawable(
-                R.drawable.player_pause_btn,
+            R.drawable.player_pause_btn,
                 null
         )
         isPlaying = true
@@ -192,7 +193,7 @@ class AudioListFragment : Fragment(), AudioListAdapter.onItemList_Click {
     private fun stopAudio() {
         //stop the audio
         player_btn_play.background = requireActivity().resources.getDrawable(
-                R.drawable.player_play_btn,
+            R.drawable.player_play_btn,
                 null
         )
         player_tv_headername.text = "Stopped"
@@ -217,7 +218,7 @@ class AudioListFragment : Fragment(), AudioListAdapter.onItemList_Click {
         }
 
         player_btn_play.background = requireActivity().resources.getDrawable(
-                R.drawable.player_pause_btn,
+            R.drawable.player_pause_btn,
                 null
         )
         player_tv_filename.text = filetoplay.name

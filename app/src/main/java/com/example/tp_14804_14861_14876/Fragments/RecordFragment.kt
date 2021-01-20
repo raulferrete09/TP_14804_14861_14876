@@ -1,4 +1,4 @@
-package com.example.tp_14804_14861_14876
+package com.example.tp_14804_14861_14876.Fragments
 
 import android.Manifest
 import android.content.Intent
@@ -15,8 +15,10 @@ import android.widget.Chronometer
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
+import com.example.tp_14804_14861_14876.Activitys.MainActivity
+import com.example.tp_14804_14861_14876.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import java.text.SimpleDateFormat
@@ -49,6 +51,9 @@ class RecordFragment : Fragment(), View.OnClickListener {
     lateinit var back_btn_arrow: Button
 
     lateinit var intent:Intent
+
+    lateinit var audioListFragment: AudioListFragment
+    lateinit var transaction: FragmentTransaction
 
 
 
@@ -96,7 +101,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        navController = Navigation.findNavController(view)
+        //navController = Navigation.findNavController(view)
         record_btn_list = view.findViewById<Button>(R.id.record_btn_list)
         record_btn_start = view.findViewById<Button>(R.id.record_btn_start)
         timer_chromo_counter = view.findViewById<Chronometer>(R.id.timer_chromo_counter)
@@ -129,14 +134,18 @@ class RecordFragment : Fragment(), View.OnClickListener {
         intent = Intent(activity, MainActivity::class.java)
         record_btn_start.isEnabled = true
         when (v.id) {
-            R.id.record_btn_list ->
-                navController?.navigate(R.id.action_recordFragment_to_audioListFragment)
+            R.id.record_btn_list -> {
+                audioListFragment = AudioListFragment()
+                transaction = fragmentManager?.beginTransaction()!!
+                transaction.replace(R.id.drawable_frameLayout, audioListFragment)
+                transaction.commit()
+            }
             R.id.record_btn_start ->
                 if (isRecording) {
                     //Start record
                     startRecording()
                     record_btn_start.background = resources.getDrawable(
-                            R.drawable.record_btn_recording,
+                        R.drawable.record_btn_recording,
                             null
                     )
                     isRecording = true
@@ -191,7 +200,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
                 filenametext.text = "Recording Stopped, File Saved : " + pathname;
                 timer_chromo_counter.text = "Finished"
                 record_btn_start.background = resources.getDrawable(
-                        R.drawable.record_btn_stopped,
+                    R.drawable.record_btn_stopped,
                         null
                 )
                 record_btn_start.isEnabled = true

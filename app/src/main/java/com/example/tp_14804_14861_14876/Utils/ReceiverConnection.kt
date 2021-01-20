@@ -1,10 +1,10 @@
-package com.example.tp_14804_14861_14876
+package com.example.tp_14804_14861_14876.Utils
 import android.app.Application
 
 class ReceiverConnection: Application() {
     companion object {
         @get:Synchronized
-        lateinit var instance:ReceiverConnection
+        lateinit var instance: ReceiverConnection
     }
 
     override fun onCreate(){
