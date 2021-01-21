@@ -1,16 +1,24 @@
 package com.example.tp_14804_14861_14876.Activitys
 
-import android.app.ActionBar
+import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentTransaction
 import com.example.tp_14804_14861_14876.Fragments.*
@@ -23,8 +31,10 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.squareup.picasso.Picasso
+import com.squareup.picasso.Request
 import com.squareup.picasso.Transformation
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation
+import java.io.File
 
 
 class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverListener{
@@ -73,8 +83,6 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         user_tv_name = hview.findViewById<TextView>(R.id.user_tv_name)
         user_iv_photo = hview.findViewById<ImageView>(R.id.user_iv_photo)
 
-
-
         val galleryIntent = Intent(
             Intent.ACTION_PICK,
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -94,7 +102,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
 
         // rounded corner image
         val radius = 50
-        val margin = 5
+        val margin = 0
         transformation = RoundedCornersTransformation(radius, margin)
         Picasso.get().load(photo).transform(transformation).into(user_iv_photo)
 
@@ -119,11 +127,19 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         navigationview.setNavigationItemSelectedListener{
             when (it.itemId) {
                 R.id.photo_icon -> {
-                    mainFragment = MainFragment()
-                    supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.drawable_frameLayout, mainFragment,null).addToBackStack(null)
-                        .commit()
+                    if (checkPermissions()){
+                        val folder =
+                            File(Environment.getExternalStorageDirectory().toString() + File.separator + "DCIM"+ File.separator + "HVAC")
+                        if (!folder.exists()) {
+                            folder.mkdirs()
+                            //Toast.makeText(this@MainActivity, "Successful", Toast.LENGTH_SHORT).show()
+                            var openGalleryIntent = Intent(Intent.ACTION_VIEW, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                            startActivityForResult(openGalleryIntent, 111)
+                        } else {
+                            var openGalleryIntent = Intent(Intent.ACTION_VIEW, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                            startActivityForResult(openGalleryIntent, 111)
+                        }
+                    }
                 }
                 R.id.audio_list_icon -> {
                     audioListFragment = AudioListFragment()
@@ -172,6 +188,28 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
             drawer_layout.closeDrawers()
             true
         }
+    }
+
+    private fun checkPermissions(): Boolean {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            //Permission Granted
+            return true
+        } else {
+            //Permission not granted, ask for permission
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ),
+                111
+            )
+            return false
+        }
+
     }
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
