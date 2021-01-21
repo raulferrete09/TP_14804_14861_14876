@@ -1,17 +1,23 @@
 package com.example.tp_14804_14861_14876.Fragments
 
+import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
+import com.example.tp_14804_14861_14876.Activitys.LoginActivity
+import com.example.tp_14804_14861_14876.Activitys.MainActivity
 import com.example.tp_14804_14861_14876.R
+import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.FirebaseAuth
 import java.util.regex.Pattern
 
 // TODO: Rename parameter arguments, choose names that match
@@ -29,7 +35,12 @@ class PasswordFragment : Fragment(), View.OnClickListener {
     var currentmisshowpass = false
     var misshowpass = false
     var misshowconfirmpass = false
+    var x:Int = 0
+    var auth : FirebaseAuth? = null
+    var validationpassword: String? = "false"
 
+
+    lateinit var intent: Intent
     lateinit var settings_et_currentpassword: EditText
     lateinit var settings_et_password: EditText
     lateinit var settings_et_confirmpassword: EditText
@@ -89,28 +100,33 @@ class PasswordFragment : Fragment(), View.OnClickListener {
         password_iv_confirmshow = view.findViewById<ImageView>(R.id.password_iv_confirmshow)
         settings_btn_change_password = view.findViewById<Button>(R.id.settings_btn_change_password)
 
+        auth = FirebaseAuth.getInstance()
+
+        settings_et_password.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                val pass = settings_et_password.text.toString()
+                validationpassword = validatePassword(pass)
+            }
+
+            override fun afterTextChanged(s: Editable) {}
+        })
+
         settings_et_currentpassword.setOnClickListener(this)
         settings_et_password.setOnClickListener(this)
         settings_et_confirmpassword.setOnClickListener(this)
         password_iv_currentshow.setOnClickListener(this)
         password_iv_show.setOnClickListener(this)
         password_iv_confirmshow.setOnClickListener(this)
+        settings_btn_change_password.setOnClickListener(this)
+
+
     }
 
     override fun onClick(v: View) {
+        intent = Intent(activity, LoginActivity::class.java)
+
         when (v.id) {
-            R.id.settings_et_password -> {
-                profileFragment = ProfileFragment()
-                transaction = fragmentManager?.beginTransaction()!!
-                transaction.replace(R.id.drawable_frameLayout, profileFragment)
-                transaction.commit()
-            }
-            R.id.settings_et_confirmpassword -> {
-                passwordFragment = PasswordFragment()
-                transaction = fragmentManager?.beginTransaction()!!
-                transaction.replace(R.id.drawable_frameLayout, passwordFragment)
-                transaction.commit()
-            }
             R.id.password_iv_currentshow -> {
                 currentmisshowpass = !currentmisshowpass
                 showCurrentPassword(currentmisshowpass)
@@ -123,6 +139,45 @@ class PasswordFragment : Fragment(), View.OnClickListener {
                 misshowconfirmpass = !misshowconfirmpass
                 showConfirmPassword(misshowconfirmpass)
             }
+            R.id.settings_btn_change_password ->
+                changePassword()
+
+        }
+    }
+
+    private fun changePassword() {
+        if(settings_et_currentpassword.text.isNotEmpty() && settings_et_password.text.isNotEmpty()
+            && settings_et_confirmpassword.text.isNotEmpty()) {
+            if (settings_et_password.text.toString() == settings_et_confirmpassword.text.toString() && validationpassword == "false") {
+                val user = auth?.currentUser
+                if(user != null && user.email != null) {
+                    val credential = EmailAuthProvider.getCredential(user.email!!, settings_et_currentpassword.text.toString())
+                    // Prompt the user to re-provide their sign-in credentials
+                    user?.reauthenticate(credential)
+                        ?.addOnCompleteListener {
+                            if(it.isSuccessful){
+                                //Toast.makeText(this,"Re-Authentication success",Toast.LENGTH_SHORT).show()
+                                user?.updatePassword(settings_et_password.text.toString())
+                                    ?.addOnCompleteListener {task ->
+                                        if(task.isSuccessful){
+                                            //Toast.makeText(this,"Password changed successfully",Toast.LENGTH_SHORT).show()
+                                            auth?.signOut()
+                                            startActivity(intent)
+                                        }
+                                        //Log.d("User Password update.")
+                                    }
+                            } else {
+                                //Toast.makeText(this,"Re-Authentication failed",Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                }
+            } else {
+                x = 2
+                showAlert(x)
+            }
+        } else {
+            x = 1
+            showAlert(x)
         }
     }
 
@@ -170,5 +225,15 @@ class PasswordFragment : Fragment(), View.OnClickListener {
             validate = "true"
         }
         return validate
+    }
+    private fun showAlert(x:Int){
+        val builder = AlertDialog.Builder(requireContext())
+        when(x) {
+            1 -> builder.setMessage("An authentication error has occurred. Unfilled passwords and/or passwords do not match.")
+            2 -> builder.setMessage("An password verification error has occurred. Please choose a password with 8 or more characters including uppercase, lowercase and digits.")
+        }
+        builder.setPositiveButton("Accept",null)
+        val dialog: AlertDialog =builder.create()
+        dialog.show()
     }
 }
