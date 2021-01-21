@@ -20,6 +20,7 @@ import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
+import com.facebook.login.Login
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.Auth
@@ -54,6 +55,8 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
     lateinit var login_tv_forgpass:TextView
     lateinit var password_iv_show: ImageView
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -67,10 +70,16 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
         login_tv_forgpass = findViewById<TextView>(R.id.login_tv_forgpass)
         password_iv_show = findViewById<ImageView>(R.id.password_iv_show)
 
+        auth = FirebaseAuth.getInstance()
+        if(auth?.currentUser!= null) {
+            startActivity(Intent(this, MainActivity::class.java))
+        }
+
+
         baseContext.registerReceiver(ConnectionReceiver(),IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         ReceiverConnection.instance.setConnectionListener(this)
 
-        auth = FirebaseAuth.getInstance()
+
 
         login_btn_signin.setOnClickListener {
             signinAndSignup()

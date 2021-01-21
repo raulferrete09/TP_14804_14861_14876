@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -25,6 +26,7 @@ import com.example.tp_14804_14861_14876.R
 import com.example.tp_14804_14861_14876.Utils.Alert
 import com.example.tp_14804_14861_14876.Utils.ConnectionReceiver
 import com.example.tp_14804_14861_14876.Utils.ReceiverConnection
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -35,9 +37,9 @@ import jp.wasabeef.picasso.transformations.RoundedCornersTransformation
 import java.io.File
 
 
-class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverListener {
+class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverListener{
 
-    lateinit var drawer_layout: DrawerLayout
+    lateinit var drawer_layout:DrawerLayout
     lateinit var navigationview: NavigationView
     lateinit var toolbar: androidx.appcompat.widget.Toolbar
     lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
@@ -55,8 +57,8 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
     lateinit var accerelometerFragment: AccerelometerFragment
     lateinit var settingsFragment: SettingsFragment
 
-
-    var auth: FirebaseAuth? = null
+    lateinit var mGoogleSignInClient: GoogleSignInClient
+    var auth : FirebaseAuth? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,8 +94,8 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         //Firebase info
         auth = FirebaseAuth.getInstance()
         val user: FirebaseUser? = auth?.currentUser
-        val name: String? = user?.displayName
-        val id: String? = user?.uid
+        val name:String? = user?.displayName
+        val id:String? = user?.uid
         var photo = user?.photoUrl
 
         user_tv_name.text = name
@@ -123,7 +125,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
             .commit()
 
-        navigationview.setNavigationItemSelectedListener {
+        navigationview.setNavigationItemSelectedListener{
             when (it.itemId) {
                 R.id.photo_icon -> {
                     if (checkPermissions()){
@@ -144,48 +146,43 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                     audioListFragment = AudioListFragment()
                     supportFragmentManager
                         .beginTransaction()
-                        .replace(R.id.drawable_frameLayout, audioListFragment, null).addToBackStack(
-                            null
-                        )
+                        .replace(R.id.drawable_frameLayout, audioListFragment,null).addToBackStack(null)
                         .commit()
                 }
                 R.id.mic_sound_icon -> {
                     recordFragment = RecordFragment()
                     supportFragmentManager
                         .beginTransaction()
-                        .replace(R.id.drawable_frameLayout, recordFragment, null).addToBackStack(
-                            null
-                        )
+                        .replace(R.id.drawable_frameLayout, recordFragment,null).addToBackStack(null)
                         .commit()
                 }
                 R.id.temperature_icon -> {
                     temperatureFragment = TemperatureFragment()
                     supportFragmentManager
                         .beginTransaction()
-                        .replace(R.id.drawable_frameLayout, temperatureFragment, null)
-                        .addToBackStack(
-                            null
-                        )
+                        .replace(R.id.drawable_frameLayout, temperatureFragment,null).addToBackStack(null)
                         .commit()
                 }
                 R.id.accelerometer_icon -> {
                     accerelometerFragment = AccerelometerFragment()
                     supportFragmentManager
                         .beginTransaction()
-                        .replace(R.id.drawable_frameLayout, accerelometerFragment, null)
-                        .addToBackStack(
-                            null
-                        )
+                        .replace(R.id.drawable_frameLayout, accerelometerFragment,null).addToBackStack(null)
                         .commit()
                 }
                 R.id.settings_icon -> {
                     settingsFragment = SettingsFragment()
                     supportFragmentManager
                         .beginTransaction()
-                        .replace(R.id.drawable_frameLayout, settingsFragment, null).addToBackStack(
-                            null
-                        )
+                        .replace(R.id.drawable_frameLayout, settingsFragment,null).addToBackStack(null)
                         .commit()
+                }
+                R.id.logout_icon -> {
+
+                    FirebaseAuth.getInstance().signOut()
+                    val intent= Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
+
                 }
 
             }
@@ -217,7 +214,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
     }
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
-        if (!isConnected) {
+        if(!isConnected){
             var alert = Alert()
             val builder = AlertDialog.Builder(this)
             alert.showAlert(builder, this)
