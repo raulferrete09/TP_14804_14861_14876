@@ -34,9 +34,9 @@ import jp.wasabeef.picasso.transformations.RoundedCornersTransformation
 import java.io.File
 
 
-class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverListener{
+class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverListener {
 
-    lateinit var drawer_layout:DrawerLayout
+    lateinit var drawer_layout: DrawerLayout
     lateinit var navigationview: NavigationView
     lateinit var toolbar: androidx.appcompat.widget.Toolbar
     lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
     lateinit var settingsFragment: SettingsFragment
 
 
-    var auth : FirebaseAuth? = null
+    var auth: FirebaseAuth? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,8 +91,8 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         //Firebase info
         auth = FirebaseAuth.getInstance()
         val user: FirebaseUser? = auth?.currentUser
-        val name:String? = user?.displayName
-        val id:String? = user?.uid
+        val name: String? = user?.displayName
+        val id: String? = user?.uid
         var photo = user?.photoUrl
 
         user_tv_name.text = name
@@ -122,11 +122,11 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
             .commit()
 
-        navigationview.setNavigationItemSelectedListener{
+        navigationview.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.photo_icon -> {
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                             111
                         )
                     }
@@ -191,7 +191,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
     }
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
-        if(!isConnected){
+        if (!isConnected) {
             var alert = Alert()
             val builder = AlertDialog.Builder(this)
             alert.showAlert(builder, this)
@@ -204,17 +204,15 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        val file = File(Environment.getExternalStorageDirectory().toString() + File.separator + "audios")
+        val file =
+            File(Environment.getExternalStorageDirectory().toString() + File.separator + "HVAC")
         println(file)
         if (requestCode == 111 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             if (!file.exists()) {
                 file.mkdirs()
                 Toast.makeText(this@MainActivity, "Successful", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this@MainActivity, "Folder Already Exists", Toast.LENGTH_SHORT)
-                    .show()
             }
-        }
 
+        }
     }
 }
