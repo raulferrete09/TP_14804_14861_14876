@@ -7,10 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.FragmentTransaction
 import com.example.tp_14804_14861_14876.R
 import com.google.firebase.auth.FirebaseAuth
@@ -183,7 +180,7 @@ class SettingsFragment : Fragment(), View.OnClickListener {
         auth?.sendPasswordResetEmail(email!!)
                 ?.addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("TAG", "Email sent.")
+                        Toast.makeText(activity,"Check your email account", Toast.LENGTH_LONG).show()
                     }
                 }
     }

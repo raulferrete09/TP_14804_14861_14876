@@ -53,6 +53,7 @@
                 android:background="@drawable/login_et"
                 android:ems="10"
                 android:hint="Change Profile"
+                android:textSize="16sp"
                 android:inputType="textPassword"
                 android:textColorHint="@color/colorSigninSignup" />
 
@@ -93,6 +94,7 @@
                 android:background="@drawable/login_et"
                 android:ems="10"
                 android:hint="Change Password"
+                android:textSize="16sp"
                 android:inputType="textPassword"
                 android:textColorHint="@color/colorSigninSignup" />
 
@@ -134,6 +136,7 @@
                 android:background="@drawable/login_et"
                 android:ems="10"
                 android:hint="Forget Password"
+                android:textSize="16sp"
                 android:inputType="textPassword"
                 android:textColorHint="@color/colorSigninSignup" />
 

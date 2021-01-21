@@ -120,7 +120,6 @@ class PasswordFragment : Fragment(), View.OnClickListener {
         password_iv_confirmshow.setOnClickListener(this)
         settings_btn_change_password.setOnClickListener(this)
 
-
     }
 
     override fun onClick(v: View) {
@@ -139,9 +138,9 @@ class PasswordFragment : Fragment(), View.OnClickListener {
                 misshowconfirmpass = !misshowconfirmpass
                 showConfirmPassword(misshowconfirmpass)
             }
-            R.id.settings_btn_change_password ->
+            R.id.settings_btn_change_password ->{
                 changePassword()
-
+            }
         }
     }
 
@@ -156,18 +155,18 @@ class PasswordFragment : Fragment(), View.OnClickListener {
                     user?.reauthenticate(credential)
                         ?.addOnCompleteListener {
                             if(it.isSuccessful){
-                                //Toast.makeText(this,"Re-Authentication success",Toast.LENGTH_SHORT).show()
+                                Toast.makeText(activity,"Re-Authentication success", Toast.LENGTH_SHORT).show()
                                 user?.updatePassword(settings_et_password.text.toString())
                                     ?.addOnCompleteListener {task ->
                                         if(task.isSuccessful){
-                                            //Toast.makeText(this,"Password changed successfully",Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(activity,"Password changed successfully", Toast.LENGTH_LONG).show()
                                             auth?.signOut()
                                             startActivity(intent)
                                         }
-                                        //Log.d("User Password update.")
+                                        //Toast.makeText(activity,"User Password update.", Toast.LENGTH_LONG).show()
                                     }
                             } else {
-                                //Toast.makeText(this,"Re-Authentication failed",Toast.LENGTH_SHORT).show()
+                                Toast.makeText(activity,"Re-Authentication failed",Toast.LENGTH_SHORT).show()
                             }
                         }
                 }
