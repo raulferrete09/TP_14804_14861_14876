@@ -20,7 +20,6 @@ import com.example.tp_14804_14861_14876.Utils.ReceiverConnection
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation
@@ -48,7 +47,6 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
 
     var auth : FirebaseAuth? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -74,21 +72,20 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         user_iv_photo = hview.findViewById<ImageView>(R.id.user_iv_photo)
 
         val galleryIntent = Intent(
-            Intent.ACTION_PICK,
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         )
         var RESULT_GALLERY = 0
 
 
         //Firebase info
         auth = FirebaseAuth.getInstance()
-        val user = auth?.currentUser
+        val user: FirebaseUser? = auth?.currentUser
         val name:String? = user?.displayName
-        val id= user?.uid
+        val id:String? = user?.uid
         var photo = user?.photoUrl
 
         user_tv_name.text = name
-        println(name)
         user_tv_id.text = id
 
         // rounded corner image
@@ -98,11 +95,11 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         Picasso.get().load(photo).transform(transformation).into(user_iv_photo)
 
         actionBarDrawerToggle = ActionBarDrawerToggle(
-            this,
-            drawer_layout,
-            toolbar,
-            R.string.openNavDrawer,
-            R.string.closeNavDrawer
+                this,
+                drawer_layout,
+                toolbar,
+                R.string.openNavDrawer,
+                R.string.closeNavDrawer
         )
 
         drawer_layout.addDrawerListener(actionBarDrawerToggle)
@@ -110,54 +107,54 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
 
         mainFragment = MainFragment()
         supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.drawable_frameLayout, mainFragment)
-            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-            .commit()
+                .beginTransaction()
+                .replace(R.id.drawable_frameLayout, mainFragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .commit()
 
         navigationview.setNavigationItemSelectedListener{
             when (it.itemId) {
                 R.id.photo_icon -> {
                     mainFragment = MainFragment()
                     supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.drawable_frameLayout, mainFragment,null).addToBackStack(null)
-                        .commit()
+                            .beginTransaction()
+                            .replace(R.id.drawable_frameLayout, mainFragment,null).addToBackStack(null)
+                            .commit()
                 }
                 R.id.audio_list_icon -> {
                     audioListFragment = AudioListFragment()
                     supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.drawable_frameLayout, audioListFragment,null).addToBackStack(null)
-                        .commit()
+                            .beginTransaction()
+                            .replace(R.id.drawable_frameLayout, audioListFragment,null).addToBackStack(null)
+                            .commit()
                 }
                 R.id.mic_sound_icon -> {
                     recordFragment = RecordFragment()
                     supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.drawable_frameLayout, recordFragment,null).addToBackStack(null)
-                        .commit()
+                            .beginTransaction()
+                            .replace(R.id.drawable_frameLayout, recordFragment,null).addToBackStack(null)
+                            .commit()
                 }
                 R.id.temperature_icon -> {
                     temperatureFragment = TemperatureFragment()
                     supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.drawable_frameLayout, temperatureFragment,null).addToBackStack(null)
-                        .commit()
+                            .beginTransaction()
+                            .replace(R.id.drawable_frameLayout, temperatureFragment,null).addToBackStack(null)
+                            .commit()
                 }
                 R.id.accelerometer_icon -> {
                     accerelometerFragment = AccerelometerFragment()
                     supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.drawable_frameLayout, accerelometerFragment,null).addToBackStack(null)
-                        .commit()
+                            .beginTransaction()
+                            .replace(R.id.drawable_frameLayout, accerelometerFragment,null).addToBackStack(null)
+                            .commit()
                 }
                 R.id.settings_icon -> {
                     settingsFragment = SettingsFragment()
                     supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.drawable_frameLayout, settingsFragment,null).addToBackStack(null)
-                        .commit()
+                            .beginTransaction()
+                            .replace(R.id.drawable_frameLayout, settingsFragment,null).addToBackStack(null)
+                            .commit()
                 }
 
             }

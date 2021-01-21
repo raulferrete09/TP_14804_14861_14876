@@ -4,14 +4,16 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.util.Base64
 import android.util.Log
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import com.example.tp_14804_14861_14876.R
 import com.example.tp_14804_14861_14876.Utils.Alert
 import com.example.tp_14804_14861_14876.Utils.ConnectionReceiver
@@ -31,7 +33,10 @@ import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.database.*
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import java.io.InputStream
+import java.net.URL
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.*
@@ -153,6 +158,7 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
                 .registerCallback(callbackManager, object : FacebookCallback<LoginResult>{
                     override fun onSuccess(result: LoginResult?) {
                         //Second step
+
                         handleFacebookAccessToken(result?.accessToken)
                     }
 
@@ -169,6 +175,11 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
 
     fun handleFacebookAccessToken(token : AccessToken?){
         var credential = FacebookAuthProvider.getCredential(token?.token!!)
+        val imageURL = "https://graph.facebook.com/" + token.userId.toString() + "/picture?type=large"
+        //val inp: InputStream = URL(imageURL).getContent() as InputStream
+        //val bitmap: Bitmap = BitmapFactory.decodeStream(inp)
+        println("AQUI " + imageURL)
+
         auth?.signInWithCredential(credential)
                 ?.addOnCompleteListener {
                     task ->
@@ -199,6 +210,8 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
             }
         }
     }
+
+
 
     fun firebaseAuthWithGoogle(account: GoogleSignInAccount?) {
         var credential = GoogleAuthProvider.getCredential(account?.idToken,null)
@@ -256,7 +269,7 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
 
             startActivity(Intent(this, MainActivity::class.java))
             //sendData()
-            readData()
+            //readData()
             finish()
         }
     }
@@ -295,7 +308,7 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
 
     }
 
-    fun readData(){
+    /*fun readData(){
         val person = auth?.currentUser
         val uid = person?.uid
         database.reference.child("users").child("$uid").addListenerForSingleValueEvent(object :
@@ -310,6 +323,6 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
                 println(name)
             }
         })
-    }
+    }*/
 
 }
