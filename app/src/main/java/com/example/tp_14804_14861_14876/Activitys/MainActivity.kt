@@ -48,7 +48,6 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
     lateinit var user_tv_id: TextView
     lateinit var hview: View
     lateinit var transformation: Transformation
-    var FolderName: String? = null
 
     lateinit var mainFragment: MainFragment
     lateinit var recordFragment: RecordFragment
