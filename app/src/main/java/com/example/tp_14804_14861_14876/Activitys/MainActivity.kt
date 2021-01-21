@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
     lateinit var accerelometerFragment: AccerelometerFragment
     lateinit var settingsFragment: SettingsFragment
 
-
+    lateinit var mGoogleSignInClient: GoogleSignInClient
     var auth : FirebaseAuth? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -155,6 +155,14 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                         .beginTransaction()
                         .replace(R.id.drawable_frameLayout, settingsFragment,null).addToBackStack(null)
                         .commit()
+                }
+                R.id.logout_icon -> {
+                    mGoogleSignInClient.signOut().addOnCompleteListener {
+                        FirebaseAuth.getInstance().signOut()
+                        val intent= Intent(this, LoginActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
                 }
 
             }
