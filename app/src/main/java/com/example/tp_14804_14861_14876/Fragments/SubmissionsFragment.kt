@@ -32,8 +32,8 @@ private const val ARG_PARAM2 = "param2"
 class SubmissionsFragment : Fragment(), View.OnClickListener {
 
     lateinit var profile_iv_photo: ImageView
-    lateinit var profile_iv_name: TextView
-    lateinit var profile_iv_id: TextView
+    lateinit var profile_tv_name: TextView
+    lateinit var profile_tv_id: TextView
     lateinit var report_ed_anomaly: EditText
     lateinit var transformation: Transformation
     lateinit var submission_btn_firebase: Button
@@ -86,8 +86,8 @@ class SubmissionsFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        profile_iv_id = view.findViewById<TextView>(R.id.profile_iv_id)
-        profile_iv_name = view.findViewById<TextView>(R.id.profile_iv_name)
+        profile_tv_id = view.findViewById<TextView>(R.id.profile_tv_id)
+        profile_tv_name = view.findViewById<TextView>(R.id.profile_tv_name)
         profile_iv_photo = view.findViewById<ImageView>(R.id.profile_iv_photo)
 
         report_ed_anomaly = view.findViewById<EditText>(R.id.report_ed_anomaly)
@@ -103,8 +103,8 @@ class SubmissionsFragment : Fragment(), View.OnClickListener {
         val id:String? = user?.uid
         var photo = user?.photoUrl
 
-        profile_iv_name.text = name
-        profile_iv_id.text = id
+        profile_tv_name.text = name
+        profile_tv_id.text = id
 
 // rounded corner image
         val radius = 50

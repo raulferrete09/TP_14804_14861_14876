@@ -40,7 +40,7 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
     lateinit var signup_btn_signup: Button
     lateinit var password_iv_show: ImageView
     lateinit var password_iv_confirmshow: ImageView
-    lateinit var signup_et_confirmepassword: EditText
+    lateinit var signup_et_confirmpassword: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,10 +56,11 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
         signup_btn_signup = findViewById<Button>(R.id.signup_btn_signup)
         password_iv_show = findViewById<ImageView>(R.id.password_iv_show)
         password_iv_confirmshow = findViewById<ImageView>(R.id.password_iv_confirmshow)
-        signup_et_confirmepassword = findViewById<EditText>(R.id.signup_et_confirmepassword)
         database = FirebaseDatabase.getInstance()
         referance = database.getReference("Users")
         auth = FirebaseAuth.getInstance()
+        signup_et_confirmpassword = findViewById<EditText>(R.id.signup_et_confirmpassword)
+
 
         signup_et_password.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -74,7 +75,7 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
         signup_et_surname.setOnClickListener(this)
         signup_et_email.setOnClickListener(this)
         signup_et_password.setOnClickListener(this)
-        signup_et_confirmepassword.setOnClickListener(this)
+        signup_et_confirmpassword.setOnClickListener(this)
         signup_btn_signup.setOnClickListener(this)
 
         password_iv_show.setOnClickListener {
@@ -83,7 +84,7 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
         }
         password_iv_confirmshow.setOnClickListener {
             misshowconfirmpass = !misshowconfirmpass
-            showconfirmPassword(misshowconfirmpass)
+            showConfirmPassword(misshowconfirmpass)
         }
         signup_tv_signin.setOnClickListener{
             ToLoginPage()
@@ -119,8 +120,8 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
             R.id.signup_btn_signup ->
                 if(signup_et_name.text.isNotEmpty() && signup_et_surname.text.isNotEmpty()
                         && signup_et_email.text.isNotEmpty() && signup_et_password.text.isNotEmpty()
-                        && signup_et_confirmepassword.text.isNotEmpty()
-                        && (signup_et_confirmepassword.text.toString() == signup_et_password.text.toString())
+                        && signup_et_confirmpassword.text.isNotEmpty()
+                        && (signup_et_confirmpassword.text.toString() == signup_et_password.text.toString())
                         && validationpassword == "false") {
                     FirebaseAuth.getInstance().createUserWithEmailAndPassword(signup_et_email.text.toString(), signup_et_password.text.toString()).addOnCompleteListener {
                         if (it.isSuccessful) {
@@ -145,11 +146,11 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
                             x = 4
                             showAlert(x)
                         }
-                        ((signup_et_confirmepassword.text.isEmpty()) || (signup_et_confirmepassword.text.toString() != signup_et_password.text.toString()))-> {
+                        ((signup_et_confirmpassword.text.isEmpty()) || (signup_et_confirmpassword.text.toString() != signup_et_password.text.toString()))-> {
                             x = 5
                             showAlert(x)
                         }
-                        ((signup_et_confirmepassword.text.toString() == signup_et_password.text.toString()) && (validationpassword != "false"))  -> {
+                        ((signup_et_confirmpassword.text.toString() == signup_et_password.text.toString()) && (validationpassword != "false"))  -> {
                             x = 6
                             showAlert(x)
                     }
@@ -185,15 +186,15 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
         signup_et_password.setSelection(signup_et_password.text.toString().length)
     }
 
-    fun showconfirmPassword(isShow:Boolean) {
+    fun showConfirmPassword(isShow:Boolean) {
         if (isShow){
-            signup_et_confirmepassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
+            signup_et_confirmpassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
             password_iv_confirmshow.setImageResource(R.drawable.ic_hide_password)
         } else {
-            signup_et_confirmepassword.transformationMethod = PasswordTransformationMethod.getInstance()
+            signup_et_confirmpassword.transformationMethod = PasswordTransformationMethod.getInstance()
             password_iv_confirmshow.setImageResource(R.drawable.ic_show_password)
         }
-        signup_et_confirmepassword.setSelection(signup_et_confirmepassword.text.toString().length)
+        signup_et_confirmpassword.setSelection(signup_et_confirmpassword.text.toString().length)
     }
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {

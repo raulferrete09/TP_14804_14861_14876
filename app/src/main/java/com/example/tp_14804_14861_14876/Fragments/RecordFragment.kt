@@ -4,10 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
-import android.os.Build
-import android.os.Bundle
-import android.os.CountDownTimer
-import android.os.SystemClock
+import android.os.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -117,24 +114,11 @@ class RecordFragment : Fragment(), View.OnClickListener {
         record_btn_start.setOnClickListener(this)
         back_btn_arrow.setOnClickListener(this)
 
-        //Check permission
-        if (ActivityCompat.checkSelfPermission(
-                        requireContext(),
-                        Manifest.permission.RECORD_AUDIO
-                ) != PackageManager.PERMISSION_GRANTED
-        )
-            ActivityCompat.requestPermissions(
-                    requireActivity(),
-                    arrayOf(
-                            Manifest.permission.RECORD_AUDIO,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    ),
-                    111
-            )
-
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onClick(v: View) {
+
         intent = Intent(activity, MainActivity::class.java)
         record_btn_start.isEnabled = true
         when (v.id) {
@@ -145,14 +129,25 @@ class RecordFragment : Fragment(), View.OnClickListener {
                 transaction.commit()
             }
             R.id.record_btn_start ->
-                if (isRecording) {
+                if (!isRecording) {
                     //Start record
-                    startRecording()
+                    stopRecording()
                     record_btn_start.background = resources.getDrawable(
-                        R.drawable.record_btn_recording,
+                            R.drawable.record_btn_recording,
                             null
                     )
-                    isRecording = true
+                    record_btn_start.isEnabled=false
+                    isRecording = false
+                } else {
+                    if (checkPermissions()){
+                        //Start record
+                        startRecording()
+                        record_btn_start.background = resources.getDrawable(
+                                R.drawable.record_btn_recording,
+                                null
+                        )
+                        isRecording = true
+                    }
                 }
             R.id.back_btn_arrow ->
                 startActivity(intent)
@@ -160,6 +155,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun startRecording() {
 
         //Firebase info
@@ -176,8 +172,8 @@ class RecordFragment : Fragment(), View.OnClickListener {
         //Get app external directory path
         //name -> path = User + timeStamp + ".mp3"
         val pathname = name + "_" + timeStamp + ".mp3"
-        val path = requireActivity().getExternalFilesDir("/")!!.toString() + "/" + pathname
-
+        val path = requireActivity().getExternalFilesDir("/").toString() + "/" + pathname
+        println(path)
         mr.setAudioSource(MediaRecorder.AudioSource.MIC)
         mr.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
         mr.setMaxDuration(10000)
@@ -198,14 +194,13 @@ class RecordFragment : Fragment(), View.OnClickListener {
                 counter++
             }
 
-            @RequiresApi(Build.VERSION_CODES.O)
             override fun onFinish() {
                 mr.stop()
                 timer_chromo_counter.stop()
                 filenametext.text = "Recording Stopped, File Saved : " + pathname;
                 timer_chromo_counter.text = "Finished"
                 record_btn_start.background = resources.getDrawable(
-                    R.drawable.record_btn_stopped,
+                        R.drawable.record_btn_stopped,
                         null
                 )
                 record_btn_start.isEnabled = true
@@ -213,17 +208,20 @@ class RecordFragment : Fragment(), View.OnClickListener {
                 back_btn_arrow.isEnabled = true
                 counter = 0
 
-                /*bytes = File(pathname).readBytes()
+                /*val a = Environment.getExternalStorageDirectory().toString()+"/Android/data/com.example.tp_14804_14861_14876/files/" + "audio.mp3"
+                bytes = File(a).readBytes()
+                println(a)
                 base64 = Base64.getEncoder().encodeToString(bytes)
-                //println(base64)
-                var map = mutableMapOf<String,Any>()
+                println(base64)*/
+
+                /*var map = mutableMapOf<String,Any>()
                 map["mp3 file"] = base64
                 println(map)*/
             }
         }
         timer.start()
-
     }
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun stopRecording() {
         //Stop Timer, very obvious
         //Change text on page to file saved
@@ -239,8 +237,12 @@ class RecordFragment : Fragment(), View.OnClickListener {
         if (ActivityCompat.checkSelfPermission(
                         requireContext(),
                         Manifest.permission.RECORD_AUDIO
-                ) != PackageManager.PERMISSION_GRANTED
-        )
+                ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            //Permission Granted
+            return true
+        } else {
+            //Permission not granted, ask for permission
             ActivityCompat.requestPermissions(
                     requireActivity(),
                     arrayOf(
@@ -249,7 +251,8 @@ class RecordFragment : Fragment(), View.OnClickListener {
                     ),
                     111
             )
-        return true
+            return false
+        }
     }
 
 }

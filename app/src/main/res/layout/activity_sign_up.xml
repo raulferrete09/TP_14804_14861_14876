@@ -119,7 +119,7 @@
                 android:orientation="vertical">
 
                 <EditText
-                    android:id="@+id/signup_et_confirmepassword"
+                    android:id="@+id/signup_et_confirmpassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -135,7 +135,7 @@
                     android:id="@+id/password_iv_confirmshow"
                     android:layout_width="37dp"
                     android:layout_height="37dp"
-                    android:layout_alignTop="@+id/signup_et_confirmepassword"
+                    android:layout_alignTop="@+id/signup_et_confirmpassword"
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="3dp"
                     android:layout_marginEnd="19dp"
