@@ -1,15 +1,24 @@
 package com.example.tp_14804_14861_14876.Activitys
 
-import android.app.ActionBar
+import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentTransaction
 import com.example.tp_14804_14861_14876.Fragments.*
@@ -17,12 +26,15 @@ import com.example.tp_14804_14861_14876.R
 import com.example.tp_14804_14861_14876.Utils.Alert
 import com.example.tp_14804_14861_14876.Utils.ConnectionReceiver
 import com.example.tp_14804_14861_14876.Utils.ReceiverConnection
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.squareup.picasso.Picasso
+import com.squareup.picasso.Request
 import com.squareup.picasso.Transformation
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation
+import java.io.File
 
 
 class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverListener{
@@ -44,7 +56,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
     lateinit var accerelometerFragment: AccerelometerFragment
     lateinit var settingsFragment: SettingsFragment
 
-
+    lateinit var mGoogleSignInClient: GoogleSignInClient
     var auth : FirebaseAuth? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,8 +84,8 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         user_iv_photo = hview.findViewById<ImageView>(R.id.user_iv_photo)
 
         val galleryIntent = Intent(
-                Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            Intent.ACTION_PICK,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         )
         var RESULT_GALLERY = 0
 
@@ -90,16 +102,16 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
 
         // rounded corner image
         val radius = 50
-        val margin = 5
+        val margin = 0
         transformation = RoundedCornersTransformation(radius, margin)
         Picasso.get().load(photo).transform(transformation).into(user_iv_photo)
 
         actionBarDrawerToggle = ActionBarDrawerToggle(
-                this,
-                drawer_layout,
-                toolbar,
-                R.string.openNavDrawer,
-                R.string.closeNavDrawer
+            this,
+            drawer_layout,
+            toolbar,
+            R.string.openNavDrawer,
+            R.string.closeNavDrawer
         )
 
         drawer_layout.addDrawerListener(actionBarDrawerToggle)
@@ -107,60 +119,97 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
 
         mainFragment = MainFragment()
         supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.drawable_frameLayout, mainFragment)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .commit()
+            .beginTransaction()
+            .replace(R.id.drawable_frameLayout, mainFragment)
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            .commit()
 
         navigationview.setNavigationItemSelectedListener{
             when (it.itemId) {
                 R.id.photo_icon -> {
-                    mainFragment = MainFragment()
-                    supportFragmentManager
-                            .beginTransaction()
-                            .replace(R.id.drawable_frameLayout, mainFragment,null).addToBackStack(null)
-                            .commit()
+                    if (checkPermissions()){
+                        val folder =
+                            File(Environment.getExternalStorageDirectory().toString() + File.separator + "DCIM"+ File.separator + "HVAC")
+                        if (!folder.exists()) {
+                            folder.mkdirs()
+                            //Toast.makeText(this@MainActivity, "Successful", Toast.LENGTH_SHORT).show()
+                            var openGalleryIntent = Intent(Intent.ACTION_VIEW, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                            startActivityForResult(openGalleryIntent, 111)
+                        } else {
+                            var openGalleryIntent = Intent(Intent.ACTION_VIEW, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                            startActivityForResult(openGalleryIntent, 111)
+                        }
+                    }
                 }
                 R.id.audio_list_icon -> {
                     audioListFragment = AudioListFragment()
                     supportFragmentManager
-                            .beginTransaction()
-                            .replace(R.id.drawable_frameLayout, audioListFragment,null).addToBackStack(null)
-                            .commit()
+                        .beginTransaction()
+                        .replace(R.id.drawable_frameLayout, audioListFragment,null).addToBackStack(null)
+                        .commit()
                 }
                 R.id.mic_sound_icon -> {
                     recordFragment = RecordFragment()
                     supportFragmentManager
-                            .beginTransaction()
-                            .replace(R.id.drawable_frameLayout, recordFragment,null).addToBackStack(null)
-                            .commit()
+                        .beginTransaction()
+                        .replace(R.id.drawable_frameLayout, recordFragment,null).addToBackStack(null)
+                        .commit()
                 }
                 R.id.temperature_icon -> {
                     temperatureFragment = TemperatureFragment()
                     supportFragmentManager
-                            .beginTransaction()
-                            .replace(R.id.drawable_frameLayout, temperatureFragment,null).addToBackStack(null)
-                            .commit()
+                        .beginTransaction()
+                        .replace(R.id.drawable_frameLayout, temperatureFragment,null).addToBackStack(null)
+                        .commit()
                 }
                 R.id.accelerometer_icon -> {
                     accerelometerFragment = AccerelometerFragment()
                     supportFragmentManager
-                            .beginTransaction()
-                            .replace(R.id.drawable_frameLayout, accerelometerFragment,null).addToBackStack(null)
-                            .commit()
+                        .beginTransaction()
+                        .replace(R.id.drawable_frameLayout, accerelometerFragment,null).addToBackStack(null)
+                        .commit()
                 }
                 R.id.settings_icon -> {
                     settingsFragment = SettingsFragment()
                     supportFragmentManager
-                            .beginTransaction()
-                            .replace(R.id.drawable_frameLayout, settingsFragment,null).addToBackStack(null)
-                            .commit()
+                        .beginTransaction()
+                        .replace(R.id.drawable_frameLayout, settingsFragment,null).addToBackStack(null)
+                        .commit()
+                }
+                R.id.logout_icon -> {
+
+                    FirebaseAuth.getInstance().signOut()
+                    val intent= Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
+
                 }
 
             }
             drawer_layout.closeDrawers()
             true
         }
+    }
+
+    private fun checkPermissions(): Boolean {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            //Permission Granted
+            return true
+        } else {
+            //Permission not granted, ask for permission
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ),
+                111
+            )
+            return false
+        }
+
     }
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
