@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -125,16 +126,19 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         navigationview.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.photo_icon -> {
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                            111
-                        )
+                    if (checkPermissions()){
+                        val folder =
+                            File(Environment.getExternalStorageDirectory().toString() + File.separator + "DCIM"+ File.separator + "HVAC")
+                        if (!folder.exists()) {
+                            folder.mkdirs()
+                            //Toast.makeText(this@MainActivity, "Successful", Toast.LENGTH_SHORT).show()
+                            var openGalleryIntent = Intent(Intent.ACTION_VIEW, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                            startActivityForResult(openGalleryIntent, 111)
+                        } else {
+                            var openGalleryIntent = Intent(Intent.ACTION_VIEW, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                            startActivityForResult(openGalleryIntent, 111)
+                        }
                     }
-                    mainFragment = MainFragment()
-                    supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.drawable_frameLayout, mainFragment, null).addToBackStack(null)
-                        .commit()
                 }
                 R.id.audio_list_icon -> {
                     audioListFragment = AudioListFragment()
@@ -190,29 +194,33 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         }
     }
 
+    private fun checkPermissions(): Boolean {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            //Permission Granted
+            return true
+        } else {
+            //Permission not granted, ask for permission
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ),
+                111
+            )
+            return false
+        }
+
+    }
+
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         if (!isConnected) {
             var alert = Alert()
             val builder = AlertDialog.Builder(this)
             alert.showAlert(builder, this)
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        val file =
-            File(Environment.getExternalStorageDirectory().toString() + File.separator + "HVAC")
-        println(file)
-        if (requestCode == 111 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            if (!file.exists()) {
-                file.mkdirs()
-                Toast.makeText(this@MainActivity, "Successful", Toast.LENGTH_SHORT).show()
-            }
-
         }
     }
 }
