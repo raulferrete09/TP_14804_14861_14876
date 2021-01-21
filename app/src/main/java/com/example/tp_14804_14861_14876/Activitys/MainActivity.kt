@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -17,6 +18,7 @@ import com.example.tp_14804_14861_14876.R
 import com.example.tp_14804_14861_14876.Utils.Alert
 import com.example.tp_14804_14861_14876.Utils.ConnectionReceiver
 import com.example.tp_14804_14861_14876.Utils.ReceiverConnection
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -70,6 +72,8 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         user_tv_id = hview.findViewById<TextView>(R.id.user_tv_id)
         user_tv_name = hview.findViewById<TextView>(R.id.user_tv_name)
         user_iv_photo = hview.findViewById<ImageView>(R.id.user_iv_photo)
+
+
 
         val galleryIntent = Intent(
             Intent.ACTION_PICK,
@@ -157,12 +161,11 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                         .commit()
                 }
                 R.id.logout_icon -> {
-                    mGoogleSignInClient.signOut().addOnCompleteListener {
-                        FirebaseAuth.getInstance().signOut()
-                        val intent= Intent(this, LoginActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    }
+
+                    FirebaseAuth.getInstance().signOut()
+                    val intent= Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
+
                 }
 
             }
