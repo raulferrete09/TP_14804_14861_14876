@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
 
         // rounded corner image
         val radius = 50
-        val margin = 5
+        val margin = 0
         transformation = RoundedCornersTransformation(radius, margin)
         Picasso.get().load(photo).transform(transformation).into(user_iv_photo)
 
