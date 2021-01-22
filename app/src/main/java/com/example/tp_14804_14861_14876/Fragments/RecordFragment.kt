@@ -5,6 +5,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.os.*
+import android.util.Base64.DEFAULT
+import android.util.Base64.encodeToString
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +23,9 @@ import com.example.tp_14804_14861_14876.Activitys.MainActivity
 import com.example.tp_14804_14861_14876.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileInputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -73,8 +77,8 @@ class RecordFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_record, container, false)
@@ -136,10 +140,10 @@ class RecordFragment : Fragment(), View.OnClickListener {
                         R.drawable.record_btn_recording,
                         null
                     )
-                    record_btn_start.isEnabled=false
+                    record_btn_start.isEnabled = false
                     isRecording = false
                 } else {
-                    if (checkPermissions()){
+                    if (checkPermissions()) {
                         //Start record
                         startRecording()
                         record_btn_start.background = resources.getDrawable(
@@ -168,6 +172,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         //Get app external directory path
         //name -> path = User + timeStamp + ".mp3"
+        //val pathname = "Audio.mp3"
         val pathname = name + "_" + timeStamp + ".mp3"
         val path = requireActivity().getExternalFilesDir("/")!!.toString() + "/" + pathname
 
@@ -198,8 +203,8 @@ class RecordFragment : Fragment(), View.OnClickListener {
                 filenametext.text = "Recording Stopped, File Saved : " + pathname;
                 timer_chromo_counter.text = "Finished"
                 record_btn_start.background = resources.getDrawable(
-                        R.drawable.record_btn_stopped,
-                        null
+                    R.drawable.record_btn_stopped,
+                    null
                 )
                 record_btn_start.isEnabled = true
                 record_btn_list.isEnabled = true
@@ -207,11 +212,8 @@ class RecordFragment : Fragment(), View.OnClickListener {
 
                 counter = 0
 
-                /*val a = Environment.getExternalStorageDirectory().toString()+"/Android/data/com.example.tp_14804_14861_14876/files/" + "audio.mp3"
-                bytes = File(a).readBytes()
-                println(a)
-                base64 = Base64.getEncoder().encodeToString(bytes)
-                println(base64)*/
+                encodeAudio(path)
+
 
                 /*var map = mutableMapOf<String,Any>()
                 map["mp3 file"] = base64
@@ -231,12 +233,45 @@ class RecordFragment : Fragment(), View.OnClickListener {
         mr.release()
     }
 
+    /*@RequiresApi(Build.VERSION_CODES.O)
+    private fun encodeAudio(){
+        val a = Environment.getExternalStorageDirectory().toString()+"/Android/data/com.example.tp_14804_14861_14876/files/" + "audio.mp3"
+        bytes = File(a).readBytes()
+        println(a)
+        base64 = Base64.getEncoder().encodeToString(bytes)
+        println(base64)
+    }*/
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun encodeAudio(selectedPath: String) {
+        val audioBytes: ByteArray
+        println(selectedPath)
+        try {
+
+            // Just to check file size.. Its is correct i-e; Not Zero
+            val audioFile = File(selectedPath)
+            val fileSize = audioFile.length()
+            val baos = ByteArrayOutputStream()
+            val fis = FileInputStream(File(selectedPath))
+            val buf = ByteArray(8192)
+            var n: Int
+            while (-1 != fis.read(buf).also { n = it }) baos.write(buf, 0, n)
+            audioBytes = baos.toByteArray()
+
+            // Here goes the Base64 string
+            var audioBase64 = Base64.getEncoder().encodeToString(audioBytes)
+            println(audioBase64)
+        } catch (e: Exception) {
+            //DiagnosticHelper.writeException(e)
+        }
+    }
+
+
     private fun checkPermissions(): Boolean {
         //Check permission
         if (ActivityCompat.checkSelfPermission(
-                        requireContext(),
-                        Manifest.permission.RECORD_AUDIO
-                ) == PackageManager.PERMISSION_GRANTED
+                requireContext(),
+                Manifest.permission.RECORD_AUDIO
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
             //Permission Granted
             return true
