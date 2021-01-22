@@ -110,7 +110,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
         record_btn_start = view.findViewById<Button>(R.id.record_btn_start)
         timer_chromo_counter = view.findViewById<Chronometer>(R.id.timer_chromo_counter)
         filenametext = view.findViewById<TextView>(R.id.info_tv)
-        back_btn_arrow = view.findViewById<Button>(R.id.back_btn_arrow)
+
 
 
         record_btn_list.setOnClickListener(this)
@@ -154,8 +154,6 @@ class RecordFragment : Fragment(), View.OnClickListener {
                     )
                     isRecording = true
                 }
-            R.id.back_btn_arrow ->
-                startActivity(intent)
         }
 
     }

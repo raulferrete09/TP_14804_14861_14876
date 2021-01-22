@@ -71,14 +71,10 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
         password_iv_show = findViewById<ImageView>(R.id.password_iv_show)
 
         auth = FirebaseAuth.getInstance()
-        if(auth?.currentUser!= null) {
-            startActivity(Intent(this, MainActivity::class.java))
-        }
 
 
         baseContext.registerReceiver(ConnectionReceiver(),IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         ReceiverConnection.instance.setConnectionListener(this)
-
 
 
         login_btn_signin.setOnClickListener {
