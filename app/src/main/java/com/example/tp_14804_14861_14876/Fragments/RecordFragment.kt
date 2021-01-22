@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.os.*
+import android.provider.MediaStore
 import android.util.Base64.DEFAULT
 import android.util.Base64.encodeToString
 import android.view.LayoutInflater
@@ -136,21 +137,25 @@ class RecordFragment : Fragment(), View.OnClickListener {
                 if (!isRecording) {
                     //Start record
                     stopRecording()
-                    record_btn_start.background = resources.getDrawable(
-                        R.drawable.record_btn_recording,
-                        null
-                    )
+                    record_btn_start.background = resources.getDrawable(R.drawable.record_btn_recording, null)
                     record_btn_start.isEnabled = false
                     isRecording = false
                 } else {
                     if (checkPermissions()) {
-                        //Start record
-                        startRecording()
-                        record_btn_start.background = resources.getDrawable(
-                            R.drawable.record_btn_recording,
-                            null
-                        )
-                        isRecording = true
+                        val folder =
+                            File(Environment.getExternalStorageDirectory().toString() + File.separator + "HVAC"+ File.separator + "Audios")
+                        if (!folder.exists()) {
+                            folder.mkdirs()
+                            //Start record
+                            startRecording()
+                            record_btn_start.background = resources.getDrawable(R.drawable.record_btn_recording, null)
+                            isRecording = true
+                        } else {
+                            //Start record
+                            startRecording()
+                            record_btn_start.background = resources.getDrawable(R.drawable.record_btn_recording, null)
+                            isRecording = true
+                        }
                     }
                 }
         }
@@ -174,8 +179,8 @@ class RecordFragment : Fragment(), View.OnClickListener {
         //name -> path = User + timeStamp + ".mp3"
         //val pathname = "Audio.mp3"
         val pathname = name + "_" + timeStamp + ".mp3"
-        val path = requireActivity().getExternalFilesDir("/")!!.toString() + "/" + pathname
-
+        val path = Environment.getExternalStorageDirectory().toString() + "/HVAC/Audios/" + pathname
+        println(path)
         mr.setAudioSource(MediaRecorder.AudioSource.MIC)
         mr.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
         mr.setMaxDuration(10000)
@@ -202,10 +207,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
                 timer_chromo_counter.stop()
                 filenametext.text = "Recording Stopped, File Saved : " + pathname;
                 timer_chromo_counter.text = "Finished"
-                record_btn_start.background = resources.getDrawable(
-                    R.drawable.record_btn_stopped,
-                    null
-                )
+                record_btn_start.background = resources.getDrawable(R.drawable.record_btn_stopped, null)
                 record_btn_start.isEnabled = true
                 record_btn_list.isEnabled = true
                 progress_bar.visibility = View.INVISIBLE
@@ -242,16 +244,16 @@ class RecordFragment : Fragment(), View.OnClickListener {
         println(base64)
     }*/
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun encodeAudio(selectedPath: String) {
+    private fun encodeAudio(path: String) {
         val audioBytes: ByteArray
-        println(selectedPath)
+        //println(path)
         try {
 
             // Just to check file size.. Its is correct i-e; Not Zero
-            val audioFile = File(selectedPath)
+            val audioFile = File(path)
             val fileSize = audioFile.length()
             val baos = ByteArrayOutputStream()
-            val fis = FileInputStream(File(selectedPath))
+            val fis = FileInputStream(File(path))
             val buf = ByteArray(8192)
             var n: Int
             while (-1 != fis.read(buf).also { n = it }) baos.write(buf, 0, n)
