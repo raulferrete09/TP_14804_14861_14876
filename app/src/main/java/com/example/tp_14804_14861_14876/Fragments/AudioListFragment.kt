@@ -2,6 +2,7 @@ package com.example.tp_14804_14861_14876.Fragments
 
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -109,7 +110,8 @@ class AudioListFragment : Fragment(), AudioListAdapter.onItemList_Click {
         player_seekbar = view.findViewById<SeekBar>(R.id.player_seekbar)
 
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val path = requireActivity().getExternalFilesDir("/")!!.absolutePath
+        val path = Environment.getExternalStorageDirectory().toString() + "/HVAC/Audios/"
+        print(path)
         val directory = File(path)
         allFiles = directory.listFiles()
 

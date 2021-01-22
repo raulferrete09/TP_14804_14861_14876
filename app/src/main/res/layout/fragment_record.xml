@@ -24,9 +24,9 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="139dp"
+            android:layout_marginStart="146dp"
             android:layout_marginTop="94dp"
-            android:layout_marginEnd="121dp"
+            android:layout_marginEnd="114dp"
             android:layout_marginBottom="94dp"
             android:textSize="44sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -35,20 +35,22 @@
 
         <ProgressBar
             android:id="@+id/progress_bar"
-            style="@style/Widget.AppCompat.ProgressBar"
+            style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="0dp"
-            android:indeterminate="true"
-            android:indeterminateTint="@color/red" />
+            android:layout_marginTop="-1dp"
+            android:background="@drawable/cicle_shape"
+            android:indeterminate="false"
+            android:indeterminateTint="@color/red"
+            android:progressDrawable="@drawable/cicle_progress_bar" />
 
     </RelativeLayout>
 
     <Button
         android:id="@+id/record_btn_start"
-        android:layout_width="179dp"
-        android:layout_height="179dp"
+        android:layout_width="136dp"
+        android:layout_height="139dp"
         android:background="@drawable/record_btn_stopped"
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -59,8 +61,8 @@
 
     <Button
         android:id="@+id/record_btn_list"
-        android:layout_width="33dp"
-        android:layout_height="31dp"
+        android:layout_width="27dp"
+        android:layout_height="23dp"
         android:background="@drawable/recorder_list_btn"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="@+id/record_btn_start"
