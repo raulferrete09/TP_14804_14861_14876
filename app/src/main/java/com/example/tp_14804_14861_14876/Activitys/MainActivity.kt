@@ -3,7 +3,9 @@ package com.example.tp_14804_14861_14876.Activitys
 import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -65,6 +67,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         setContentView(R.layout.activity_main)
 
         //Internet Connection
+        baseContext.registerReceiver(ConnectionReceiver(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         ReceiverConnection.instance.setConnectionListener(this)
         setUpNavigationDrawer()
     }

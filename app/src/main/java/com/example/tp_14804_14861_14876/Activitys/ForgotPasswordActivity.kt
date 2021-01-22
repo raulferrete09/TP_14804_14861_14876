@@ -2,6 +2,8 @@ package com.example.tp_14804_14861_14876.Activitys
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.EditText
@@ -22,6 +24,8 @@ class ForgotPasswordActivity : AppCompatActivity(), ConnectionReceiver.Connectio
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_forgot_password)
 
+        //Internet Connection
+        baseContext.registerReceiver(ConnectionReceiver(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         ReceiverConnection.instance.setConnectionListener(this)
 
         auth = FirebaseAuth.getInstance()

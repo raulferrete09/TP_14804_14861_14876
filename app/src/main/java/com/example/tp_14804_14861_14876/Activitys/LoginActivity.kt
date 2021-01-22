@@ -72,7 +72,7 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
 
         auth = FirebaseAuth.getInstance()
 
-
+        //Internet Connection
         baseContext.registerReceiver(ConnectionReceiver(),IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         ReceiverConnection.instance.setConnectionListener(this)
 
