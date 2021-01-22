@@ -1,24 +1,18 @@
 package com.example.tp_14804_14861_14876.Activitys
 
 import android.Manifest
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentTransaction
 import com.example.tp_14804_14861_14876.Fragments.*
@@ -26,12 +20,19 @@ import com.example.tp_14804_14861_14876.R
 import com.example.tp_14804_14861_14876.Utils.Alert
 import com.example.tp_14804_14861_14876.Utils.ConnectionReceiver
 import com.example.tp_14804_14861_14876.Utils.ReceiverConnection
+import com.facebook.AccessToken
+import com.facebook.GraphRequest
+import com.facebook.HttpMethod
+import com.facebook.login.LoginManager
+import com.google.android.gms.auth.api.Auth
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.squareup.picasso.Picasso
-import com.squareup.picasso.Request
 import com.squareup.picasso.Transformation
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation
 import java.io.File
@@ -56,7 +57,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
     lateinit var accerelometerFragment: AccerelometerFragment
     lateinit var settingsFragment: SettingsFragment
 
-    lateinit var mGoogleSignInClient: GoogleSignInClient
+
     var auth : FirebaseAuth? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -127,16 +128,25 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         navigationview.setNavigationItemSelectedListener{
             when (it.itemId) {
                 R.id.photo_icon -> {
-                    if (checkPermissions()){
+                    if (checkPermissions()) {
                         val folder =
-                            File(Environment.getExternalStorageDirectory().toString() + File.separator + "DCIM"+ File.separator + "HVAC")
+                            File(
+                                Environment.getExternalStorageDirectory()
+                                    .toString() + File.separator + "DCIM" + File.separator + "HVAC"
+                            )
                         if (!folder.exists()) {
                             folder.mkdirs()
                             //Toast.makeText(this@MainActivity, "Successful", Toast.LENGTH_SHORT).show()
-                            var openGalleryIntent = Intent(Intent.ACTION_VIEW, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                            var openGalleryIntent = Intent(
+                                Intent.ACTION_VIEW,
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                            )
                             startActivityForResult(openGalleryIntent, 111)
                         } else {
-                            var openGalleryIntent = Intent(Intent.ACTION_VIEW, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                            var openGalleryIntent = Intent(
+                                Intent.ACTION_VIEW,
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                            )
                             startActivityForResult(openGalleryIntent, 111)
                         }
                     }
@@ -145,45 +155,56 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                     audioListFragment = AudioListFragment()
                     supportFragmentManager
                         .beginTransaction()
-                        .replace(R.id.drawable_frameLayout, audioListFragment,null).addToBackStack(null)
+                        .replace(R.id.drawable_frameLayout, audioListFragment, null).addToBackStack(
+                            null
+                        )
                         .commit()
                 }
                 R.id.mic_sound_icon -> {
                     recordFragment = RecordFragment()
                     supportFragmentManager
                         .beginTransaction()
-                        .replace(R.id.drawable_frameLayout, recordFragment,null).addToBackStack(null)
+                        .replace(R.id.drawable_frameLayout, recordFragment, null).addToBackStack(
+                            null
+                        )
                         .commit()
                 }
                 R.id.temperature_icon -> {
                     temperatureFragment = TemperatureFragment()
                     supportFragmentManager
                         .beginTransaction()
-                        .replace(R.id.drawable_frameLayout, temperatureFragment,null).addToBackStack(null)
+                        .replace(R.id.drawable_frameLayout, temperatureFragment, null)
+                        .addToBackStack(
+                            null
+                        )
                         .commit()
                 }
                 R.id.accelerometer_icon -> {
                     accerelometerFragment = AccerelometerFragment()
                     supportFragmentManager
                         .beginTransaction()
-                        .replace(R.id.drawable_frameLayout, accerelometerFragment,null).addToBackStack(null)
+                        .replace(R.id.drawable_frameLayout, accerelometerFragment, null)
+                        .addToBackStack(
+                            null
+                        )
                         .commit()
                 }
                 R.id.settings_icon -> {
                     settingsFragment = SettingsFragment()
                     supportFragmentManager
                         .beginTransaction()
-                        .replace(R.id.drawable_frameLayout, settingsFragment,null).addToBackStack(null)
+                        .replace(R.id.drawable_frameLayout, settingsFragment, null).addToBackStack(
+                            null
+                        )
                         .commit()
                 }
                 R.id.logout_icon -> {
-
+                    disconnectFromGoogle()
+                    disconnectFromFacebook()
                     FirebaseAuth.getInstance().signOut()
-                    val intent= Intent(this, LoginActivity::class.java)
+                    val intent = Intent(this, LoginActivity::class.java)
                     startActivity(intent)
-
                 }
-
             }
             drawer_layout.closeDrawers()
             true
@@ -210,6 +231,29 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
             return false
         }
 
+    }
+    private fun disconnectFromFacebook() {
+        if (AccessToken.getCurrentAccessToken() == null) {
+            return  // already logged out
+        }
+        GraphRequest(
+            AccessToken.getCurrentAccessToken(),
+            "/me/permissions/",
+            null,
+            HttpMethod.DELETE,
+            GraphRequest.Callback {
+                LoginManager.getInstance().logOut()
+            }).executeAsync()
+    }
+
+    private fun disconnectFromGoogle() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(this.getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+
+        val googleSignInClient = GoogleSignIn.getClient(this, gso)
+        googleSignInClient.signOut()
     }
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
