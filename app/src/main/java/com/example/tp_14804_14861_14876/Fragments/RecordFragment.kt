@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Chronometer
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
@@ -48,7 +49,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
     lateinit var record_btn_start: Button
     lateinit var timer_chromo_counter: Chronometer
     lateinit var filenametext: TextView
-    lateinit var back_btn_arrow: Button
+    lateinit var progress_bar: ProgressBar
 
     lateinit var intent:Intent
 
@@ -107,16 +108,15 @@ class RecordFragment : Fragment(), View.OnClickListener {
         record_btn_start = view.findViewById<Button>(R.id.record_btn_start)
         timer_chromo_counter = view.findViewById<Chronometer>(R.id.timer_chromo_counter)
         filenametext = view.findViewById<TextView>(R.id.info_tv)
-        back_btn_arrow = view.findViewById<Button>(R.id.back_btn_arrow)
-
+        progress_bar = view.findViewById<ProgressBar>(R.id.progress_bar)
 
         record_btn_list.setOnClickListener(this)
         record_btn_start.setOnClickListener(this)
-        back_btn_arrow.setOnClickListener(this)
+
+        progress_bar.visibility = View.INVISIBLE
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onClick(v: View) {
 
         intent = Intent(activity, MainActivity::class.java)
@@ -133,8 +133,8 @@ class RecordFragment : Fragment(), View.OnClickListener {
                     //Start record
                     stopRecording()
                     record_btn_start.background = resources.getDrawable(
-                            R.drawable.record_btn_recording,
-                            null
+                        R.drawable.record_btn_recording,
+                        null
                     )
                     record_btn_start.isEnabled=false
                     isRecording = false
@@ -143,19 +143,16 @@ class RecordFragment : Fragment(), View.OnClickListener {
                         //Start record
                         startRecording()
                         record_btn_start.background = resources.getDrawable(
-                                R.drawable.record_btn_recording,
-                                null
+                            R.drawable.record_btn_recording,
+                            null
                         )
                         isRecording = true
                     }
                 }
-            R.id.back_btn_arrow ->
-                startActivity(intent)
         }
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun startRecording() {
 
         //Firebase info
@@ -166,14 +163,14 @@ class RecordFragment : Fragment(), View.OnClickListener {
         mr = MediaRecorder()
         record_btn_start.isEnabled = false
         record_btn_list.isEnabled = false
-        back_btn_arrow.isEnabled = false
+        progress_bar.visibility = View.VISIBLE
 
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         //Get app external directory path
         //name -> path = User + timeStamp + ".mp3"
         val pathname = name + "_" + timeStamp + ".mp3"
-        val path = requireActivity().getExternalFilesDir("/").toString() + "/" + pathname
-        println(path)
+        val path = requireActivity().getExternalFilesDir("/")!!.toString() + "/" + pathname
+
         mr.setAudioSource(MediaRecorder.AudioSource.MIC)
         mr.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
         mr.setMaxDuration(10000)
@@ -194,6 +191,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
                 counter++
             }
 
+            @RequiresApi(Build.VERSION_CODES.O)
             override fun onFinish() {
                 mr.stop()
                 timer_chromo_counter.stop()
@@ -205,7 +203,8 @@ class RecordFragment : Fragment(), View.OnClickListener {
                 )
                 record_btn_start.isEnabled = true
                 record_btn_list.isEnabled = true
-                back_btn_arrow.isEnabled = true
+                progress_bar.visibility = View.INVISIBLE
+
                 counter = 0
 
                 /*val a = Environment.getExternalStorageDirectory().toString()+"/Android/data/com.example.tp_14804_14861_14876/files/" + "audio.mp3"
@@ -220,8 +219,8 @@ class RecordFragment : Fragment(), View.OnClickListener {
             }
         }
         timer.start()
+
     }
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun stopRecording() {
         //Stop Timer, very obvious
         //Change text on page to file saved
@@ -244,12 +243,12 @@ class RecordFragment : Fragment(), View.OnClickListener {
         } else {
             //Permission not granted, ask for permission
             ActivityCompat.requestPermissions(
-                    requireActivity(),
-                    arrayOf(
-                            Manifest.permission.RECORD_AUDIO,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    ),
-                    111
+                requireActivity(),
+                arrayOf(
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ),
+                111
             )
             return false
         }
