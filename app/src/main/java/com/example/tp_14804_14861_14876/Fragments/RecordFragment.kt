@@ -73,8 +73,8 @@ class RecordFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_record, container, false)
@@ -92,12 +92,12 @@ class RecordFragment : Fragment(), View.OnClickListener {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            RecordFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                RecordFragment().apply {
+                    arguments = Bundle().apply {
+                        putString(ARG_PARAM1, param1)
+                        putString(ARG_PARAM2, param2)
+                    }
                 }
-            }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -117,8 +117,8 @@ class RecordFragment : Fragment(), View.OnClickListener {
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onClick(v: View) {
+
         intent = Intent(activity, MainActivity::class.java)
         record_btn_start.isEnabled = true
         when (v.id) {
@@ -153,7 +153,6 @@ class RecordFragment : Fragment(), View.OnClickListener {
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun startRecording() {
 
         //Firebase info
@@ -170,8 +169,8 @@ class RecordFragment : Fragment(), View.OnClickListener {
         //Get app external directory path
         //name -> path = User + timeStamp + ".mp3"
         val pathname = name + "_" + timeStamp + ".mp3"
-        val path = requireActivity().getExternalFilesDir("/").toString() + "/" + pathname
-        println(path)
+        val path = requireActivity().getExternalFilesDir("/")!!.toString() + "/" + pathname
+
         mr.setAudioSource(MediaRecorder.AudioSource.MIC)
         mr.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
         mr.setMaxDuration(10000)
@@ -192,14 +191,15 @@ class RecordFragment : Fragment(), View.OnClickListener {
                 counter++
             }
 
+            @RequiresApi(Build.VERSION_CODES.O)
             override fun onFinish() {
                 mr.stop()
                 timer_chromo_counter.stop()
                 filenametext.text = "Recording Stopped, File Saved : " + pathname;
                 timer_chromo_counter.text = "Finished"
                 record_btn_start.background = resources.getDrawable(
-                    R.drawable.record_btn_stopped,
-                    null
+                        R.drawable.record_btn_stopped,
+                        null
                 )
                 record_btn_start.isEnabled = true
                 record_btn_list.isEnabled = true
@@ -219,8 +219,8 @@ class RecordFragment : Fragment(), View.OnClickListener {
             }
         }
         timer.start()
+
     }
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun stopRecording() {
         //Stop Timer, very obvious
         //Change text on page to file saved
@@ -234,9 +234,9 @@ class RecordFragment : Fragment(), View.OnClickListener {
     private fun checkPermissions(): Boolean {
         //Check permission
         if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.RECORD_AUDIO
-            ) == PackageManager.PERMISSION_GRANTED
+                        requireContext(),
+                        Manifest.permission.RECORD_AUDIO
+                ) == PackageManager.PERMISSION_GRANTED
         ) {
             //Permission Granted
             return true
