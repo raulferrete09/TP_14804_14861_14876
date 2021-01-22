@@ -46,6 +46,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
     var navController: NavController? = null
     var isRecording = true
     var counter = 0
+    var progresscounter = 0
     var auth : FirebaseAuth? = null
 
 
@@ -114,6 +115,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
         timer_chromo_counter = view.findViewById<Chronometer>(R.id.timer_chromo_counter)
         filenametext = view.findViewById<TextView>(R.id.info_tv)
         progress_bar = view.findViewById<ProgressBar>(R.id.progress_bar)
+        progress_bar.max = 10
 
         record_btn_list.setOnClickListener(this)
         record_btn_start.setOnClickListener(this)
@@ -199,6 +201,8 @@ class RecordFragment : Fragment(), View.OnClickListener {
 
                 //timer_chromo_counter.text = counter.toString()
                 counter++
+                progress_bar.progress = progresscounter
+                progresscounter++
             }
 
             @RequiresApi(Build.VERSION_CODES.O)
@@ -213,7 +217,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
                 progress_bar.visibility = View.INVISIBLE
 
                 counter = 0
-
+                progresscounter = 0
                 encodeAudio(path)
 
 
