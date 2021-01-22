@@ -235,14 +235,6 @@ class RecordFragment : Fragment(), View.OnClickListener {
         mr.release()
     }
 
-    /*@RequiresApi(Build.VERSION_CODES.O)
-    private fun encodeAudio(){
-        val a = Environment.getExternalStorageDirectory().toString()+"/Android/data/com.example.tp_14804_14861_14876/files/" + "audio.mp3"
-        bytes = File(a).readBytes()
-        println(a)
-        base64 = Base64.getEncoder().encodeToString(bytes)
-        println(base64)
-    }*/
     @RequiresApi(Build.VERSION_CODES.O)
     private fun encodeAudio(path: String) {
         val audioBytes: ByteArray
@@ -254,7 +246,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
             val fileSize = audioFile.length()
             val baos = ByteArrayOutputStream()
             val fis = FileInputStream(File(path))
-            val buf = ByteArray(8192)
+            val buf = ByteArray(2048)
             var n: Int
             while (-1 != fis.read(buf).also { n = it }) baos.write(buf, 0, n)
             audioBytes = baos.toByteArray()
