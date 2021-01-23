@@ -129,7 +129,7 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
                             ToLoginPage()
 
                             val title = "Sign Up"
-                            val message = "Conta criada com sucesso!"
+                            val message = "Sign up created successfully"
                             PushNotification(
                                 NotificationData(title, message),
                                 TOPIC
