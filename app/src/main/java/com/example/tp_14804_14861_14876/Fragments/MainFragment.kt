@@ -123,7 +123,6 @@ class MainFragment : Fragment(), View.OnClickListener {
                 transaction.addToBackStack(null)
                 transaction.commit()
             }
-
             R.id.OK_m1 -> {
                 val anomaly = ""
                 dashboard_tv_anomaly.text = anomaly
@@ -137,7 +136,6 @@ class MainFragment : Fragment(), View.OnClickListener {
                 dashboard_tv_oknok.text = "NOK"
                 dashboard_tv_machine.text = "Machine 1"
                 dashboard_layout.setBackgroundColor(resources.getColor(R.color.red))
-
             }
             R.id.OK_m2 -> {
                 val anomaly = ""
@@ -152,7 +150,6 @@ class MainFragment : Fragment(), View.OnClickListener {
                 dashboard_tv_oknok.text = "NOK"
                 dashboard_tv_machine.text = "Machine 2"
                 dashboard_layout.setBackgroundColor(resources.getColor(R.color.red))
-
             }
         }
     }

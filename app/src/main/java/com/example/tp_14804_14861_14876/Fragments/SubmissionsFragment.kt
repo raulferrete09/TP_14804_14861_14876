@@ -1,14 +1,12 @@
 package com.example.tp_14804_14861_14876.Fragments
 
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
+import android.widget.AdapterView.OnItemSelectedListener
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.example.tp_14804_14861_14876.R
@@ -29,7 +27,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [SubmissionsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class SubmissionsFragment : Fragment(), View.OnClickListener {
+class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedListener {
 
     lateinit var profile_iv_photo: ImageView
     lateinit var profile_tv_name: TextView
@@ -37,11 +35,22 @@ class SubmissionsFragment : Fragment(), View.OnClickListener {
     lateinit var report_ed_anomaly: EditText
     lateinit var transformation: Transformation
     lateinit var submission_btn_firebase: Button
+    lateinit var submission_spinner_machine: Spinner
+    lateinit var submission_spinner_intervation: Spinner
+    lateinit var submission_tv_machine: TextView
+    lateinit var submission_tv_intervation: TextView
+    lateinit var submission_iv_addphoto: ImageView
+    lateinit var submission_iv_addaudio: ImageView
 
     lateinit var mainFragment: MainFragment
     lateinit var transaction: FragmentTransaction
 
+    lateinit var adpater_number: ArrayAdapter<CharSequence>
+    lateinit var adpater_intervation: ArrayAdapter<CharSequence>
+
     var auth : FirebaseAuth? = null
+
+
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -89,12 +98,30 @@ class SubmissionsFragment : Fragment(), View.OnClickListener {
         profile_tv_id = view.findViewById<TextView>(R.id.profile_tv_id)
         profile_tv_name = view.findViewById<TextView>(R.id.profile_tv_name)
         profile_iv_photo = view.findViewById<ImageView>(R.id.profile_iv_photo)
+        submission_spinner_machine = view.findViewById<Spinner>(R.id.submission_spinner_machine)
+        submission_spinner_intervation = view.findViewById<Spinner>(R.id.submission_spinner_intervation)
+        submission_tv_machine = view.findViewById<TextView>(R.id.submission_tv_machine)
+        submission_tv_intervation = view.findViewById<TextView>(R.id.submission_tv_intervation)
+        submission_iv_addphoto = view.findViewById<ImageView>(R.id.submission_iv_addphoto)
+        submission_iv_addaudio = view.findViewById<ImageView>(R.id.submission_iv_addaudio)
 
         report_ed_anomaly = view.findViewById<EditText>(R.id.report_ed_anomaly)
         submission_btn_firebase = view.findViewById<Button>(R.id.submission_btn_firebase)
 
+        adpater_number = ArrayAdapter.createFromResource(requireContext(), R.array.numbers, android.R.layout.simple_spinner_item)
+        adpater_number.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        submission_spinner_machine.adapter = adpater_number
+        submission_spinner_machine.onItemSelectedListener = this
+
+        adpater_intervation = ArrayAdapter.createFromResource(requireContext(), R.array.type_of_intervation, android.R.layout.simple_spinner_item)
+        adpater_intervation.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        submission_spinner_intervation.adapter = adpater_intervation
+        submission_spinner_intervation.onItemSelectedListener = this
+
+
         report_ed_anomaly.setOnClickListener(this)
         submission_btn_firebase.setOnClickListener(this)
+
 
         //Firebase info
         auth = FirebaseAuth.getInstance()
@@ -124,6 +151,13 @@ class SubmissionsFragment : Fragment(), View.OnClickListener {
 
         }
     }
+
+    override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+        val text = parent.getItemAtPosition(position).toString()
+        //Toast.makeText(parent.context, text, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {}
 
 }
 
