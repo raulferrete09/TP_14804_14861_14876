@@ -20,6 +20,9 @@ import androidx.fragment.app.FragmentTransaction
 import com.example.tp_14804_14861_14876.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation
@@ -58,7 +61,10 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
     lateinit var adpater_intervation: ArrayAdapter<CharSequence>
 
     var auth : FirebaseAuth? = null
-
+    var count: Int = 0
+    private var images: ArrayList<Uri?>? = null
+    lateinit var fileref: StorageReference
+    private var storageReference: StorageReference? = null
 
 
     // TODO: Rename and change types of parameters
@@ -67,6 +73,7 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        images = ArrayList()
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -137,11 +144,15 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         auth = FirebaseAuth.getInstance()
         val user: FirebaseUser? = auth?.currentUser
         val name:String? = user?.displayName
-        val id:String? = user?.uid
+        val uid:String? = user?.uid
         var photo = user?.photoUrl
+        storageReference = FirebaseStorage.getInstance()
+                .reference
+                .child("Reports")
+                .child("$uid")
 
         profile_tv_name.text = name
-        profile_tv_id.text = id
+        profile_tv_id.text = uid
 
 // rounded corner image
         val radius = 50
@@ -167,6 +178,7 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
 
     private fun checkInformation() {
         if(submission_spinner_machine.toString().isNotEmpty() && submission_spinner_intervation.toString().isNotEmpty() && report_ed_anomaly.text.isNotEmpty())  {
+            sendData()
             mainFragment = MainFragment()
             transaction = fragmentManager?.beginTransaction()!!
             transaction.replace(R.id.drawable_frameLayout, mainFragment)
@@ -185,9 +197,37 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == 1000 && resultCode == Activity.RESULT_OK) {
-            var imageUri = data?.data
-            //uploadImage()
+            if(data!!.clipData != null){
+                //Pick multiple images
+                //get number of images
+                count = data.clipData!!.itemCount
+                for(i in 0 until count){
+                    val imageUri = data.clipData!!.getItemAt(i).uri
+                    println(imageUri)
+                    images!!.add(imageUri)
+                }
+
+            }else{
+                //Pick single image
+                count = 1
+                val imageUri = data.data
+                images!!.add(imageUri)
+            }
         }
     }
+
+    private fun sendData(){
+        for (i in 0 until count){
+            var file = images!![i]
+            var fileaudio = storageReference!!
+                    .child("Report1")
+                    .child("$file")
+            if (file != null) {
+                fileaudio.putFile(file)
+            }
+        }
+        images = ArrayList()
+    }
+
 }
 
