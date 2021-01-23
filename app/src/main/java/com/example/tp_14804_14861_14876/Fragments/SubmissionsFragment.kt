@@ -1,12 +1,20 @@
 package com.example.tp_14804_14861_14876.Fragments
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.example.tp_14804_14861_14876.R
@@ -15,6 +23,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation
+import java.io.File
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -121,7 +130,8 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
 
         report_ed_anomaly.setOnClickListener(this)
         submission_btn_firebase.setOnClickListener(this)
-
+        submission_iv_addphoto.setOnClickListener(this)
+        submission_iv_addaudio.setOnClickListener(this)
 
         //Firebase info
         auth = FirebaseAuth.getInstance()
@@ -143,14 +153,27 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
     override fun onClick(v: View) {
         when (v.id) {
             R.id.submission_btn_firebase -> {
-                mainFragment = MainFragment()
-                transaction = fragmentManager?.beginTransaction()!!
-                transaction.replace(R.id.drawable_frameLayout, mainFragment)
-                transaction.commit()
+                checkInformation()
             }
-
+            R.id.submission_iv_addphoto -> {
+                var openGalleryIntent= Intent(Intent.ACTION_PICK)
+                openGalleryIntent.setDataAndType(Uri.parse(Environment.getExternalStorageDirectory(). absolutePath+ "/DCIM/HVAC/"),"*/*")
+                openGalleryIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
+                openGalleryIntent.action = Intent.ACTION_GET_CONTENT
+                startActivityForResult(openGalleryIntent,1000)
+            }
         }
     }
+
+    private fun checkInformation() {
+        if(submission_spinner_machine.toString().isNotEmpty() && submission_spinner_intervation.toString().isNotEmpty() && report_ed_anomaly.text.isNotEmpty())  {
+            mainFragment = MainFragment()
+            transaction = fragmentManager?.beginTransaction()!!
+            transaction.replace(R.id.drawable_frameLayout, mainFragment)
+            transaction.commit()
+        }
+    }
+
 
     override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
         val text = parent.getItemAtPosition(position).toString()
@@ -159,5 +182,12 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
 
     override fun onNothingSelected(parent: AdapterView<*>?) {}
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == 1000 && resultCode == Activity.RESULT_OK) {
+            var imageUri = data?.data
+            //uploadImage()
+        }
+    }
 }
 
