@@ -126,8 +126,10 @@ class ProfileFragment : Fragment(), View.OnClickListener {
             }
             R.id.settings_btn_change_profile -> {
                 updateProfile()
-                var intent = Intent(activity, MainActivity::class.java)
-                startActivity(intent)
+                mainFragment = MainFragment()
+                transaction = fragmentManager?.beginTransaction()!!
+                transaction.replace(R.id.drawable_frameLayout, mainFragment)
+                transaction.commit()
             }
 
         }
