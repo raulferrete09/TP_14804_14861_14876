@@ -11,7 +11,7 @@
     app:behavior_peekHeight="70dp"
     android:layout_marginHorizontal="50dp"
     android:layout_marginVertical="100dp"
-    android:id="@+id/player_sheet">
+    android:id="@+id/dasboard_layout">
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -31,7 +31,6 @@
             app:srcCompat="@drawable/gear_engineering_icon" />
 
         <TextView
-            android:id="@+id/player_tv_headername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="3"
@@ -41,7 +40,7 @@
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/player_tv_headertitle"
+            android:id="@+id/dasboard_tv_machine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="3"
@@ -56,7 +55,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/player_tv_filename"
+        android:id="@+id/dasboard_tv_oknok"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="OK"
@@ -80,6 +79,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/player_tv_filename" />
+        app:layout_constraintTop_toBottomOf="@id/dasboard_tv_oknok" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

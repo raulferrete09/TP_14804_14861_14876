@@ -1,14 +1,21 @@
 package com.example.tp_14804_14861_14876.Fragments
 
+import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Layout
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.NavController
 import com.example.tp_14804_14861_14876.Activitys.MainActivity
 import com.example.tp_14804_14861_14876.R
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 // TODO: Rename parameter arguments, choose names that match
@@ -28,6 +35,17 @@ class MainFragment : Fragment(), View.OnClickListener {
     lateinit var add_btn_submission: FloatingActionButton
     lateinit var submissionsFragment: SubmissionsFragment
     lateinit var transaction: FragmentTransaction
+    lateinit var dashboadinformation: Layout
+    lateinit var dashboard_tv_oknok: TextView
+    lateinit var dashboard_tv_anomaly: TextView
+    lateinit var dashboard_tv_machine: TextView
+    lateinit var dashboard_layout: ConstraintLayout
+    lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
+
+    lateinit var OK_m1: Button
+    lateinit var NOK_m1: Button
+    lateinit var OK_m2: Button
+    lateinit var NOK_m2: Button
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -77,8 +95,23 @@ class MainFragment : Fragment(), View.OnClickListener {
         (requireActivity() as MainActivity).supportActionBar!!.hide()
 
         add_btn_submission = view.findViewById<FloatingActionButton>(R.id.add_btn_submission)
+        dashboard_tv_machine = view.findViewById<TextView>(R.id.dasboard_tv_machine)
+        dashboard_tv_oknok = view.findViewById<TextView>(R.id.dasboard_tv_oknok)
+        dashboard_tv_anomaly = view.findViewById<TextView>(R.id.dasboard_tv_anomaly)
+        dashboard_layout = view.findViewById<ConstraintLayout>(R.id.dasboard_layout)
 
         add_btn_submission.setOnClickListener(this)
+
+        OK_m1 = view.findViewById<Button>(R.id.OK_m1)
+        NOK_m1 = view.findViewById<Button>(R.id.NOK_m1)
+        OK_m2 = view.findViewById<Button>(R.id.OK_m2)
+        NOK_m2 = view.findViewById<Button>(R.id.NOK_m2)
+
+        OK_m1.setOnClickListener(this)
+        NOK_m1.setOnClickListener(this)
+        OK_m2.setOnClickListener(this)
+        NOK_m2.setOnClickListener(this)
+
     }
 
     override fun onClick(v: View) {
@@ -89,6 +122,34 @@ class MainFragment : Fragment(), View.OnClickListener {
                 transaction.replace(R.id.drawable_frameLayout, submissionsFragment, null)
                 transaction.addToBackStack(null)
                 transaction.commit()
+            }
+            R.id.OK_m1 -> {
+                val anomaly = ""
+                dashboard_tv_anomaly.text = anomaly
+                dashboard_tv_oknok.text = "OK"
+                dashboard_tv_machine.text = "Machine 1"
+                dashboard_layout.setBackgroundColor(resources.getColor(R.color.green))
+            }
+            R.id.NOK_m1 -> {
+                val anomaly = "Temperatura demasioado alta"
+                dashboard_tv_anomaly.text = anomaly
+                dashboard_tv_oknok.text = "NOK"
+                dashboard_tv_machine.text = "Machine 1"
+                dashboard_layout.setBackgroundColor(resources.getColor(R.color.red))
+            }
+            R.id.OK_m2 -> {
+                val anomaly = ""
+                dashboard_tv_anomaly.text = anomaly
+                dashboard_tv_oknok.text = "OK"
+                dashboard_tv_machine.text = "Machine 2"
+                dashboard_layout.setBackgroundColor(resources.getColor(R.color.green))
+            }
+            R.id.NOK_m2 -> {
+                val anomaly = "Som demasioado alto"
+                dashboard_tv_anomaly.text = anomaly
+                dashboard_tv_oknok.text = "NOK"
+                dashboard_tv_machine.text = "Machine 2"
+                dashboard_layout.setBackgroundColor(resources.getColor(R.color.red))
             }
         }
     }

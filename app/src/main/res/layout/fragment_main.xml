@@ -42,6 +42,44 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <Button
+            android:id="@+id/OK_m1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="321dp"
+            android:layout_marginBottom="624dp"
+            android:text="Ok_m1" />
+
+        <Button
+            android:id="@+id/NOK_m1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="323dp"
+            android:text="NOK_m1" />
+
+        <Button
+            android:id="@+id/NOK_m2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="23dp"
+            android:text="NOK_m2" />
+
+        <Button
+            android:id="@+id/OK_m2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/button11"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="14dp"
+            android:layout_marginBottom="626dp"
+            android:text="OK_m2" />
+
     </RelativeLayout>
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/button_layout_submission"
