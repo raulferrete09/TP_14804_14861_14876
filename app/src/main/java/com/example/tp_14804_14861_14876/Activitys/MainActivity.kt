@@ -16,11 +16,14 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentTransaction
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.tp_14804_14861_14876.Fragments.*
 import com.example.tp_14804_14861_14876.R
 import com.example.tp_14804_14861_14876.Utils.Alert
@@ -30,6 +33,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Request
 import com.squareup.picasso.Transformation
@@ -58,6 +64,9 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
 
     lateinit var mGoogleSignInClient: GoogleSignInClient
     var auth : FirebaseAuth? = null
+    lateinit var fileref: StorageReference
+    private var storageReference: StorageReference? = null
+    private var database: FirebaseDatabase? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,12 +75,14 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         //Internet Connection
         ReceiverConnection.instance.setConnectionListener(this)
         setUpNavigationDrawer()
+
     }
 
     private fun setUpNavigationDrawer() {
-        toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.main_toolbar)
+        toolbar = findViewById<Toolbar>(R.id.main_toolbar)
         toolbar.title = ""
         setSupportActionBar(toolbar)
+
         //hide toolbar
         supportActionBar?.hide()
 
@@ -92,19 +103,37 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
 
         //Firebase info
         auth = FirebaseAuth.getInstance()
+        database = FirebaseDatabase.getInstance()
         val user: FirebaseUser? = auth?.currentUser
         val name:String? = user?.displayName
         val id:String? = user?.uid
-        var photo = user?.photoUrl
+        val r = database!!.getReference("users").child("$id")
 
+        storageReference = FirebaseStorage.getInstance().reference.child("Users Image").child("$id")
+        fileref = storageReference!!.child("picture.jpg")
+
+        println(name)
         user_tv_name.text = name
         user_tv_id.text = id
 
         // rounded corner image
-        val radius = 50
-        val margin = 0
-        transformation = RoundedCornersTransformation(radius, margin)
-        Picasso.get().load(photo).transform(transformation).into(user_iv_photo)
+        fileref?.downloadUrl?.addOnSuccessListener { task ->
+            Glide.with(this).load(task).override(300,300).apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
+        }
+
+        r.addValueEventListener(object : ValueEventListener{
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var map = snapshot.value as Map<String, Any>
+                user_tv_name.text = map["name"].toString()
+                var photo = map["photo"].toString()
+                var photo_uri = Uri.parse(photo)
+                Glide.with(baseContext).load(photo_uri).override(300,300).apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
+            }
+        })
 
         actionBarDrawerToggle = ActionBarDrawerToggle(
             this,
@@ -132,6 +161,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                             File(Environment.getExternalStorageDirectory().toString() + File.separator + "DCIM"+ File.separator + "HVAC")
                         if (!folder.exists()) {
                             folder.mkdirs()
+
                             //Toast.makeText(this@MainActivity, "Successful", Toast.LENGTH_SHORT).show()
                             var openGalleryIntent = Intent(Intent.ACTION_VIEW, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                             startActivityForResult(openGalleryIntent, 111)
@@ -196,6 +226,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) == PackageManager.PERMISSION_GRANTED
         ) {
+
             //Permission Granted
             return true
         } else {

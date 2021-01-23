@@ -185,10 +185,6 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
     fun handleFacebookAccessToken(token : AccessToken?){
         var credential = FacebookAuthProvider.getCredential(token?.token!!)
         val imageURL = "https://graph.facebook.com/" + token.userId.toString() + "/picture?type=large"
-        //val inp: InputStream = URL(imageURL).getContent() as InputStream
-        //val bitmap: Bitmap = BitmapFactory.decodeStream(inp)
-        println("AQUI " + imageURL)
-
         auth?.signInWithCredential(credential)
                 ?.addOnCompleteListener {
                     task ->
@@ -275,10 +271,8 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
     }
     fun moveMainPage(user:FirebaseUser?){
         if(user != null){
-
             startActivity(Intent(this, MainActivity::class.java))
-            //sendData()
-            //readData()
+            sendData()
             finish()
         }
     }
@@ -314,24 +308,5 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
             .child("users")
             .child("$uid")
             .setValue(map)
-
     }
-
-    /*fun readData(){
-        val person = auth?.currentUser
-        val uid = person?.uid
-        database.reference.child("users").child("$uid").addListenerForSingleValueEvent(object :
-            ValueEventListener{
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onDataChange(p0: DataSnapshot) {
-                var map = p0.value as Map<String, Any>
-                var name = map["name"].toString()
-                println(name)
-            }
-        })
-    }*/
-
 }
