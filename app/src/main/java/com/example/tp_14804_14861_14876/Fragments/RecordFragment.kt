@@ -130,10 +130,22 @@ class RecordFragment : Fragment(), View.OnClickListener {
         record_btn_start.isEnabled = true
         when (v.id) {
             R.id.record_btn_list -> {
-                audioListFragment = AudioListFragment()
-                transaction = fragmentManager?.beginTransaction()!!
-                transaction.replace(R.id.drawable_frameLayout, audioListFragment)
-                transaction.commit()
+                if (checkPermissions()) {
+                    val folder =
+                        File(Environment.getExternalStorageDirectory().toString() + File.separator + "HVAC"+ File.separator + "Audios")
+                    if (!folder.exists()) {
+                        folder.mkdirs()
+                        audioListFragment = AudioListFragment()
+                        transaction = fragmentManager?.beginTransaction()!!
+                        transaction.replace(R.id.drawable_frameLayout, audioListFragment)
+                        transaction.commit()
+                    } else {
+                        audioListFragment = AudioListFragment()
+                        transaction = fragmentManager?.beginTransaction()!!
+                        transaction.replace(R.id.drawable_frameLayout, audioListFragment)
+                        transaction.commit()
+                    }
+                }
             }
             R.id.record_btn_start ->
                 if (!isRecording) {

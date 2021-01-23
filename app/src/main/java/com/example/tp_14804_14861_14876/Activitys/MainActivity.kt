@@ -166,13 +166,31 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                     }
                 }
                 R.id.audio_list_icon -> {
-                    audioListFragment = AudioListFragment()
-                    supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.drawable_frameLayout, audioListFragment, null).addToBackStack(
-                            null
-                        )
-                        .commit()
+                    if (checkPermissions()) {
+                        val folder =
+                            File(
+                                getExternalStorageDirectory()
+                                    .toString() + File.separator + "DCIM" + File.separator + "HVAC"
+                            )
+                        if (!folder.exists()) {
+                            folder.mkdirs()
+                            audioListFragment = AudioListFragment()
+                            supportFragmentManager
+                                .beginTransaction()
+                                .replace(R.id.drawable_frameLayout, audioListFragment, null).addToBackStack(
+                                    null
+                                )
+                                .commit()
+                        } else {
+                            audioListFragment = AudioListFragment()
+                            supportFragmentManager
+                                .beginTransaction()
+                                .replace(R.id.drawable_frameLayout, audioListFragment, null).addToBackStack(
+                                    null
+                                )
+                                .commit()
+                        }
+                    }
                 }
                 R.id.mic_sound_icon -> {
                     recordFragment = RecordFragment()
