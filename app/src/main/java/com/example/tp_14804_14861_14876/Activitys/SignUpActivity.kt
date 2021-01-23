@@ -1,26 +1,39 @@
 package com.example.tp_14804_14861_14876.Activitys
 
 import android.app.AlertDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
+import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.example.tp_14804_14861_14876.R
-import com.example.tp_14804_14861_14876.Utils.Alert
-import com.example.tp_14804_14861_14876.Utils.ConnectionReceiver
-import com.example.tp_14804_14861_14876.Utils.ReceiverConnection
+import com.example.tp_14804_14861_14876.Utils.*
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.util.regex.Pattern
 
+    const val TOPIC = "/topics/myTopic"
+
 class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverListener, View.OnClickListener {
+
+    val TAG = "SignUpActivity"
+
 
     var misshowpass = false
     var misshowconfirmpass = false
@@ -81,6 +94,22 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
             ToLoginPage()
         }
 
+        FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
+
+    }
+
+    private fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val response = RetrofitInstance.api.postNotification(notification)
+            if(response.isSuccessful) {
+                Log.d(TAG, "Response: ${Gson().toJson(response)}")
+            }
+            else {
+                Log.e(TAG, response.errorBody().toString())
+            }
+        }catch (e: Exception) {
+            Log.e(TAG, e.toString())
+        }
     }
 
     private fun ToLoginPage() {
@@ -98,6 +127,17 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
                     FirebaseAuth.getInstance().createUserWithEmailAndPassword(signup_et_email.text.toString(), signup_et_password.text.toString()).addOnCompleteListener {
                         if (it.isSuccessful) {
                             ToLoginPage()
+
+                            val title = "Sign Up"
+                            val message = "Conta criada com sucesso!"
+                            PushNotification(
+                                NotificationData(title, message),
+                                TOPIC
+                            ).also {
+                                sendNotification(it)
+                            }
+
+
                         }
                     }
                 }else {
@@ -129,6 +169,8 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
                 }
             }
         }
+
+
     }
 
     fun showAlert(x:Int){
