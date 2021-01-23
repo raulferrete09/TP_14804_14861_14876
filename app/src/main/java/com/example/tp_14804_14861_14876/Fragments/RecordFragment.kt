@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
+import android.net.Uri
 import android.os.*
 import android.provider.MediaStore
 import android.util.Base64.DEFAULT
@@ -20,10 +21,19 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.NavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.tp_14804_14861_14876.Activitys.MainActivity
 import com.example.tp_14804_14861_14876.R
+import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.StorageTask
+import com.google.firebase.storage.UploadTask
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
@@ -48,6 +58,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
     var counter = 0
     var progresscounter = 0
     var auth : FirebaseAuth? = null
+    lateinit var audioBase64: String
 
 
     lateinit var mr: MediaRecorder
@@ -68,6 +79,9 @@ class RecordFragment : Fragment(), View.OnClickListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    lateinit var fileref: StorageReference
+    private var storageReference: StorageReference? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,6 +130,11 @@ class RecordFragment : Fragment(), View.OnClickListener {
         filenametext = view.findViewById<TextView>(R.id.info_tv)
         progress_bar = view.findViewById<ProgressBar>(R.id.progress_bar)
         progress_bar.max = 10
+
+        auth= FirebaseAuth.getInstance()
+        var uid = auth?.currentUser?.uid
+        storageReference = FirebaseStorage.getInstance().reference.child("Sound").child("$uid")
+
 
         record_btn_list.setOnClickListener(this)
         record_btn_start.setOnClickListener(this)
@@ -192,6 +211,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
         //Get app external directory path
         //name -> path = User + timeStamp + ".mp3"
         //val pathname = "Audio.mp3"
+        val audioname = name + "_" + timeStamp
         val pathname = name + "_" + timeStamp + ".mp3"
         val path = Environment.getExternalStorageDirectory().toString() + "/HVAC/Audios/" + pathname
         println(path)
@@ -230,8 +250,8 @@ class RecordFragment : Fragment(), View.OnClickListener {
 
                 counter = 0
                 progresscounter = 0
-                encodeAudio(path)
-
+                var base64 = encodeAudio(path)
+                sendData(base64, audioname,path)
 
                 /*var map = mutableMapOf<String,Any>()
                 map["mp3 file"] = base64
@@ -252,7 +272,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun encodeAudio(path: String) {
+    private fun encodeAudio(path: String): String {
         val audioBytes: ByteArray
         //println(path)
         try {
@@ -268,11 +288,12 @@ class RecordFragment : Fragment(), View.OnClickListener {
             audioBytes = baos.toByteArray()
 
             // Here goes the Base64 string
-            var audioBase64 = Base64.getEncoder().encodeToString(audioBytes)
+            audioBase64 = Base64.getEncoder().encodeToString(audioBytes)
             println(audioBase64)
         } catch (e: Exception) {
             //DiagnosticHelper.writeException(e)
         }
+        return audioBase64
     }
 
 
@@ -297,6 +318,58 @@ class RecordFragment : Fragment(), View.OnClickListener {
             )
             return false
         }
+    }
+
+    private fun sendData(base64: String, audioname: String,path: String){
+        val person = auth?.currentUser
+        val uid = person?.uid
+        var map = mutableMapOf<String,Any>()
+        var database = FirebaseDatabase.getInstance()
+        map["base64"]=base64
+        map["anomaly"]=""
+        database.reference
+                .child("Audio")
+                .child("$uid")
+                .child("$audioname")
+                .updateChildren(map)
+        var file = Uri.fromFile(File(path))
+        fileref = storageReference!!.child("$path"+".mp3")
+        fileref.putFile(file)
+        /* if (path != null){
+
+             var uploadTask: StorageTask<*>
+             val myUri = Uri.parse(path)
+             uploadTask = fileref.putFile(myUri)
+
+             uploadTask.continueWithTask(Continuation <UploadTask.TaskSnapshot, Task<Uri>> Contiuation@{ task ->
+                 if(!task.isSuccessful ){
+                     task.exception?.let{
+                         throw it
+                     }
+                 }
+                 return@Contiuation fileref.downloadUrl
+             }).addOnCompleteListener { task ->
+                 if(task.isSuccessful){
+                     val downloadUrl = task.result
+                     val url = downloadUrl.toString()
+                     val map = HashMap<String, Any>()
+                     map["$audioname"] = url
+                     //userReference!!.updateChildren(map)
+                     FirebaseDatabase.getInstance()
+                             .reference
+                             .child("users")
+                             .child("$uid")
+                             .updateChildren(map)
+
+                   fileref.downloadUrl.addOnSuccessListener { task ->
+                         Glide.with(this).load(task).override(300,300).apply(RequestOptions.circleCropTransform()).into(profile_iv_photo)
+                         //   Glide.with(mainFragment).load(task).override(300,300).apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
+                         //   user_iv_photo.setImageResource(task);
+                     }
+                 }
+             }
+         }*/
+
     }
 
 }
