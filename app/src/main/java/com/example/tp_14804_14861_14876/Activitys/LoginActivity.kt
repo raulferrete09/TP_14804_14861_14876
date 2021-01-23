@@ -144,7 +144,6 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
     fun googleLogin() {
         var signInIntent = googleSignInClient?.signInIntent
         startActivityForResult(signInIntent,GOOGLE_LOGIN_CODE)
-        progressDialog()
 
     }
     fun facebookLogin(){
@@ -177,6 +176,7 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
 
                         //Third step
                         //Login
+                        //progressDialog()
                         moveMainPage(task.result?.user)
                     }else{
                         //Show the error message
