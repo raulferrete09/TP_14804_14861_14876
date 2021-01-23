@@ -4,37 +4,65 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorWhite"
     tools:context=".Fragments.RecordFragment">
 
-
-    <Chronometer
-        android:id="@+id/timer_chromo_counter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="132dp"
-        android:textSize="44sp"
+    <RelativeLayout
+        android:id="@+id/relativeLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="257dp"
+        android:layout_marginTop= "250dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/info_tv" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Chronometer
+            android:id="@+id/timer_chromo_counter"
+            android:layout_width="155dp"
+            android:layout_height="64dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="146dp"
+            android:layout_marginTop="94dp"
+            android:layout_marginEnd="114dp"
+            android:layout_marginBottom="94dp"
+            android:textSize="44sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="-1dp"
+            android:background="@drawable/cicle_shape"
+            android:indeterminate="false"
+            android:indeterminateTint="@color/red"
+            android:progressDrawable="@drawable/cicle_progress_bar" />
+
+    </RelativeLayout>
 
     <Button
         android:id="@+id/record_btn_start"
-        android:layout_width="179dp"
-        android:layout_height="179dp"
-        android:layout_marginTop="64dp"
+        android:layout_width="136dp"
+        android:layout_height="139dp"
         android:background="@drawable/record_btn_stopped"
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/timer_chromo_counter"
-        app:layout_constraintVertical_bias="0.14" />
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout3"
+        app:layout_constraintVertical_bias="0.546" />
 
     <Button
         android:id="@+id/record_btn_list"
-        android:layout_width="33dp"
-        android:layout_height="31dp"
+        android:layout_width="27dp"
+        android:layout_height="23dp"
         android:background="@drawable/recorder_list_btn"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="@+id/record_btn_start"
@@ -46,20 +74,11 @@
         android:id="@+id/info_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="188dp"
+        android:layout_marginTop="136dp"
         android:gravity="center"
         android:text="Press the mic button \n to start recording"
         android:textSize="18sp"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="-16dp" />
+        tools:layout_editor_absoluteX="0dp" />
 
-    <Button
-        android:id="@+id/back_btn_arrow"
-        android:layout_width="37dp"
-        android:layout_height="42dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/ic_back_arrow"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />"
 </androidx.constraintlayout.widget.ConstraintLayout>

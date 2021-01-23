@@ -1,12 +1,14 @@
 package com.example.tp_14804_14861_14876.Activitys
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
@@ -60,6 +62,7 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
     lateinit var login_et_password:EditText
     lateinit var login_tv_forgpass:TextView
     lateinit var password_iv_show: ImageView
+    lateinit var progressDialog: ProgressDialog
     private lateinit var database: FirebaseDatabase
     private lateinit var referance: DatabaseReference
 
@@ -86,10 +89,9 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
             startActivity(Intent(this, MainActivity::class.java))
         }
 
-
+        //Internet Connection
         baseContext.registerReceiver(ConnectionReceiver(),IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         ReceiverConnection.instance.setConnectionListener(this)
-
 
 
         login_btn_signin.setOnClickListener {
@@ -167,7 +169,6 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
                 .registerCallback(callbackManager, object : FacebookCallback<LoginResult>{
                     override fun onSuccess(result: LoginResult?) {
                         //Second step
-
                         handleFacebookAccessToken(result?.accessToken)
                     }
 
@@ -181,10 +182,8 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
 
                 })
     }
-
     fun handleFacebookAccessToken(token : AccessToken?){
         var credential = FacebookAuthProvider.getCredential(token?.token!!)
-        val imageURL = "https://graph.facebook.com/" + token.userId.toString() + "/picture?type=large"
         auth?.signInWithCredential(credential)
                 ?.addOnCompleteListener {
                     task ->
@@ -192,7 +191,6 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
 
                         //Third step
                         //Login
-
                         moveMainPage(task.result?.user)
                     }else{
                         //Show the error message
@@ -215,8 +213,6 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
             }
         }
     }
-
-
 
     fun firebaseAuthWithGoogle(account: GoogleSignInAccount?) {
         var credential = GoogleAuthProvider.getCredential(account?.idToken,null)
@@ -262,7 +258,6 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
                 if(task.isSuccessful){
                     //Login
                     moveMainPage(task.result?.user)
-
                 }else{
                     //Show the error message
                     Toast.makeText(this,task.exception?.message,Toast.LENGTH_LONG).show()
@@ -271,6 +266,7 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
     }
     fun moveMainPage(user:FirebaseUser?){
         if(user != null){
+            progressDialog()
             startActivity(Intent(this, MainActivity::class.java))
             sendData()
             finish()
@@ -293,6 +289,21 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
         builder.setPositiveButton("Accept",null)
         val dialog: AlertDialog =builder.create()
         dialog.show()
+    }
+
+    private fun progressDialog() {
+        //Initialize Progress Dialog
+        progressDialog = ProgressDialog(this)
+        //Show Dialog
+        progressDialog.show()
+        //Set Content View
+        progressDialog.setContentView(R.layout.progress_dialog)
+        //Set Transparent background
+        progressDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
+
+    override fun onBackPressed() {
+        progressDialog.dismiss()
     }
 
     private fun sendData(){
