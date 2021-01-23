@@ -1,6 +1,7 @@
 package com.example.tp_14804_14861_14876.Activitys
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
@@ -54,6 +55,7 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
     lateinit var login_et_password:EditText
     lateinit var login_tv_forgpass:TextView
     lateinit var password_iv_show: ImageView
+    lateinit var progressDialog: ProgressDialog
 
 
 
@@ -72,7 +74,7 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
 
         auth = FirebaseAuth.getInstance()
 
-
+        //Internet Connection
         baseContext.registerReceiver(ConnectionReceiver(),IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         ReceiverConnection.instance.setConnectionListener(this)
 
@@ -174,6 +176,7 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
 
                         //Third step
                         //Login
+                        //progressDialog()
                         moveMainPage(task.result?.user)
                     }else{
                         //Show the error message
@@ -250,6 +253,7 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
     }
     fun moveMainPage(user:FirebaseUser?){
         if(user != null){
+            progressDialog()
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
@@ -271,6 +275,21 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
         builder.setPositiveButton("Accept",null)
         val dialog: AlertDialog =builder.create()
         dialog.show()
+    }
+
+    private fun progressDialog() {
+        //Initialize Progress Dialog
+        progressDialog = ProgressDialog(this)
+        //Show Dialog
+        progressDialog.show()
+        //Set Content View
+        progressDialog.setContentView(R.layout.progress_dialog)
+        //Set Transparent background
+        progressDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
+
+    override fun onBackPressed() {
+        progressDialog.dismiss()
     }
 
 }
