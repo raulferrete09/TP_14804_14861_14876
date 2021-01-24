@@ -3,6 +3,7 @@ package com.example.tp_14804_14861_14876.Fragments
 import android.Manifest.permission
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -66,6 +67,7 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
     private val PERMISSION_CODE = 1000
     lateinit var name: String
     lateinit var email: String
+    lateinit var pathname: String
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -175,11 +177,17 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
                     )
                     if (!folder.exists()) {
                         folder.mkdirs()
-                        checkInformation()
-                        shareData()
+                        if (checkInformation()) {
+                            shareData()
+                        } else {
+                            showAlert()
+                        }
                     } else {
-                        checkInformation()
-                        shareData()
+                        if (checkInformation()) {
+                            shareData()
+                        } else {
+                            showAlert()
+                        }
                     }
                 }
             }
@@ -205,30 +213,31 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
             startActivityForResult(intent, 1000)
     }
 
-    private fun checkInformation() {
+    private fun checkInformation(): Boolean {
         if(submission_spinner_machine.toString().isNotEmpty() && submission_spinner_intervation.toString().isNotEmpty() && report_ed_anomaly.text.isNotEmpty())  {
             savePDF(email, name)
             mainFragment = MainFragment()
             transaction = fragmentManager?.beginTransaction()!!
             transaction.replace(R.id.drawable_frameLayout, mainFragment)
             transaction.commit()
+            return true
+        } else {
+            return false
         }
+
     }
 
     private fun savePDF(email: String, name: String) {
         //create object of Document class
         val doc = com.itextpdf.text.Document()
         //get text
-        val text_spinner_machine: String = submission_spinner_machine.selectedItem.toString()
+        val text_spinner_machine= submission_spinner_machine.selectedItem.toString()
         val text_spinner_intervation = submission_spinner_intervation.selectedItem.toString()
         val text_reportanomaly = report_ed_anomaly.text.toString()
 
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val data = timeStamp.substring(0, 4) + "/" + timeStamp.substring(4, 6) + "/" + timeStamp.substring(
-            6,
-            8
-        ) + " at " + timeStamp.substring(9, 11) + "h" + timeStamp.substring(11, 13)
-        val pathname = "Report" + "_" + text_spinner_intervation + "_" + timeStamp
+        val data = timeStamp.substring(0, 4) + "/" + timeStamp.substring(4, 6) + "/" + timeStamp.substring(6, 8) + " at " + timeStamp.substring(9, 11) + "h" + timeStamp.substring(11, 13)
+        pathname = "Report" + "_" + text_spinner_intervation + "_" + timeStamp
         val path = Environment.getExternalStorageDirectory().toString() + "/" + "HVAC/Reports/" + pathname + ".pdf"
 
         try {
@@ -288,16 +297,17 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         }
     }
     private fun shareData() {
-        val imageFile = File(Environment.getExternalStorageDirectory().toString() + "/" + "HVAC/Reports/Report_Maintenance_20210124_173049.pdf")
-        val imageUri = FileProvider.getUriForFile(requireContext(),
+
+        val pathFile = File(Environment.getExternalStorageDirectory().toString() + "/" + "HVAC/Reports/" + pathname + ".pdf")
+        val pathUri = FileProvider.getUriForFile(requireContext(),
             "com.example.tp_14804_14861_14876.provider",
-            imageFile
+            pathFile
         )
         val intent = Intent()
         intent.action = Intent.ACTION_SEND
         intent.type = "*/*"
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        intent.putExtra(Intent.EXTRA_STREAM, imageUri)
+        intent.putExtra(Intent.EXTRA_STREAM, pathUri)
 
         startActivity(Intent.createChooser(intent, "Please select app: "))
     }
@@ -336,6 +346,15 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
             )
             return false
         }
+    }
+
+    fun showAlert(){
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Error")
+        builder.setMessage("Please detail the problem. ")
+        builder.setPositiveButton("Accept",null)
+        val dialog: AlertDialog =builder.create()
+        dialog.show()
     }
 }
 
