@@ -112,9 +112,16 @@ class ProfileFragment : Fragment(), View.OnClickListener {
         profile_iv_photo.setOnClickListener(this)
         settings_btn_change_profile.setOnClickListener(this)
 
-        fileref?.downloadUrl?.addOnSuccessListener { task ->
-            Glide.with(this).load(task).override(300,300).apply(RequestOptions.circleCropTransform()).into(profile_iv_photo)
+        try {
+            fileref?.downloadUrl?.addOnSuccessListener { task ->
+                Glide.with(this).load(task).override(300,300).apply(RequestOptions.circleCropTransform()).into(profile_iv_photo)
+            }
+        }catch (e: Exception){
+            e.printStackTrace()
+            Glide.with(this).load(image).override(300,300).apply(RequestOptions.circleCropTransform()).into(profile_iv_photo)
         }
+
+        Glide.with(this).load(image).override(300,300).apply(RequestOptions.circleCropTransform()).into(profile_iv_photo)
     }
 
     override fun onClick(v: View) {
@@ -156,7 +163,8 @@ class ProfileFragment : Fragment(), View.OnClickListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == 1000 && resultCode == Activity.RESULT_OK) {
-            imageUri = data ?.data
+            imageUri = data?.data
+            println(imageUri)
             uploadImage()
         }
     }

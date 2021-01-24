@@ -17,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.tp_14804_14861_14876.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -62,9 +64,13 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
 
     var auth : FirebaseAuth? = null
     var count: Int = 0
+    var sound_count: Int = 0
     private var images: ArrayList<Uri?>? = null
+    private var sounds: ArrayList<Uri?>? = null
     lateinit var fileref: StorageReference
     private var storageReference: StorageReference? = null
+    private var Image_storageReference: StorageReference? = null
+
 
 
     // TODO: Rename and change types of parameters
@@ -145,7 +151,9 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         val user: FirebaseUser? = auth?.currentUser
         val name:String? = user?.displayName
         val uid:String? = user?.uid
-        var photo = user?.photoUrl
+        var image = user?.photoUrl
+        Image_storageReference = FirebaseStorage.getInstance().reference.child("Users Image").child("$uid")
+        fileref = Image_storageReference!!.child("picture.jpg")
         storageReference = FirebaseStorage.getInstance()
                 .reference
                 .child("Reports")
@@ -155,10 +163,14 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         profile_tv_id.text = uid
 
 // rounded corner image
-        val radius = 50
-        val margin = 5
-        transformation = RoundedCornersTransformation(radius, margin)
-        Picasso.get().load(photo).transform(transformation).into(profile_iv_photo)
+        try {
+            fileref?.downloadUrl?.addOnSuccessListener { task ->
+                Glide.with(this).load(task).override(300,300).apply(RequestOptions.circleCropTransform()).into(profile_iv_photo)
+            }
+        }catch (e: Exception){
+            e.printStackTrace()
+            Glide.with(this).load(image).override(300,300).apply(RequestOptions.circleCropTransform()).into(profile_iv_photo)
+        }
     }
 
     override fun onClick(v: View) {
@@ -173,8 +185,27 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
                 openGalleryIntent.action = Intent.ACTION_GET_CONTENT
                 startActivityForResult(openGalleryIntent,1000)
             }
+            R.id.submission_iv_addaudio ->{
+                selectFile()
+            }
         }
     }
+
+    private fun selectFile() {
+        var intent= Intent(Intent.ACTION_PICK)
+        intent.setType("*/*")
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(intent, 1100)
+    }
+
+    /*private fun selectFile() {
+        var intent= Intent(Intent.ACTION_PICK)
+        intent.setType("/")
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(intent, 1000)
+    }*/
 
     private fun checkInformation() {
         if(submission_spinner_machine.toString().isNotEmpty() && submission_spinner_intervation.toString().isNotEmpty() && report_ed_anomaly.text.isNotEmpty())  {
@@ -213,17 +244,57 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
                 val imageUri = data.data
                 images!!.add(imageUri)
             }
+        }else if(requestCode == 1100 && resultCode == Activity.RESULT_OK){
+            if(data!!.clipData != null){
+                //Pick multiple images
+                //get number of images
+                sound_count = data.clipData!!.itemCount
+                for(i in 0 until sound_count){
+                    val soundUri = data.clipData!!.getItemAt(i).uri
+                    println(soundUri)
+                    sounds!!.add(soundUri)
+                }
+
+            }else{
+                //Pick single image
+                sound_count = 1
+                val soundUri = data.data
+                sounds!!.add(soundUri)
+            }
+        }else{
+            //do Nothing
         }
     }
 
     private fun sendData(){
+        //Images
         for (i in 0 until count){
             var file = images!![i]
+
+            var file_string = file.toString()
+            var photo_name = file_string.substringAfter("content://com.android.providers.media.documents/document/")
+            println(photo_name)
             var fileaudio = storageReference!!
                     .child("Report1")
-                    .child("$file")
+                    .child("Photos")
+                    .child("$photo_name")
             if (file != null) {
                 fileaudio.putFile(file)
+            }
+        }
+        //Sounds
+        for (i in 0 until sound_count){
+            var file_sound = sounds!![i]
+
+            var file_sound_string = file_sound.toString()
+            //var sound_name = file_string.substringAfter("content://com.android.providers.media.documents/document/")
+            println(file_sound_string)
+            var fileaudio = storageReference!!
+                    .child("Report1")
+                    .child("Photos")
+                    .child("$file_sound_string")
+            if (file_sound != null) {
+                fileaudio.putFile(file_sound)
             }
         }
         images = ArrayList()

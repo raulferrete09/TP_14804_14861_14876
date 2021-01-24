@@ -123,6 +123,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         val user: FirebaseUser? = auth?.currentUser
         val name:String? = user?.displayName
         val id:String? = user?.uid
+        val image = user?.photoUrl
         val r = database!!.getReference("users").child("$id")
 
         storageReference = FirebaseStorage.getInstance().reference.child("Users Image").child("$id")
@@ -133,8 +134,13 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         user_tv_id.text = id
 
         // rounded corner image
-        fileref?.downloadUrl?.addOnSuccessListener { task ->
-            Glide.with(this).load(task).override(300,300).apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
+        try {
+            fileref?.downloadUrl?.addOnSuccessListener { task ->
+                Glide.with(this).load(task).override(300,300).apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
+            }
+        }catch (e: Exception){
+            e.printStackTrace()
+            Glide.with(this).load(image).override(300,300).apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
         }
 
         r.addValueEventListener(object : ValueEventListener{
@@ -147,7 +153,11 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                 user_tv_name.text = map["name"].toString()
                 var photo = map["photo"].toString()
                 var photo_uri = Uri.parse(photo)
-                Glide.with(baseContext).load(photo_uri).override(300,300).apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
+                if(map["photo"] == null){
+                    Glide.with(baseContext).load(image).override(300, 300).apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
+                }else {
+                    Glide.with(baseContext).load(photo_uri).override(300, 300).apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
+                }
             }
         })
 
