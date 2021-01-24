@@ -62,4 +62,7 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'jp.wasabeef:picasso-transformations:2.1.0'
 
+    //write pdf library
+    implementation 'com.itextpdf:itextg:5.5.10'
+
 }
