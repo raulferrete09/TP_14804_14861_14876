@@ -151,7 +151,10 @@ class RecordFragment : Fragment(), View.OnClickListener {
             R.id.record_btn_list -> {
                 if (checkPermissions()) {
                     val folder =
-                        File(Environment.getExternalStorageDirectory().toString() + File.separator + "HVAC"+ File.separator + "Audios")
+                        File(
+                            Environment.getExternalStorageDirectory()
+                                .toString() + File.separator + "HVAC" + File.separator + "Audios"
+                        )
                     if (!folder.exists()) {
                         folder.mkdirs()
                         audioListFragment = AudioListFragment()
@@ -170,23 +173,35 @@ class RecordFragment : Fragment(), View.OnClickListener {
                 if (!isRecording) {
                     //Start record
                     stopRecording()
-                    record_btn_start.background = resources.getDrawable(R.drawable.record_btn_recording, null)
+                    record_btn_start.background = resources.getDrawable(
+                        R.drawable.record_btn_recording,
+                        null
+                    )
                     record_btn_start.isEnabled = false
                     isRecording = false
                 } else {
                     if (checkPermissions()) {
                         val folder =
-                            File(Environment.getExternalStorageDirectory().toString() + File.separator + "HVAC"+ File.separator + "Audios")
+                            File(
+                                Environment.getExternalStorageDirectory()
+                                    .toString() + File.separator + "HVAC" + File.separator + "Audios"
+                            )
                         if (!folder.exists()) {
                             folder.mkdirs()
                             //Start record
                             startRecording()
-                            record_btn_start.background = resources.getDrawable(R.drawable.record_btn_recording, null)
+                            record_btn_start.background = resources.getDrawable(
+                                R.drawable.record_btn_recording,
+                                null
+                            )
                             isRecording = true
                         } else {
                             //Start record
                             startRecording()
-                            record_btn_start.background = resources.getDrawable(R.drawable.record_btn_recording, null)
+                            record_btn_start.background = resources.getDrawable(
+                                R.drawable.record_btn_recording,
+                                null
+                            )
                             isRecording = true
                         }
                     }
@@ -243,13 +258,18 @@ class RecordFragment : Fragment(), View.OnClickListener {
                 timer_chromo_counter.stop()
                 filenametext.text = "Recording Stopped, File Saved : " + pathname;
                 timer_chromo_counter.text = "Finished"
-                record_btn_start.background = resources.getDrawable(R.drawable.record_btn_stopped, null)
                 record_btn_start.isEnabled = true
                 record_btn_list.isEnabled = true
                 progress_bar.visibility = View.INVISIBLE
 
                 counter = 0
                 progresscounter = 0
+                encodeAudio(path)
+
+                // Change button image and set Recording state to false
+                record_btn_start.setBackgroundResource(R.drawable.record_btn_stopped)
+
+                //record_btn_start.background = resources.getDrawable(R.drawable.record_btn_stopped, null)
                 var base64 = encodeAudio(path)
                 sendData(base64, audioname,path)
 
