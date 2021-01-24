@@ -223,7 +223,6 @@ class RecordFragment : Fragment(), View.OnClickListener {
                 timer_chromo_counter.stop()
                 filenametext.text = "Recording Stopped, File Saved : " + pathname;
                 timer_chromo_counter.text = "Finished"
-                record_btn_start.background = resources.getDrawable(R.drawable.record_btn_stopped, null)
                 record_btn_start.isEnabled = true
                 record_btn_list.isEnabled = true
                 progress_bar.visibility = View.INVISIBLE
@@ -232,6 +231,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
                 progresscounter = 0
                 encodeAudio(path)
 
+                //record_btn_start.background = resources.getDrawable(R.drawable.record_btn_stopped, null)
 
                 /*var map = mutableMapOf<String,Any>()
                 map["mp3 file"] = base64
@@ -245,7 +245,6 @@ class RecordFragment : Fragment(), View.OnClickListener {
         //Stop Timer, very obvious
         //Change text on page to file saved
         //filenametext.text = "Recording Stopped, File Saved : " + path
-
         //Stop media recorder and set it to null for further use to record new audio
         mr.stop()
         mr.release()

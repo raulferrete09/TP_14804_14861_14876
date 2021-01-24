@@ -4,17 +4,15 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.PermissionChecker.checkSelfPermission
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.example.tp_14804_14861_14876.R
@@ -58,8 +56,7 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
     lateinit var adpater_intervation: ArrayAdapter<CharSequence>
 
     var auth : FirebaseAuth? = null
-
-
+    private val PERMISSION_CODE = 1000
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -117,12 +114,20 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         report_ed_anomaly = view.findViewById<EditText>(R.id.report_ed_anomaly)
         submission_btn_firebase = view.findViewById<Button>(R.id.submission_btn_firebase)
 
-        adpater_number = ArrayAdapter.createFromResource(requireContext(), R.array.numbers, android.R.layout.simple_spinner_item)
+        adpater_number = ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.numbers,
+            android.R.layout.simple_spinner_item
+        )
         adpater_number.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         submission_spinner_machine.adapter = adpater_number
         submission_spinner_machine.onItemSelectedListener = this
 
-        adpater_intervation = ArrayAdapter.createFromResource(requireContext(), R.array.type_of_intervation, android.R.layout.simple_spinner_item)
+        adpater_intervation = ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.type_of_intervation,
+            android.R.layout.simple_spinner_item
+        )
         adpater_intervation.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         submission_spinner_intervation.adapter = adpater_intervation
         submission_spinner_intervation.onItemSelectedListener = this
@@ -156,12 +161,36 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
                 checkInformation()
             }
             R.id.submission_iv_addphoto -> {
-                var openGalleryIntent= Intent(Intent.ACTION_PICK)
-                openGalleryIntent.setDataAndType(Uri.parse(Environment.getExternalStorageDirectory(). absolutePath+ "/DCIM/HVAC/"),"*/*")
-                openGalleryIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
-                openGalleryIntent.action = Intent.ACTION_GET_CONTENT
-                startActivityForResult(openGalleryIntent,1000)
+                if (checkPermissions()) {
+                    selectFile()
+                }
             }
+            R.id.submission_iv_addaudio -> {
+                if (checkPermissions()) {
+                selectFile()
+                }
+            }
+        }
+    }
+
+    private fun selectFile() {
+
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                requireContext() as Activity,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                PERMISSION_CODE
+            )
+        } else {
+            var intent = Intent(Intent.ACTION_PICK)
+            intent.setType("*/*")
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            intent.action = Intent.ACTION_GET_CONTENT
+            startActivityForResult(intent, 1000)
         }
     }
 
@@ -189,5 +218,27 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
             //uploadImage()
         }
     }
+    private fun checkPermissions(): Boolean {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            //Permission Granted
+            return true
+        } else {
+            //Permission not granted, ask for permission
+            ActivityCompat.requestPermissions(
+                requireContext() as Activity,
+                arrayOf(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ),
+                111
+            )
+            return false
+        }
+    }
+
+
 }
 
