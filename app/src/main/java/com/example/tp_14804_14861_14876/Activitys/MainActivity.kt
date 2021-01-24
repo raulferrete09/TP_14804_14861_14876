@@ -104,6 +104,9 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         )
         var RESULT_GALLERY = 0
 
+        user_iv_photo.setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java))
+        }
 
         //Firebase info
         auth = FirebaseAuth.getInstance()

@@ -5,27 +5,23 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.core.app.ActivityCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.example.tp_14804_14861_14876.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.itextpdf.text.*
-import com.itextpdf.text.FontFactory.TIMES_ROMAN
-import com.itextpdf.text.FontFactory.getFont
-import com.itextpdf.text.pdf.PdfName.TIMES_ROMAN
 import com.itextpdf.text.pdf.PdfWriter
-import com.itextpdf.text.pdf.parser.Line
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation
@@ -70,7 +66,6 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
     private val PERMISSION_CODE = 1000
     lateinit var name: String
     lateinit var email: String
-
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -174,12 +169,17 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         when (v.id) {
             R.id.submission_btn_firebase -> {
                 if (checkPermissions()) {
-                    val folder = File(Environment.getExternalStorageDirectory().toString() + File.separator + "HVAC" + File.separator + "Reports")
+                    val folder = File(
+                        Environment.getExternalStorageDirectory()
+                            .toString() + File.separator + "HVAC" + File.separator + "Reports"
+                    )
                     if (!folder.exists()) {
                         folder.mkdirs()
                         checkInformation()
+                        shareData()
                     } else {
                         checkInformation()
+                        shareData()
                     }
                 }
             }
@@ -198,7 +198,8 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
 
     private fun selectFile() {
             var intent = Intent(Intent.ACTION_PICK)
-            intent.setType("*/*")
+            //intent.setDataAndType( Uri.parse(Environment.getExternalStorageDirectory().path +  File.separator + "DCMI/HVAC" + File.separator),"*/*")
+            intent.type = "*/*"
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
             intent.action = Intent.ACTION_GET_CONTENT
             startActivityForResult(intent, 1000)
@@ -214,14 +215,20 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         }
     }
 
-    private fun savePDF(email:String, name:String) {
+    private fun savePDF(email: String, name: String) {
         //create object of Document class
         val doc = com.itextpdf.text.Document()
+        //get text
+        val text_spinner_machine: String = submission_spinner_machine.selectedItem.toString()
+        val text_spinner_intervation = submission_spinner_intervation.selectedItem.toString()
+        val text_reportanomaly = report_ed_anomaly.text.toString()
 
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val data = timeStamp.substring(0, 4) + "/" + timeStamp.substring(4, 6) + "/" + timeStamp.substring(6, 8) + " at " + timeStamp.substring(9,11) + "h" + timeStamp.substring(11,13)
-        //val data = timeStamp.substring(0, 4) + "/" + timeStamp.substring(5, 6) + "/" + timeStamp.substring(7, 8) + " at " + timeStamp.substring(9,10) + ":" + timeStamp.substring(11,12)
-        val pathname = "Report" + "_" + timeStamp
+        val data = timeStamp.substring(0, 4) + "/" + timeStamp.substring(4, 6) + "/" + timeStamp.substring(
+            6,
+            8
+        ) + " at " + timeStamp.substring(9, 11) + "h" + timeStamp.substring(11, 13)
+        val pathname = "Report" + "_" + text_spinner_intervation + "_" + timeStamp
         val path = Environment.getExternalStorageDirectory().toString() + "/" + "HVAC/Reports/" + pathname + ".pdf"
 
         try {
@@ -230,22 +237,17 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
             //open the document for writing
             doc.open()
 
-            //get text
-            val text_spinner_machine: String = submission_spinner_machine.selectedItem.toString()
-            val text_spinner_intervation = submission_spinner_intervation.selectedItem.toString()
-            val text_reportanomaly = report_ed_anomaly.text.toString()
-
             //
-            val font_title: Font = Font(FontFactory.getFont(FontFactory.TIMES_BOLD,20.0f))
-            val font_text: Font = Font(FontFactory.getFont(FontFactory.TIMES_BOLD,14.0f))
+            val font_title: Font = Font(FontFactory.getFont(FontFactory.TIMES_BOLD, 20.0f))
+            val font_text: Font = Font(FontFactory.getFont(FontFactory.TIMES_BOLD, 14.0f))
             val title = Chunk("Intervention report of $data", font_title)
-            val text_machine = Chunk("Machine",font_text )
-            val text_intervation = Chunk("Type of Intervation",font_text)
-            val text_report = Chunk("Report",font_text)
-            val text_photos = Chunk("Photos",font_text)
-            val text_audio = Chunk("Audios",font_text)
-            val text_name = Chunk("Name",font_text)
-            val text_email = Chunk("Email",font_text)
+            val text_machine = Chunk("Machine", font_text)
+            val text_intervation = Chunk("Type of Intervation", font_text)
+            val text_report = Chunk("Report", font_text)
+            val text_photos = Chunk("Photos", font_text)
+            val text_audio = Chunk("Audios", font_text)
+            val text_name = Chunk("Name", font_text)
+            val text_email = Chunk("Email", font_text)
 
             //create the pdf structure
             doc.addAuthor("HVAC")
@@ -281,10 +283,23 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
             doc.close()
 
             Toast.makeText(activity, "$pathname.pdf \nsaved to success", Toast.LENGTH_SHORT).show()
-
         } catch (e: Exception) {
             Toast.makeText(activity, e.message, Toast.LENGTH_SHORT).show()
         }
+    }
+    private fun shareData() {
+        val imageFile = File(Environment.getExternalStorageDirectory().toString() + "/" + "HVAC/Reports/Report_Maintenance_20210124_173049.pdf")
+        val imageUri = FileProvider.getUriForFile(requireContext(),
+            "com.example.tp_14804_14861_14876.provider",
+            imageFile
+        )
+        val intent = Intent()
+        intent.action = Intent.ACTION_SEND
+        intent.type = "*/*"
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.putExtra(Intent.EXTRA_STREAM, imageUri)
+
+        startActivity(Intent.createChooser(intent, "Please select app: "))
     }
 
 
