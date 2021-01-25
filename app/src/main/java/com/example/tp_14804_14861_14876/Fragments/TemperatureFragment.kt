@@ -130,7 +130,7 @@ class TemperatureFragment : Fragment(), AdapterView.OnItemSelectedListener {
                                 temperature_tv_anomaly.text = "OK"
                                 temperature_tv_anomaly.setTextColor(Color.argb(255,44,174,49))
                                 temperature_progress_bar.indeterminateDrawable.setColorFilter(Color.argb(255,44,174,49), PorterDuff.Mode.SRC_IN)
-                                temperature_tv_temperature.text = "x = " + temperature.toString()
+                                temperature_tv_temperature.text = temperature.toString() + "ºC"
 
 
 
@@ -138,7 +138,7 @@ class TemperatureFragment : Fragment(), AdapterView.OnItemSelectedListener {
                                 temperature_tv_anomaly.text = "Anomaly"
                                 temperature_tv_anomaly.setTextColor(Color.argb(255,234,16,67))
                                 temperature_progress_bar.indeterminateDrawable.setColorFilter(Color.argb(255,234,16,67), PorterDuff.Mode.SRC_IN)
-                                temperature_tv_temperature.text = "x = " + temperature.toString()
+                                temperature_tv_temperature.text = temperature.toString() + "ºC"
 
                             }
                         }
