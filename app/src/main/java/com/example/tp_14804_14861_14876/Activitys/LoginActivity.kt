@@ -84,9 +84,7 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
         referance = database.getReference("Users")
 
         auth = FirebaseAuth.getInstance()
-        if(auth?.currentUser!= null) {
-            startActivity(Intent(this, MainActivity::class.java))
-        }
+
 
         //Internet Connection
         baseContext.registerReceiver(ConnectionReceiver(),IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
