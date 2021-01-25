@@ -5,23 +5,32 @@
         <menu>
             <item android:title="Photos"
                 android:id="@+id/photo_icon"
-                android:icon="@drawable/photo_icon" />
+                android:icon="@drawable/photo_icon"
+                android:iconTint="@color/gray"/>
             <item android:title="Audios"
                 android:id="@+id/audio_list_icon"
-                android:icon="@drawable/audio_icon" />
+                android:icon="@drawable/audio_icon"
+                android:iconTint="@color/gray"/>
         </menu>
     </item>
     <item android:title="DIAGNOSIS">
         <menu>
             <item android:title="@string/mic_sound_icon"
                 android:id="@+id/mic_sound_icon"
-                android:icon="@drawable/mic_icon" />
+                android:icon="@drawable/mic_icon"
+                android:iconTint="@color/gray"/>
             <item android:title="Temperature"
                 android:id="@+id/temperature_icon"
-                android:icon="@drawable/temperature_icon" />
+                android:icon="@drawable/temperature_icon"
+                android:iconTint="@color/gray"/>
             <item android:title="Accelerometer"
                 android:id="@+id/accelerometer_icon"
-                android:icon="@drawable/vibration_icon" />
+                android:icon="@drawable/vibration_icon"
+                android:iconTint="@color/gray"/>
+            <item android:title="Take Photo"
+                android:id="@+id/take_photo_icon"
+                android:icon="@drawable/take_photo_icon"
+                android:iconTint="@color/gray"/>
         </menu>
     </item>
 
@@ -29,10 +38,12 @@
         <menu>
             <item android:title="Settings"
                 android:id="@+id/settings_icon"
-                android:icon="@drawable/settings_icon" />
+                android:icon="@drawable/settings_icon"
+                android:iconTint="@color/gray"/>
             <item android:title="Log Out"
                 android:id="@+id/logout_icon"
-                android:icon="@drawable/logout_icon" />
+                android:icon="@drawable/logout_icon"
+                android:iconTint="@color/gray"/>
         </menu>
     </item>
 

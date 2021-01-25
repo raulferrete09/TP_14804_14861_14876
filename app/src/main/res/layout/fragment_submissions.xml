@@ -36,22 +36,71 @@
         tools:layout_editor_absoluteX="-59dp"
         tools:layout_editor_absoluteY="0dp">
 
+        <Spinner
+            android:id="@+id/submission_spinner_machine"
+            android:layout_width="120dp"
+            android:layout_height="22dp"
+            android:layout_marginTop="200dp"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/submission_tv_machine"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/submission_tv_machine"
+            android:layout_width="73dp"
+            android:layout_height="22dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="200dp"
+            android:text="Machine:"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Spinner
+            android:id="@+id/submission_spinner_intervation"
+            android:layout_width="172dp"
+            android:layout_height="22dp"
+            android:layout_marginTop="224dp"
+            android:layout_marginEnd="16dp"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/submission_tv_intervation"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/submission_tv_intervation"
+            android:layout_width="153dp"
+            android:layout_height="23dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="224dp"
+            android:text="Type of intervation:"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <EditText
             android:id="@+id/report_ed_anomaly"
-            android:layout_width="368dp"
-            android:layout_height="343dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
+            android:layout_width="377dp"
+            android:layout_height="307dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:background="@drawable/dashboard_infomation"
             android:backgroundTint="@color/transparent"
             android:gravity="start|top"
             android:hint="Report"
             android:inputType="textMultiLine"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/submission_btn_firebase"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.533"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/submission_tv_intervation"
+            app:layout_constraintVertical_bias="0.368" />
 
         <Button
             android:id="@+id/submission_btn_firebase"
@@ -70,25 +119,56 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintVertical_bias="0.82" />
 
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="60dp"
-            android:text="Button"
+
+        <TextView
+            android:id="@+id/submission_tv_addphoto"
+            android:layout_width="88dp"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:text="Add Photo"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/submission_iv_addphoto"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.746"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/submission_iv_addphoto"
+            app:layout_constraintVertical_bias="0.75" />
+
+        <ImageView
+            android:id="@+id/submission_iv_addphoto"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="52dp"
+            android:background="@drawable/add_photo_icon"
+            app:layout_constraintBottom_toTopOf="@+id/submission_btn_firebase"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/report_ed_anomaly" />
+
+
+        <TextView
+            android:id="@+id/submission_tv_addaudio"
+            android:layout_width="85dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="82dp"
+            android:gravity="center"
+            android:text="Add Audio"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/submission_iv_addaudio"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/submission_iv_addaudio"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <ImageView
+            android:id="@+id/submission_iv_addaudio"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="52dp"
+            android:background="@drawable/mic_icon"
             app:layout_constraintBottom_toTopOf="@+id/submission_btn_firebase"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/report_ed_anomaly" />
 
-        <Button
-            android:id="@+id/button4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="60dp"
-            android:text="Button"
-            app:layout_constraintBottom_toTopOf="@+id/submission_btn_firebase"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/report_ed_anomaly" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

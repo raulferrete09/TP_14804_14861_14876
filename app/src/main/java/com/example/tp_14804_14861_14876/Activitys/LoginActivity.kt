@@ -1,9 +1,12 @@
 package com.example.tp_14804_14861_14876.Activitys
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -32,6 +35,10 @@ import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import java.io.InputStream
+import java.net.URL
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.*
@@ -54,6 +61,10 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
     lateinit var login_et_password:EditText
     lateinit var login_tv_forgpass:TextView
     lateinit var password_iv_show: ImageView
+    lateinit var progressDialog: ProgressDialog
+    private lateinit var database: FirebaseDatabase
+    private lateinit var referance: DatabaseReference
+
 
 
 
@@ -69,10 +80,15 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
         login_et_password = findViewById<EditText>(R.id.login_et_password)
         login_tv_forgpass = findViewById<TextView>(R.id.login_tv_forgpass)
         password_iv_show = findViewById<ImageView>(R.id.password_iv_show)
+        database = FirebaseDatabase.getInstance()
+        referance = database.getReference("Users")
 
         auth = FirebaseAuth.getInstance()
+        if(auth?.currentUser!= null) {
+            startActivity(Intent(this, MainActivity::class.java))
+        }
 
-
+        //Internet Connection
         baseContext.registerReceiver(ConnectionReceiver(),IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         ReceiverConnection.instance.setConnectionListener(this)
 
@@ -142,8 +158,8 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
     fun googleLogin() {
         var signInIntent = googleSignInClient?.signInIntent
         startActivityForResult(signInIntent,GOOGLE_LOGIN_CODE)
-
     }
+
     fun facebookLogin(){
         LoginManager.getInstance()
                 .logInWithReadPermissions(this, Arrays.asList("public_profile","email"))
@@ -190,7 +206,6 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
             //result é através do SHA (canto superior direito GRADLE -> Tasks -> Android -> run signingReport)
             if (result != null) {
                 if(result.isSuccess) {
-                    
                     var account = result.signInAccount
                     firebaseAuthWithGoogle(account)
                 }
@@ -250,7 +265,9 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
     }
     fun moveMainPage(user:FirebaseUser?){
         if(user != null){
+            progressDialog()
             startActivity(Intent(this, MainActivity::class.java))
+            sendData()
             finish()
         }
     }
@@ -273,4 +290,33 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
         dialog.show()
     }
 
+    private fun progressDialog() {
+        //Initialize Progress Dialog
+        progressDialog = ProgressDialog(this)
+        //Show Dialog
+        progressDialog.show()
+        //Set Content View
+        progressDialog.setContentView(R.layout.progress_dialog)
+        //Set Transparent background
+        progressDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
+
+    override fun onBackPressed() {
+        progressDialog.dismiss()
+    }
+
+    private fun sendData(){
+        val person = auth?.currentUser
+        val uid = person?.uid
+        var name = person?.displayName
+        var email = person?.email
+        var map = mutableMapOf<String,String?>()
+
+        map["name"]=name
+        map["email"]=email
+        database.reference
+            .child("users")
+            .child("$uid")
+            .setValue(map)
+    }
 }

@@ -4,8 +4,11 @@ import android.app.AlertDialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Build
+import android.content.IntentFilter
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -26,6 +29,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import java.util.regex.Pattern
 
     const val TOPIC = "/topics/myTopic"
@@ -39,6 +45,9 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
     var misshowconfirmpass = false
     var validationpassword: String? = "false"
     var x:Int = 0
+    var auth : FirebaseAuth? = null
+    private lateinit var database: FirebaseDatabase
+    private lateinit var referance: DatabaseReference
     lateinit var signup_et_name: EditText
     lateinit var signup_et_surname: EditText
     lateinit var signup_et_email: EditText
@@ -48,11 +57,15 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
     lateinit var password_iv_show: ImageView
     lateinit var password_iv_confirmshow: ImageView
     lateinit var signup_et_confirmpassword: EditText
+    lateinit var progressDialog: ProgressDialog
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
 
+        //Internet Connection
+        baseContext.registerReceiver(ConnectionReceiver(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         ReceiverConnection.instance.setConnectionListener(this)
 
         signup_et_name = findViewById<EditText>(R.id.signup_et_name)
@@ -63,6 +76,9 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
         signup_btn_signup = findViewById<Button>(R.id.signup_btn_signup)
         password_iv_show = findViewById<ImageView>(R.id.password_iv_show)
         password_iv_confirmshow = findViewById<ImageView>(R.id.password_iv_confirmshow)
+        database = FirebaseDatabase.getInstance()
+        referance = database.getReference("Users")
+        auth = FirebaseAuth.getInstance()
         signup_et_confirmpassword = findViewById<EditText>(R.id.signup_et_confirmpassword)
 
 
@@ -113,8 +129,27 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
     }
 
     private fun ToLoginPage() {
+        sendData()
         startActivity(Intent(this, LoginActivity::class.java))
     }
+
+    private fun sendData() {
+        val user = auth?.currentUser
+        val uid = user?.uid
+        var map = mutableMapOf<String,String?>()
+        var name = signup_et_name.text.toString() + " " + signup_et_surname.text.toString()
+        map["name"]=name
+        map["email"]=signup_et_email.text.toString().trim()
+        database.reference
+            .child("users")
+            .child("$uid")
+            .setValue(map)
+        val profileUpdates = UserProfileChangeRequest.Builder()
+            .setDisplayName("$name")
+            .build()
+        user!!.updateProfile(profileUpdates)
+    }
+
 
     override fun onClick(v: View?) {
         when (v!!.id) {
@@ -127,6 +162,7 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
                     FirebaseAuth.getInstance().createUserWithEmailAndPassword(signup_et_email.text.toString(), signup_et_password.text.toString()).addOnCompleteListener {
                         if (it.isSuccessful) {
                             ToLoginPage()
+                            progressDialog()
 
                             val title = "Sign Up"
                             val message = "Sign up created successfully"
@@ -169,8 +205,6 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
                 }
             }
         }
-
-
     }
 
     fun showAlert(x:Int){
@@ -232,5 +266,20 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
             validate = "true"
         }
         return validate
+    }
+
+    private fun progressDialog() {
+        //Initialize Progress Dialog
+        progressDialog = ProgressDialog(this)
+        //Show Dialog
+        progressDialog.show()
+        //Set Content View
+        progressDialog.setContentView(R.layout.progress_dialog)
+        //Set Transparent background
+        progressDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
+
+    override fun onBackPressed() {
+        progressDialog.dismiss()
     }
 }
