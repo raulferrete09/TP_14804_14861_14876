@@ -8,8 +8,7 @@ import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
+import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -37,7 +36,8 @@ private const val ARG_PARAM2 = "param2"
  * Use the [MainFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemList_Click {
+class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemList_Click,
+    AdapterView.OnItemSelectedListener {
 
     var navController: NavController? = null
 
@@ -54,14 +54,11 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
     lateinit var dashboadinformation: Layout
     lateinit var dashboard_tv_oknok: TextView
     lateinit var dashboard_tv_anomaly: TextView
-    lateinit var dashboard_tv_machine: TextView
+    lateinit var dashboard_spinner_machine: Spinner
     lateinit var dashboard_layout: ConstraintLayout
     lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
+    lateinit var adpater_number: ArrayAdapter<CharSequence>
 
-    lateinit var OK_m1: Button
-    lateinit var NOK_m1: Button
-    lateinit var OK_m2: Button
-    lateinit var NOK_m2: Button
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -111,11 +108,21 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
         (requireActivity() as MainActivity).supportActionBar!!.hide()
 
         add_btn_submission = view.findViewById<FloatingActionButton>(R.id.add_btn_submission)
-        dashboard_tv_machine = view.findViewById<TextView>(R.id.dasboard_tv_machine)
+        dashboard_spinner_machine = view.findViewById<Spinner>(R.id.dasboard_spinner_machine)
         dashboard_tv_oknok = view.findViewById<TextView>(R.id.dasboard_tv_oknok)
         dashboard_tv_anomaly = view.findViewById<TextView>(R.id.dasboard_tv_anomaly)
         dashboard_layout = view.findViewById<ConstraintLayout>(R.id.dasboard_layout)
 
+
+        adpater_number = ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.numbers,
+            android.R.layout.simple_spinner_item
+        )
+
+        adpater_number.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        dashboard_spinner_machine.adapter = adpater_number
+        dashboard_spinner_machine.onItemSelectedListener = this
 
         reportlist = view.findViewById<RecyclerView>(R.id.report_list_view)
 
@@ -132,16 +139,6 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
 
         add_btn_submission.setOnClickListener(this)
 
-        OK_m1 = view.findViewById<Button>(R.id.OK_m1)
-        NOK_m1 = view.findViewById<Button>(R.id.NOK_m1)
-        OK_m2 = view.findViewById<Button>(R.id.OK_m2)
-        NOK_m2 = view.findViewById<Button>(R.id.NOK_m2)
-
-        OK_m1.setOnClickListener(this)
-        NOK_m1.setOnClickListener(this)
-        OK_m2.setOnClickListener(this)
-        NOK_m2.setOnClickListener(this)
-
     }
 
     override fun onClick(v: View) {
@@ -152,34 +149,6 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
                 transaction.replace(R.id.drawable_frameLayout, submissionsFragment, null)
                 transaction.addToBackStack(null)
                 transaction.commit()
-            }
-            R.id.OK_m1 -> {
-                val anomaly = ""
-                dashboard_tv_anomaly.text = anomaly
-                dashboard_tv_oknok.text = "OK"
-                dashboard_tv_machine.text = "Machine 1"
-                dashboard_layout.setBackgroundColor(resources.getColor(R.color.green))
-            }
-            R.id.NOK_m1 -> {
-                val anomaly = "Temperatura demasioado alta"
-                dashboard_tv_anomaly.text = anomaly
-                dashboard_tv_oknok.text = "NOK"
-                dashboard_tv_machine.text = "Machine 1"
-                dashboard_layout.setBackgroundColor(resources.getColor(R.color.red))
-            }
-            R.id.OK_m2 -> {
-                val anomaly = ""
-                dashboard_tv_anomaly.text = anomaly
-                dashboard_tv_oknok.text = "OK"
-                dashboard_tv_machine.text = "Machine 2"
-                dashboard_layout.setBackgroundColor(resources.getColor(R.color.green))
-            }
-            R.id.NOK_m2 -> {
-                val anomaly = "Som demasioado alto"
-                dashboard_tv_anomaly.text = anomaly
-                dashboard_tv_oknok.text = "NOK"
-                dashboard_tv_machine.text = "Machine 2"
-                dashboard_layout.setBackgroundColor(resources.getColor(R.color.red))
             }
         }
     }
@@ -195,4 +164,14 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         startActivity(intent)
     }
+
+    override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+        val text = parent.getItemAtPosition(position).toString()
+  }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        TODO("Not yet implemented")
+    }
+
+
 }

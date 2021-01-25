@@ -359,8 +359,8 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         dialog.show()
     }
 
-    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        val text = parent?.getItemAtPosition(position).toString()
+    override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+        val text = parent.getItemAtPosition(position).toString()
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {

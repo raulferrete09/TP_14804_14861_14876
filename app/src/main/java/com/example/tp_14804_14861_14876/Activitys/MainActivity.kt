@@ -156,7 +156,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
             Glide.with(this).load(image).override(300,300).apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
         }
 
-        r.addValueEventListener(object : ValueEventListener{
+        /*r.addValueEventListener(object : ValueEventListener{
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
             }
@@ -172,7 +172,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                     Glide.with(baseContext).load(photo_uri).override(300, 300).apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
                 }
             }
-        })
+        })*/
 
         actionBarDrawerToggle = ActionBarDrawerToggle(
             this,
