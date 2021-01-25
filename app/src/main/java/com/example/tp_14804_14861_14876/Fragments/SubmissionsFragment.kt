@@ -103,7 +103,9 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
     var sound_url_check = 0
     lateinit var pathname: String
     lateinit var timeStamp:String
-
+    lateinit var text_spinner_machine: String
+    lateinit var text_spinner_intervation: String
+    lateinit var text_reportanomaly: String
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -204,8 +206,14 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         profile_tv_name.text = name
         profile_tv_id.text = uid
 
+        //get text
+        text_spinner_machine = submission_spinner_machine.selectedItem.toString()
+        text_spinner_intervation = submission_spinner_intervation.selectedItem.toString()
+        text_reportanomaly = report_ed_anomaly.text.toString()
+
         timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        pathname = "Report" + "_" + timeStamp
+        pathname = "Report" + "_" + text_spinner_intervation + "_" + timeStamp
+
 // rounded corner image
         try {
             fileref?.downloadUrl?.addOnSuccessListener { task ->
@@ -289,10 +297,7 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
             //open the document for writing
             doc.open()
 
-            //get text
-            val text_spinner_machine: String = submission_spinner_machine.selectedItem.toString()
-            val text_spinner_intervation = submission_spinner_intervation.selectedItem.toString()
-            val text_reportanomaly = report_ed_anomaly.text.toString()
+
 
             //
             val font_title: Font = Font(FontFactory.getFont(FontFactory.TIMES_BOLD, 20.0f))
@@ -617,6 +622,7 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         builder.setPositiveButton("Confirm") { dialogInterface: DialogInterface, i: Int ->
             try {
                 savePDF(email, name)
+                shareData()
                 mainFragment = MainFragment()
                 transaction = fragmentManager?.beginTransaction()!!
                 transaction.replace(R.id.drawable_frameLayout, mainFragment)

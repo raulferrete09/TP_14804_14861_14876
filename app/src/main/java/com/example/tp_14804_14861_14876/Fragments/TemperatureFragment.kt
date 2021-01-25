@@ -11,6 +11,10 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.view.ViewCompat.setBackgroundTintList
 import com.example.tp_14804_14861_14876.R
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -30,6 +34,9 @@ class TemperatureFragment : Fragment(), AdapterView.OnItemSelectedListener {
     lateinit var temperature_tv_temperature: TextView
     lateinit var temperature_spinner_machine: Spinner
     lateinit var adpater_number: ArrayAdapter<CharSequence>
+    var status: Any? = null
+    var temperature: Any? = null
+    private lateinit var database: FirebaseDatabase
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -90,28 +97,55 @@ class TemperatureFragment : Fragment(), AdapterView.OnItemSelectedListener {
         temperature_spinner_machine.adapter = adpater_number
         temperature_spinner_machine.onItemSelectedListener = this
 
-        // get text firebase
-        val temperature = 35.15
-        temperature_tv_anomaly.text = "2"
-        if (temperature_tv_anomaly.text == "1") {
-            temperature_tv_anomaly.text = "OK"
-            temperature_tv_anomaly.setTextColor(Color.argb(255,44,174,49))
-            temperature_progress_bar.indeterminateDrawable.setColorFilter(Color.argb(255,44,174,49), PorterDuff.Mode.SRC_IN)
-            temperature_tv_temperature.text = temperature.toString() + "ºC"
-        } else {
-            temperature_tv_anomaly.text = "Anomaly"
-            temperature_tv_anomaly.setTextColor(Color.argb(255,234,16,67))
-            temperature_progress_bar.indeterminateDrawable.setColorFilter(Color.argb(255,234,16,67), PorterDuff.Mode.SRC_IN)
-            temperature_tv_temperature.text = temperature.toString() + "ºC"
-        }
-
     }
 
     override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
         val text = parent.getItemAtPosition(position).toString()
+        updateData()
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
         TODO("Not yet implemented")
     }
+
+    private fun updateData(){
+        val MachineNumber = temperature_spinner_machine.selectedItem.toString()
+        println(MachineNumber)
+        database = FirebaseDatabase.getInstance()
+        database.reference.child("Temperature")
+                .child("M"+"$MachineNumber")
+                .addValueEventListener(object: ValueEventListener {
+                    override fun onCancelled(error: DatabaseError) {
+                        TODO("Not yet implemented")
+                    }
+
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if(snapshot.value != null) {
+                            var map = snapshot.value as Map<String, Any?>
+                            status = map["status"]
+                            temperature = map["Temperature"]
+
+                            // get text firebase
+                            if (status == "OK") {
+                                temperature_tv_anomaly.text = "OK"
+                                temperature_tv_anomaly.setTextColor(Color.argb(255,44,174,49))
+                                temperature_progress_bar.indeterminateDrawable.setColorFilter(Color.argb(255,44,174,49), PorterDuff.Mode.SRC_IN)
+                                temperature_tv_temperature.text = "x = " + temperature.toString()
+
+
+
+                            } else {
+                                temperature_tv_anomaly.text = "Anomaly"
+                                temperature_tv_anomaly.setTextColor(Color.argb(255,234,16,67))
+                                temperature_progress_bar.indeterminateDrawable.setColorFilter(Color.argb(255,234,16,67), PorterDuff.Mode.SRC_IN)
+                                temperature_tv_temperature.text = "x = " + temperature.toString()
+
+                            }
+                        }
+                    }
+
+                })
+    }
+
+
 }

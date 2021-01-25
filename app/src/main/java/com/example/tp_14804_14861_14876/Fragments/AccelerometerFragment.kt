@@ -9,6 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.example.tp_14804_14861_14876.R
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -30,6 +34,12 @@ class AccerelometerFragment : Fragment(), AdapterView.OnItemSelectedListener {
     lateinit var accelerometer_tv_z: TextView
     lateinit var accelerometer_spinner_machine: Spinner
     lateinit var adpater_number: ArrayAdapter<CharSequence>
+    var accelerometer_x: Any? = null
+    var accelerometer_y: Any? = null
+    var accelerometer_z: Any? = null
+    var accelerometer_status: Any? = null
+    private lateinit var database: FirebaseDatabase
+
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -48,7 +58,7 @@ class AccerelometerFragment : Fragment(), AdapterView.OnItemSelectedListener {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_accerelometer, container, false)
+        return inflater.inflate(R.layout.fragment_accelerometer, container, false)
     }
 
     companion object {
@@ -87,42 +97,72 @@ class AccerelometerFragment : Fragment(), AdapterView.OnItemSelectedListener {
             R.array.numbers,
             android.R.layout.simple_spinner_item
         )
-
+        accelerometer_x = "1"
+        accelerometer_y = "1"
+        accelerometer_z = "1"
+        accelerometer_status = "1"
         adpater_number.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         accelerometer_spinner_machine.adapter = adpater_number
         accelerometer_spinner_machine.onItemSelectedListener = this
 
-        // get text firebase
-        val accelerometer_x = 1.91
-        val accelerometer_y = 9.94
-        val accelerometer_z = 5.35
-        accelerometer_tv_anomaly.text = "2"
-        if (accelerometer_tv_anomaly.text == "1") {
-            accelerometer_tv_anomaly.text = "OK"
-            accelerometer_tv_anomaly.setTextColor(Color.argb(255,44,174,49))
-            accelerometer_progress_bar.indeterminateDrawable.setColorFilter(Color.argb(255,44,174,49), PorterDuff.Mode.SRC_IN)
-            accelerometer_tv_x.text = "x = " + accelerometer_x.toString() + " g"
-            accelerometer_tv_y.text = "y = " + accelerometer_y.toString() + " g"
-            accelerometer_tv_z.text = "x = " + accelerometer_z.toString() + " g"
 
 
-        } else {
-            accelerometer_tv_anomaly.text = "Anomaly"
-            accelerometer_tv_anomaly.setTextColor(Color.argb(255,234,16,67))
-            accelerometer_progress_bar.indeterminateDrawable.setColorFilter(Color.argb(255,234,16,67), PorterDuff.Mode.SRC_IN)
-            accelerometer_tv_x.text = "x = " + accelerometer_x.toString() + " g"
-            accelerometer_tv_y.text = "y = " + accelerometer_y.toString() + " g"
-            accelerometer_tv_z.text = "z = " + accelerometer_z.toString() + " g"
-        }
+
+
+
+
 
     }
 
     override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
         val text = parent.getItemAtPosition(position).toString()
+        updateData()
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
         TODO("Not yet implemented")
+    }
+
+    private fun updateData(){
+        val MachineNumber = accelerometer_spinner_machine.selectedItem.toString()
+        println(MachineNumber)
+        database = FirebaseDatabase.getInstance()
+        database.reference.child("Accelerometer")
+                .child("M"+"$MachineNumber")
+                .addValueEventListener(object: ValueEventListener{
+                    override fun onCancelled(error: DatabaseError) {
+                        TODO("Not yet implemented")
+                    }
+
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if(snapshot.value != null) {
+                            var map = snapshot.value as Map<String, Any?>
+                            accelerometer_x = map["x"]
+                            accelerometer_y = map["y"]
+                            accelerometer_z = map["z"]
+                            accelerometer_status = map["status"]
+                            // get text firebase
+                            if (accelerometer_status == "OK") {
+                                accelerometer_tv_anomaly.text = "OK"
+                                accelerometer_tv_anomaly.setTextColor(Color.argb(255,44,174,49))
+                                accelerometer_progress_bar.indeterminateDrawable.setColorFilter(Color.argb(255,44,174,49), PorterDuff.Mode.SRC_IN)
+                                accelerometer_tv_x.text = "x = " + accelerometer_x.toString()
+                                accelerometer_tv_y.text = "y = " + accelerometer_y.toString()
+                                accelerometer_tv_z.text = "x = " + accelerometer_z.toString()
+
+
+                            } else {
+                                accelerometer_tv_anomaly.text = "Anomaly"
+                                accelerometer_tv_anomaly.setTextColor(Color.argb(255,234,16,67))
+                                accelerometer_progress_bar.indeterminateDrawable.setColorFilter(Color.argb(255,234,16,67), PorterDuff.Mode.SRC_IN)
+                                accelerometer_tv_x.text = "x = " + accelerometer_x.toString()
+                                accelerometer_tv_y.text = "y = " + accelerometer_y.toString()
+                                accelerometer_tv_z.text = "z = " + accelerometer_z.toString()
+                            }
+                        }
+                    }
+
+                })
     }
 
 }
