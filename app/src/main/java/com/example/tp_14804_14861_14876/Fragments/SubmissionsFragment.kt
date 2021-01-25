@@ -3,23 +3,30 @@ package com.example.tp_14804_14861_14876.Fragments
 import android.Manifest.permission
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.core.app.ActivityCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.tp_14804_14861_14876.R
+import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.itextpdf.text.*
@@ -31,6 +38,8 @@ import com.itextpdf.text.pdf.parser.Line
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.StorageTask
+import com.google.firebase.storage.UploadTask
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation
@@ -75,14 +84,27 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
     private val PERMISSION_CODE = 1000
     lateinit var name: String
     lateinit var email: String
+    lateinit var uid: String
     var count: Int = 0
     var sound_count: Int = 0
+    var selector = 0
     private var images: ArrayList<Uri?>? = null
-    private var sounds: ArrayList<Uri?>? = null
+    private var audios: ArrayList<Uri?>? = null
     lateinit var fileref: StorageReference
+    lateinit var ImageRef: StorageReference
     private var storageReference: StorageReference? = null
     private var Image_storageReference: StorageReference? = null
-
+    var photo_name: String = ""
+    var sound_name: String = ""
+    lateinit var url:String
+    var url_sound = ""
+    lateinit var doc:Document
+    var lista_images = ArrayList<String>()
+    var lista_sounds = ArrayList<String>()
+    var photo_url_check = 0
+    var sound_url_check = 0
+    lateinit var pathname: String
+    lateinit var timeStamp:String
 
 
     // TODO: Rename and change types of parameters
@@ -92,6 +114,7 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         images = ArrayList()
+        audios = ArrayList()
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -171,7 +194,7 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         val user: FirebaseUser? = auth?.currentUser
         name = user?.displayName.toString()
         email = user?.email.toString()
-        val uid:String? = user?.uid
+        uid = user?.uid.toString()
         var image = user?.photoUrl
         Image_storageReference = FirebaseStorage.getInstance().reference.child("Users Image").child("$uid")
         fileref = Image_storageReference!!.child("picture.jpg")
@@ -183,6 +206,8 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         profile_tv_name.text = name
         profile_tv_id.text = uid
 
+        timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        pathname = "Report" + "_" + timeStamp
 // rounded corner image
         try {
             fileref?.downloadUrl?.addOnSuccessListener { task ->
@@ -199,64 +224,66 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         when (v.id) {
             R.id.submission_btn_firebase -> {
                 if (checkPermissions()) {
+                    globallist_photos()
+                    globallist_sound()
                     val folder = File(Environment.getExternalStorageDirectory().toString() + File.separator + "HVAC" + File.separator + "Reports")
                     if (!folder.exists()) {
                         folder.mkdirs()
-                        checkInformation()
+                        if (checkInformation()) {
+                            //shareData()
+                            showAlertConfirmation()
+                        } else {
+                            showAlertError()
+                        }
                     } else {
-                        checkInformation()
+                        if (checkInformation()) {
+                            //shareData()
+                            showAlertConfirmation()
+                        } else {
+                            showAlertError()
+                        }
                     }
                 }
             }
             R.id.submission_iv_addphoto -> {
                 if (checkPermissions()) {
-                    selectFile()
+                    selector = 0
+                    selectFile(selector)
+
                 }
             }
             R.id.submission_iv_addaudio -> {
                 if (checkPermissions()) {
-                    selectFile()
+                    selector = 1
+                    selectFile(selector)
                 }
             }
         }
     }
 
-    private fun selectFile() {
+    private fun selectFile(selector: Int) {
         var intent= Intent(Intent.ACTION_PICK)
         intent.setType("*/*")
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
         intent.action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(intent, 1100)
+        if(selector == 0) {
+            startActivityForResult(intent, 1000)
+        }else{
+            startActivityForResult(intent, 1100)
+        }
+
     }
 
-    /*private fun selectFile() {
-        var intent= Intent(Intent.ACTION_PICK)
-        intent.setType("/")
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
-        intent.action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(intent, 1000)
-    }*/
-
-    private fun checkInformation() {
-        if(submission_spinner_machine.toString().isNotEmpty() && submission_spinner_intervation.toString().isNotEmpty() && report_ed_anomaly.text.isNotEmpty())  {
-            savePDF(email, name)
-            sendData()
-            mainFragment = MainFragment()
-            transaction = fragmentManager?.beginTransaction()!!
-            transaction.replace(R.id.drawable_frameLayout, mainFragment)
-            transaction.commit()
-        }
+    private fun checkInformation(): Boolean {
+        return submission_spinner_machine.toString().isNotEmpty() && submission_spinner_intervation.toString().isNotEmpty() && report_ed_anomaly.text.isNotEmpty()
     }
 
     private fun savePDF(email:String, name:String) {
         //create object of Document class
-        val doc = com.itextpdf.text.Document()
-
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        doc = com.itextpdf.text.Document()
         val data = timeStamp.substring(0, 4) + "/" + timeStamp.substring(4, 6) + "/" + timeStamp.substring(6, 8) + " at " + timeStamp.substring(9,11) + "h" + timeStamp.substring(11,13)
         //val data = timeStamp.substring(0, 4) + "/" + timeStamp.substring(5, 6) + "/" + timeStamp.substring(7, 8) + " at " + timeStamp.substring(9,10) + ":" + timeStamp.substring(11,12)
-        val pathname = "Report" + "_" + timeStamp
-        val path = Environment.getExternalStorageDirectory().toString() + "/" + "HVAC/Reports/" + pathname + ".pdf"
+        var path = Environment.getExternalStorageDirectory().toString() + "/" + "HVAC/Reports/" + pathname + ".pdf"
 
         try {
             //create instance of PDFWriter class
@@ -305,14 +332,34 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
             doc.add(Paragraph(" "))
             doc.add(Paragraph(Chunk(text_photos)))
             //add uri photos
-            val anchor = Anchor("https://translate.google.com/?sl=pt&tl=en&text=Criar%20a%20estrutura%20do%20PDF&op=translate.html");
-            anchor.reference = "https://translate.google.com/?sl=pt&tl=en&text=Criar%20a%20estrutura%20do%20PDF&op=translate.html"
-            doc.add(anchor)
+            for(i in 0 until count){
+                var url_photo = lista_images[i]
+                var anchor = Anchor(url_photo)
+                anchor.reference=url_photo
+                doc.add(anchor)
+                doc.add(Paragraph(" "))
+            }
             //doc.add(Paragraph("https://translate.google.com/?sl=pt&tl=en&text=Criar%20a%20estrutura%20do%20PDF&op=translate"))
             doc.add(Paragraph(" "))
             //add uri videos
             doc.add(Paragraph(Chunk(text_audio)))
+            for(i in 0 until sound_count){
+                var url_sound = lista_sounds[i]
+                var anchor = Anchor(url_sound)
+                anchor.reference=url_sound
+                doc.add(anchor)
+                doc.add(Paragraph(" "))
+            }
             doc.close()
+            var savePDF = storageReference!!
+                    .child("$pathname")
+                    .child("$pathname")
+            var pathpdf = Uri.fromFile(File(path))
+            println("NOME DO FICHEIRO PDF " + pathpdf)
+            if (pathpdf != null) {
+                savePDF.putFile(pathpdf)
+            }
+
 
             Toast.makeText(activity, "$pathname.pdf \nsaved to success", Toast.LENGTH_SHORT).show()
 
@@ -341,14 +388,16 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
                     println(imageUri)
                     images!!.add(imageUri)
                 }
-
+                sendData_Image()
             }else{
                 //Pick single image
                 count = 1
                 val imageUri = data.data
                 images!!.add(imageUri)
+                sendData_Image()
             }
-        }else if(requestCode == 1100 && resultCode == Activity.RESULT_OK){
+        }
+        if(requestCode == 1100 && resultCode == Activity.RESULT_OK){
             if(data!!.clipData != null){
                 //Pick multiple images
                 //get number of images
@@ -356,53 +405,134 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
                 for(i in 0 until sound_count){
                     val soundUri = data.clipData!!.getItemAt(i).uri
                     println(soundUri)
-                    sounds!!.add(soundUri)
+                    audios!!.add(soundUri)
                 }
+                sendData_Sound()
 
             }else{
                 //Pick single image
                 sound_count = 1
                 val soundUri = data.data
-                sounds!!.add(soundUri)
+                audios!!.add(soundUri)
+                sendData_Sound()
             }
-        }else{
-            //do Nothing
         }
+
     }
 
-    private fun sendData(){
-        //Images
+    private fun globallist_photos(){
         for (i in 0 until count){
             var file = images!![i]
+            photo_name = file.toString()
+
+            var file_string_modified = photo_name
+            val total_count = photo_name.length
+            val total_count_after = file_string_modified.replace("/", "").length
+            val numberofslash = total_count - total_count_after
+            for (i in 0 until numberofslash) {
+                photo_name = photo_name
+                photo_name = photo_name.substringAfter("/")
+            }
+            photo_name=photo_name.replace("%","_")
+            val UstorageReference = FirebaseStorage.getInstance()
+                    .reference
+                    .child("Reports")
+                    .child("$uid")
+                    .child("$pathname")
+                    .child("Photos")
+            ImageRef = UstorageReference!!.child("$photo_name")
+            uploadImage(file, ImageRef,count)
+        }
+    }
+
+    private fun globallist_sound(){
+        for (i in 0 until sound_count){
+            var file = audios!![i]
 
             var file_string = file.toString()
-            var photo_name = file_string.substringAfter("content://com.android.providers.media.documents/document/")
-            println(photo_name)
-            var fileaudio = storageReference!!
-                    .child("Report1")
-                    .child("Photos")
-                    .child("$photo_name")
-            if (file != null) {
-                fileaudio.putFile(file)
+            var file_string_modified = file_string
+            val total_count=file_string.length
+            val total_count_after = file_string_modified.replace("/","").length
+            val numberofslash = total_count - total_count_after
+            sound_name = file_string
+            // Split the string only to obtain the name of the file
+            for (i in 0 until numberofslash){
+                sound_name = sound_name
+                sound_name = sound_name.substringAfter("/")
             }
+            sound_name=sound_name.replace("%","_")
+            val UstorageReference = FirebaseStorage.getInstance()
+                    .reference
+                    .child("Reports")
+                    .child("$uid")
+                    .child("$pathname")
+                    .child("Audios")
+            ImageRef = UstorageReference!!.child("$sound_name")
+            uploadSound(file, ImageRef,sound_count)
         }
-        //Sounds
-        for (i in 0 until sound_count){
-            var file_sound = sounds!![i]
-
-            var file_sound_string = file_sound.toString()
-            //var sound_name = file_string.substringAfter("content://com.android.providers.media.documents/document/")
-            println(file_sound_string)
-            var fileaudio = storageReference!!
-                    .child("Report1")
-                    .child("Photos")
-                    .child("$file_sound_string")
-            if (file_sound != null) {
-                fileaudio.putFile(file_sound)
-            }
-        }
-        images = ArrayList()
     }
+
+    private fun sendData_Image() {
+        //Image
+        for(i in 0 until 2){
+            for (i in 0 until count) {
+                var file = images!![i]
+                println("VAI APARECER AQUI")
+                println(file)
+                var file_string = file.toString()
+                var file_string_modified = file_string
+                val total_count = file_string.length
+                val total_count_after = file_string_modified.replace("/", "").length
+                val numberofslash = total_count - total_count_after
+                photo_name = file_string
+                // Split the string only to obtain the name of the file
+                for (i in 0 until numberofslash) {
+                    photo_name = photo_name
+                    photo_name = photo_name.substringAfter("/")
+                }
+                photo_name = photo_name.replace("%", "_")
+                println(photo_name)
+                var fileaudio = storageReference!!
+                        .child("$pathname")
+                        .child("Photos")
+                        .child("$photo_name")
+                if (file != null) {
+                    fileaudio.putFile(file)
+                }
+            }
+        }
+    }
+
+    private fun sendData_Sound(){
+        //Sounds
+        for (i in 0 until 1) {
+            for (i in 0 until sound_count) {
+                var file_sound = audios!![i]
+
+                var file_sound_string = file_sound.toString()
+                sound_name = file_sound_string
+                val total_count = file_sound_string.length
+                val total_count_after = file_sound_string.replace("/", "").length
+                val numberofslash = total_count - total_count_after
+
+                // Split the string only to obtain the name of the file
+                for (i in 0 until numberofslash) {
+                    sound_name = sound_name
+                    sound_name = sound_name.substringAfter("/")
+                }
+                sound_name = sound_name.replace("%", "_")
+                println(sound_name)
+                var fileaudio = storageReference!!
+                        .child("$pathname")
+                        .child("Audios")
+                        .child("$sound_name")
+                if (file_sound != null) {
+                    fileaudio.putFile(file_sound)
+                }
+            }
+        }
+    }
+
 
     private fun checkPermissions(): Boolean {
         if (ActivityCompat.checkSelfPermission(
@@ -424,5 +554,82 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
             return false
         }
     }
+
+    fun uploadImage(File_Photo_Sound: Uri?,fileref: StorageReference, count: Int){
+
+        if (File_Photo_Sound != null){
+
+            fileref.downloadUrl.addOnSuccessListener{ task ->
+                url = task.toString()+".html"
+                lista_images.add(url)
+                println("Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa  IMAGE " + url)
+                if (lista_images.size == count){
+                    //Chamar função que usa os links
+                    photo_url_check = 1
+                    println("PHOTO DONE " + photo_url_check)
+                }
+
+            }
+
+        }else{
+            url=""
+        }
+    }
+
+    fun uploadSound(File_Photo_Sound: Uri?,fileref: StorageReference, count: Int){
+
+        if (File_Photo_Sound != null){
+
+            fileref.downloadUrl.addOnSuccessListener{ task ->
+                url_sound = task.toString()+".html"
+                lista_sounds.add(url_sound)
+                println("Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa  AUDIO  " + url_sound)
+                if (lista_sounds.size == count){
+                    //Chamar função que usa os links
+                    sound_url_check = 1
+                }
+            }
+
+        }else{
+            url=""
+        }
+    }
+
+    fun showAlertConfirmation(){
+        var choose:Int = 0
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("File Share")
+        builder.setMessage("Please confirm your submission.")
+        builder.setCancelable(false)
+        builder.setPositiveButton("Confirm") { dialogInterface: DialogInterface, i: Int ->
+            try {
+                savePDF(email, name)
+                mainFragment = MainFragment()
+                transaction = fragmentManager?.beginTransaction()!!
+                transaction.replace(R.id.drawable_frameLayout, mainFragment)
+                transaction.commit()
+            }catch (e:NullPointerException){
+                e.printStackTrace()
+            }
+        }
+        builder.setNegativeButton("Cancel") { dialogInterface: DialogInterface, i: Int ->
+            try {
+                Toast.makeText(activity,"Submission Cancelled ",Toast.LENGTH_SHORT).show()
+            }catch (e:NullPointerException){
+                e.printStackTrace()
+            }
+        }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+    fun showAlertError(){
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Error")
+        builder.setMessage("Please detail the problem. ")
+        builder.setPositiveButton("Accept",null)
+        val dialog: AlertDialog =builder.create()
+        dialog.show()
+    }
+
 }
 

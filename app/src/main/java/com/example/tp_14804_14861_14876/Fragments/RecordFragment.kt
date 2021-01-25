@@ -355,41 +355,6 @@ class RecordFragment : Fragment(), View.OnClickListener {
         var file = Uri.fromFile(File(path))
         fileref = storageReference!!.child("$path"+".mp3")
         fileref.putFile(file)
-        /* if (path != null){
-
-             var uploadTask: StorageTask<*>
-             val myUri = Uri.parse(path)
-             uploadTask = fileref.putFile(myUri)
-
-             uploadTask.continueWithTask(Continuation <UploadTask.TaskSnapshot, Task<Uri>> Contiuation@{ task ->
-                 if(!task.isSuccessful ){
-                     task.exception?.let{
-                         throw it
-                     }
-                 }
-                 return@Contiuation fileref.downloadUrl
-             }).addOnCompleteListener { task ->
-                 if(task.isSuccessful){
-                     val downloadUrl = task.result
-                     val url = downloadUrl.toString()
-                     val map = HashMap<String, Any>()
-                     map["$audioname"] = url
-                     //userReference!!.updateChildren(map)
-                     FirebaseDatabase.getInstance()
-                             .reference
-                             .child("users")
-                             .child("$uid")
-                             .updateChildren(map)
-
-                   fileref.downloadUrl.addOnSuccessListener { task ->
-                         Glide.with(this).load(task).override(300,300).apply(RequestOptions.circleCropTransform()).into(profile_iv_photo)
-                         //   Glide.with(mainFragment).load(task).override(300,300).apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
-                         //   user_iv_photo.setImageResource(task);
-                     }
-                 }
-             }
-         }*/
-
     }
 
 }
