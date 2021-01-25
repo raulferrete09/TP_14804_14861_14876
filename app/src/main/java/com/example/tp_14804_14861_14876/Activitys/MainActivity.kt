@@ -16,12 +16,13 @@ import android.provider.MediaStore
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -116,6 +117,18 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         )
         var RESULT_GALLERY = 0
 
+        user_iv_photo.setOnClickListener {
+            //Checks whether the Main Fragment is displayed. If it is not displayed, it shows
+            if ( !mainFragment.isVisible) {
+                this.mainFragment = MainFragment()
+                supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.drawable_frameLayout, mainFragment)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .commit()
+            }
+
+        }
 
         //Firebase info
         auth = FirebaseAuth.getInstance()
@@ -217,7 +230,8 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                             audioListFragment = AudioListFragment()
                             supportFragmentManager
                                 .beginTransaction()
-                                .replace(R.id.drawable_frameLayout, audioListFragment, null).addToBackStack(
+                                .replace(R.id.drawable_frameLayout, audioListFragment, null)
+                                .addToBackStack(
                                     null
                                 )
                                 .commit()
@@ -225,7 +239,8 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                             audioListFragment = AudioListFragment()
                             supportFragmentManager
                                 .beginTransaction()
-                                .replace(R.id.drawable_frameLayout, audioListFragment, null).addToBackStack(
+                                .replace(R.id.drawable_frameLayout, audioListFragment, null)
+                                .addToBackStack(
                                     null
                                 )
                                 .commit()
@@ -273,7 +288,8 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                             )
                             requestPermissions(permission, PERMISSION_CODE)
                         } else {
-                            val folder = File(getExternalStorageDirectory().toString() + File.separator + "DCIM" + File.separator + "HVAC")
+                            val folder =
+                                File(getExternalStorageDirectory().toString() + File.separator + "DCIM" + File.separator + "HVAC")
                             if (!folder.exists()) {
                                 folder.mkdirs()
                                 openCamera()
@@ -310,7 +326,10 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
     private fun openCamera() {
         val values = ContentValues()
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val image_string = File(Environment.getExternalStorageDirectory().toString() + "/DCIM/HVAC/" + "photo" + timeStamp+ ".jpg")
+        val image_string = File(
+            Environment.getExternalStorageDirectory()
+                .toString() + "/DCIM/HVAC/" + "photo" + timeStamp + ".jpg"
+        )
         values.put(MediaStore.Images.Media.TITLE, "New picture")
         values.put(MediaStore.Images.Media.DESCRIPTION, "From the camera")
         values.put(MediaStore.Images.Media.DATA, image_string.toString())

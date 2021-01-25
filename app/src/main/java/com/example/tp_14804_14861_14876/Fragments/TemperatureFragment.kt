@@ -1,10 +1,15 @@
 package com.example.tp_14804_14861_14876.Fragments
 
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.*
+import androidx.core.view.ViewCompat.setBackgroundTintList
 import com.example.tp_14804_14861_14876.R
 
 // TODO: Rename parameter arguments, choose names that match
@@ -17,7 +22,15 @@ private const val ARG_PARAM2 = "param2"
  * Use the [TemperatureFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class TemperatureFragment : Fragment() {
+class TemperatureFragment : Fragment(), AdapterView.OnItemSelectedListener {
+
+    lateinit var temperature_iv_icon: ImageView
+    lateinit var temperature_tv_anomaly: TextView
+    lateinit var temperature_progress_bar: ProgressBar
+    lateinit var temperature_tv_temperature: TextView
+    lateinit var temperature_spinner_machine: Spinner
+    lateinit var adpater_number: ArrayAdapter<CharSequence>
+
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -56,5 +69,49 @@ class TemperatureFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        temperature_iv_icon = view.findViewById<ImageView>(R.id.temperature_iv_icon)
+        temperature_tv_anomaly = view.findViewById<TextView>(R.id.temperature_tv_anomaly)
+        temperature_progress_bar = view.findViewById<ProgressBar>(R.id.temperature_progress_bar)
+        temperature_tv_temperature = view.findViewById<TextView>(R.id.temperature_tv_temperature)
+        temperature_spinner_machine = view.findViewById<Spinner>(R.id.temperature_spinner_machine)
+
+        adpater_number = ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.numbers,
+            android.R.layout.simple_spinner_item
+        )
+
+        adpater_number.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        temperature_spinner_machine.adapter = adpater_number
+        temperature_spinner_machine.onItemSelectedListener = this
+
+        // get text firebase
+        val temperature = 35.15
+        temperature_tv_anomaly.text = "2"
+        if (temperature_tv_anomaly.text == "1") {
+            temperature_tv_anomaly.text = "OK"
+            temperature_tv_anomaly.setTextColor(Color.argb(255,44,174,49))
+            temperature_progress_bar.indeterminateDrawable.setColorFilter(Color.argb(255,44,174,49), PorterDuff.Mode.SRC_IN)
+            temperature_tv_temperature.text = temperature.toString() + "ºC"
+        } else {
+            temperature_tv_anomaly.text = "Anomaly"
+            temperature_tv_anomaly.setTextColor(Color.argb(255,234,16,67))
+            temperature_progress_bar.indeterminateDrawable.setColorFilter(Color.argb(255,234,16,67), PorterDuff.Mode.SRC_IN)
+            temperature_tv_temperature.text = temperature.toString() + "ºC"
+        }
+
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+        val text = parent.getItemAtPosition(position).toString()
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        TODO("Not yet implemented")
     }
 }

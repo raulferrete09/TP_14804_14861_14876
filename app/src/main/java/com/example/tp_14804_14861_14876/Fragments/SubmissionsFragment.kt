@@ -19,6 +19,7 @@ import android.view.ViewGroup
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.core.app.ActivityCompat
+import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -30,9 +31,6 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.itextpdf.text.*
-import com.itextpdf.text.FontFactory.TIMES_ROMAN
-import com.itextpdf.text.FontFactory.getFont
-import com.itextpdf.text.pdf.PdfName.TIMES_ROMAN
 import com.itextpdf.text.pdf.PdfWriter
 import com.itextpdf.text.pdf.parser.Line
 import com.google.firebase.database.FirebaseDatabase
@@ -278,7 +276,7 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         return submission_spinner_machine.toString().isNotEmpty() && submission_spinner_intervation.toString().isNotEmpty() && report_ed_anomaly.text.isNotEmpty()
     }
 
-    private fun savePDF(email:String, name:String) {
+    private fun savePDF(email: String, name: String) {
         //create object of Document class
         doc = com.itextpdf.text.Document()
         val data = timeStamp.substring(0, 4) + "/" + timeStamp.substring(4, 6) + "/" + timeStamp.substring(6, 8) + " at " + timeStamp.substring(9,11) + "h" + timeStamp.substring(11,13)
@@ -297,16 +295,16 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
             val text_reportanomaly = report_ed_anomaly.text.toString()
 
             //
-            val font_title: Font = Font(FontFactory.getFont(FontFactory.TIMES_BOLD,20.0f))
-            val font_text: Font = Font(FontFactory.getFont(FontFactory.TIMES_BOLD,14.0f))
+            val font_title: Font = Font(FontFactory.getFont(FontFactory.TIMES_BOLD, 20.0f))
+            val font_text: Font = Font(FontFactory.getFont(FontFactory.TIMES_BOLD, 14.0f))
             val title = Chunk("Intervention report of $data", font_title)
-            val text_machine = Chunk("Machine",font_text )
-            val text_intervation = Chunk("Type of Intervation",font_text)
-            val text_report = Chunk("Report",font_text)
-            val text_photos = Chunk("Photos",font_text)
-            val text_audio = Chunk("Audios",font_text)
-            val text_name = Chunk("Name",font_text)
-            val text_email = Chunk("Email",font_text)
+            val text_machine = Chunk("Machine", font_text)
+            val text_intervation = Chunk("Type of Intervation", font_text)
+            val text_report = Chunk("Report", font_text)
+            val text_photos = Chunk("Photos", font_text)
+            val text_audio = Chunk("Audios", font_text)
+            val text_name = Chunk("Name", font_text)
+            val text_email = Chunk("Email", font_text)
 
             //create the pdf structure
             doc.addAuthor("HVAC")
@@ -366,6 +364,21 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         } catch (e: Exception) {
             Toast.makeText(activity, e.message, Toast.LENGTH_SHORT).show()
         }
+    }
+    private fun shareData() {
+
+        val pathFile = File(Environment.getExternalStorageDirectory().toString() + "/" + "HVAC/Reports/" + pathname + ".pdf")
+        val pathUri = FileProvider.getUriForFile(requireContext(),
+            "com.example.tp_14804_14861_14876.provider",
+            pathFile
+        )
+        val intent = Intent()
+        intent.action = Intent.ACTION_SEND
+        intent.type = "*/*"
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.putExtra(Intent.EXTRA_STREAM, pathUri)
+
+        startActivity(Intent.createChooser(intent, "Please select app: "))
     }
 
 
@@ -536,20 +549,20 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
 
     private fun checkPermissions(): Boolean {
         if (ActivityCompat.checkSelfPermission(
-                        requireContext(),
-                        permission.WRITE_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED
+                requireContext(),
+                permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
             //Permission Granted
             return true
         } else {
             //Permission not granted, ask for permission
             ActivityCompat.requestPermissions(
-                    requireContext() as Activity,
-                    arrayOf(
-                            permission.WRITE_EXTERNAL_STORAGE
-                    ),
-                    111
+                requireContext() as Activity,
+                arrayOf(
+                    permission.WRITE_EXTERNAL_STORAGE
+                ),
+                111
             )
             return false
         }
