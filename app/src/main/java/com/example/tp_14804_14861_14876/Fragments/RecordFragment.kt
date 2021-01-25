@@ -1,6 +1,7 @@
 package com.example.tp_14804_14861_14876.Fragments
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
@@ -8,10 +9,7 @@ import android.os.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.Chronometer
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
@@ -37,7 +35,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [RecordFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class RecordFragment : Fragment(), View.OnClickListener {
+class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelectedListener {
 
 
     var navController: NavController? = null
@@ -53,9 +51,10 @@ class RecordFragment : Fragment(), View.OnClickListener {
     lateinit var timer_chromo_counter: Chronometer
     lateinit var filenametext: TextView
     lateinit var progress_bar: ProgressBar
+    lateinit var record_spinner_machine: Spinner
 
     lateinit var intent:Intent
-
+    lateinit var adpater_number: ArrayAdapter<CharSequence>
     lateinit var audioListFragment: AudioListFragment
     lateinit var transaction: FragmentTransaction
 
@@ -109,6 +108,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
         //navController = Navigation.findNavController(view)
         record_btn_list = view.findViewById<Button>(R.id.record_btn_list)
         record_btn_start = view.findViewById<Button>(R.id.record_btn_start)
+        record_spinner_machine = view.findViewById<Spinner>(R.id.record_spinner_machine)
         timer_chromo_counter = view.findViewById<Chronometer>(R.id.timer_chromo_counter)
         filenametext = view.findViewById<TextView>(R.id.info_tv)
         progress_bar = view.findViewById<ProgressBar>(R.id.progress_bar)
@@ -118,6 +118,16 @@ class RecordFragment : Fragment(), View.OnClickListener {
         record_btn_start.setOnClickListener(this)
 
         progress_bar.visibility = View.INVISIBLE
+
+        adpater_number = ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.numbers,
+            android.R.layout.simple_spinner_item
+        )
+        adpater_number.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        record_spinner_machine.adapter = adpater_number
+        record_spinner_machine.onItemSelectedListener = this
+        showAlert()
 
     }
 
@@ -147,7 +157,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
                     }
                 }
             }
-            R.id.record_btn_start ->
+            R.id.record_btn_start -> {
                 if (!isRecording) {
                     //Start record
                     stopRecording()
@@ -184,6 +194,7 @@ class RecordFragment : Fragment(), View.OnClickListener {
                         }
                     }
                 }
+            }
         }
 
     }
@@ -199,12 +210,12 @@ class RecordFragment : Fragment(), View.OnClickListener {
         record_btn_start.isEnabled = false
         record_btn_list.isEnabled = false
         progress_bar.visibility = View.VISIBLE
-
+        val text_spinner_machine= record_spinner_machine.selectedItem.toString()
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         //Get app external directory path
         //name -> path = User + timeStamp + ".mp3"
         //val pathname = "Audio.mp3"
-        val pathname = name + "_" + timeStamp + ".mp3"
+        val pathname = name + "_" + "M" + text_spinner_machine + "_" + timeStamp + ".mp3"
         val path = Environment.getExternalStorageDirectory().toString() + "/HVAC/Audios/" + pathname
         println(path)
         mr.setAudioSource(MediaRecorder.AudioSource.MIC)
@@ -311,6 +322,22 @@ class RecordFragment : Fragment(), View.OnClickListener {
             )
             return false
         }
+    }
+    private fun showAlert(){
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Warning")
+        builder.setMessage("Please select the machine.")
+        builder.setPositiveButton("Accept",null)
+        val dialog: AlertDialog =builder.create()
+        dialog.show()
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        val text = parent?.getItemAtPosition(position).toString()
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        TODO("Not yet implemented")
     }
 
 }

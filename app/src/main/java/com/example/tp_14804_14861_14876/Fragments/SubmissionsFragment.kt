@@ -208,7 +208,9 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
             var intent = Intent(Intent.ACTION_PICK)
             //intent.setDataAndType( Uri.parse(Environment.getExternalStorageDirectory().path +  File.separator + "DCMI/HVAC" + File.separator),"*/*")
             intent.type = "*/*"
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            //intent.setDataAndType(Uri.parse(Environment.getExternalStorageDirectory().path +  File.separator + "HVAC/AUDIO" + File.separator), "*/*")
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true.toString()
+            )
             intent.action = Intent.ACTION_GET_CONTENT
             startActivityForResult(intent, 1000)
     }

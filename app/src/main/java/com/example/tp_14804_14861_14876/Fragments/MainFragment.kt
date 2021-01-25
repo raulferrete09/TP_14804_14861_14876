@@ -185,12 +185,13 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
     }
 
     override fun onClickListener(file: File, position: Int) {
+
         //For pdf file
         val file = file
         //For pdf file
         val path = Environment.getExternalStorageDirectory().toString() + "/HVAC/Reports/"
         val intent = Intent(Intent.ACTION_VIEW)
-        intent.type = "application/pdf"
+        intent.type = "application/*"
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         startActivity(intent)
     }
