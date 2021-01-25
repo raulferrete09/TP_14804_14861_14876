@@ -74,6 +74,7 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
 
     lateinit var bytes: ByteArray
     lateinit var base64: String
+    lateinit var text_spinner_machine: String
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -233,7 +234,7 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         record_btn_start.isEnabled = false
         record_btn_list.isEnabled = false
         progress_bar.visibility = View.VISIBLE
-        val text_spinner_machine= record_spinner_machine.selectedItem.toString()
+        text_spinner_machine= record_spinner_machine.selectedItem.toString()
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         //Get app external directory path
         //name -> path = User + timeStamp + ".mp3"
@@ -371,17 +372,25 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         val person = auth?.currentUser
         val uid = person?.uid
         var map = mutableMapOf<String,Any>()
+        var map1 = mutableMapOf<String,Any>()
         var database = FirebaseDatabase.getInstance()
-        map["base64"]=base64
-        map["anomaly"]=""
+        map["base64"] = base64
+        map["anomaly"] = ""
         database.reference
                 .child("Audio")
+                .child("M"+"$text_spinner_machine")
                 .child("$uid")
                 .child("$audioname")
                 .updateChildren(map)
         var file = Uri.fromFile(File(path))
         fileref = storageReference!!.child("$path"+".mp3")
         fileref.putFile(file)
+
+        map1["anomaly"] = ""
+        database.reference
+                .child("Audio")
+                .child("M"+"$text_spinner_machine")
+                .updateChildren(map1)
     }
 
 }

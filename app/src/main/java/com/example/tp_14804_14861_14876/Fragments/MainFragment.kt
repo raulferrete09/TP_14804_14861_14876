@@ -1,6 +1,8 @@
 package com.example.tp_14804_14861_14876.Fragments
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -21,6 +23,12 @@ import com.example.tp_14804_14861_14876.Utils.ReportListAdapter
 import com.example.tp_14804_14861_14876.Utils.TimeAgo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -58,7 +66,11 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
     lateinit var dashboard_layout: ConstraintLayout
     lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
     lateinit var adpater_number: ArrayAdapter<CharSequence>
-
+    private lateinit var database: FirebaseDatabase
+    var status_temperature: Any? = null
+    var status_accelerometer: Any? = null
+    var status_audio: Any? = null
+    var auth: FirebaseAuth? = null
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -73,8 +85,8 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_main, container, false)
@@ -92,12 +104,12 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            MainFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                MainFragment().apply {
+                    arguments = Bundle().apply {
+                        putString(ARG_PARAM1, param1)
+                        putString(ARG_PARAM2, param2)
+                    }
                 }
-            }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -108,16 +120,16 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
         (requireActivity() as MainActivity).supportActionBar!!.hide()
 
         add_btn_submission = view.findViewById<FloatingActionButton>(R.id.add_btn_submission)
-        dashboard_spinner_machine = view.findViewById<Spinner>(R.id.dasboard_spinner_machine)
+        dashboard_spinner_machine = view.findViewById<Spinner>(R.id.dashboard_spinner_machine)
         dashboard_tv_oknok = view.findViewById<TextView>(R.id.dasboard_tv_oknok)
         dashboard_tv_anomaly = view.findViewById<TextView>(R.id.dasboard_tv_anomaly)
         dashboard_layout = view.findViewById<ConstraintLayout>(R.id.dasboard_layout)
 
 
         adpater_number = ArrayAdapter.createFromResource(
-            requireContext(),
-            R.array.numbers,
-            android.R.layout.simple_spinner_item
+                requireContext(),
+                R.array.numbers,
+                android.R.layout.simple_spinner_item
         )
 
         adpater_number.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -167,11 +179,114 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
 
     override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
         val text = parent.getItemAtPosition(position).toString()
-  }
+        CheckData()
+    }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
         TODO("Not yet implemented")
     }
 
+    private fun CheckData() {
+        val MachineNumber = dashboard_spinner_machine.selectedItem.toString()
+        println(MachineNumber)
+        // Verification Temperature
+        database = FirebaseDatabase.getInstance()
+        database.reference.child("Temperature")
+                .child("M" + "$MachineNumber")
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onCancelled(error: DatabaseError) {
+                        TODO("Not yet implemented")
+                    }
+
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.value != null) {
+                            var map = snapshot.value as Map<String, Any?>
+                            status_temperature = map["status"]
+                            updateData()
+                        }
+                    }
+
+                })
+        database = FirebaseDatabase.getInstance()
+        database.reference.child("Accelerometer")
+                .child("M" + "$MachineNumber")
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onCancelled(error: DatabaseError) {
+                        TODO("Not yet implemented")
+                    }
+
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.value != null) {
+                            var map = snapshot.value as Map<String, Any?>
+                            status_accelerometer = map["status"]
+                            updateData()
+                        }
+                    }
+
+                })
+        auth = FirebaseAuth.getInstance()
+        val user: FirebaseUser? = auth?.currentUser
+        var uid = user?.uid
+
+        database = FirebaseDatabase.getInstance()
+        database.reference.child("Audio")
+                .child("M" + "$MachineNumber")
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onCancelled(error: DatabaseError) {
+                        TODO("Not yet implemented")
+                    }
+
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.value != null) {
+                            var map = snapshot.value as Map<String, Any?>
+                            status_audio = map["anomaly"]
+                            updateData()
+                        }
+                    }
+
+                })
+
+
+    }
+
+    private fun updateData() {
+        println(status_accelerometer)
+        println(status_temperature)
+        println(status_audio)
+        if (status_accelerometer == "OK" && status_temperature == "OK" && status_audio == "") {
+            dashboard_tv_oknok.text = "OK"
+            dashboard_tv_anomaly.text = ""
+            dashboard_layout.setBackgroundColor(resources.getColor(R.color.green))
+        } else {
+            typeAnomaly()
+            dashboard_tv_oknok.text = "ANOMALY"
+            dashboard_layout.setBackgroundColor(resources.getColor(R.color.red))
+
+        }
+    }
+
+    private fun typeAnomaly(){
+        if(status_accelerometer != "OK" && status_temperature != "OK" && status_audio != ""){
+            dashboard_tv_anomaly.text = "Accelerometer, Temperature and Audio"
+        }else if(status_temperature != "OK" && status_audio != ""){
+            dashboard_tv_anomaly.text = "Temperature and Audio"
+        }else if(status_accelerometer != "OK" && status_audio != ""){
+            dashboard_tv_anomaly.text = "Accelerometer and Audio"
+        }else if(status_accelerometer != "OK" && status_temperature != "OK"){
+            dashboard_tv_anomaly.text = "Accelerometer and Temperature"
+        }else if(status_accelerometer != "OK") {
+            dashboard_tv_anomaly.text = "Accelerometer"
+        }else if(status_temperature != "OK"){
+            dashboard_tv_anomaly.text = "Temperature"
+        }else if (status_audio != ""){
+            dashboard_tv_anomaly.text = "Audio"
+        }else{
+            // Do nothing
+        }
+
+
+
+
+    }
 
 }

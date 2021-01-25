@@ -42,7 +42,7 @@
             android:textSize="16sp" />
 
         <Spinner
-            android:id="@+id/dasboard_spinner_machine"
+            android:id="@+id/dashboard_spinner_machine"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="3"
@@ -60,7 +60,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="OK"
-        android:textSize="64sp"
+        android:textSize="55sp"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
         android:textAlignment="center"
