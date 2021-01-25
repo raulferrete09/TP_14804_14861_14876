@@ -40,12 +40,6 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".Utils.MyFirebaseMessagingService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-            </intent-filter>
-        </service>
-
         <activity
             android:name=".Activitys.ForgotPasswordActivity"
             android:screenOrientation="portrait" />
