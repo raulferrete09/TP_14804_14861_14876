@@ -14,11 +14,13 @@ import android.os.Environment
 import android.os.Environment.getExternalStorageDirectory
 import android.provider.MediaStore
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.ActivityChooserView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -48,6 +50,7 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.Request
 import com.squareup.picasso.Transformation
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation
+import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -81,7 +84,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
     private val IMAGE_CAPTURE_CODE = 1001
     private val PERMISSION_CODE = 1000
 
-
+    lateinit var btn_view:Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -107,6 +110,10 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         navigationview = findViewById<NavigationView>(R.id.nav_view)
         hview = navigationview.getHeaderView(0)
 
+        //btn_view = findViewById<Button>(R.id.btn_view)
+        //btn_view.setOnClickListener {
+        //}
+
         user_tv_id = hview.findViewById<TextView>(R.id.user_tv_id)
         user_tv_name = hview.findViewById<TextView>(R.id.user_tv_name)
         user_iv_photo = hview.findViewById<ImageView>(R.id.user_iv_photo)
@@ -118,6 +125,8 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         var RESULT_GALLERY = 0
 
         user_iv_photo.setOnClickListener {
+            //startActivity(Intent(this, View_PDF_Files_Activity::class.java))
+
             //Checks whether the Main Fragment is displayed. If it is not displayed, it shows
             if ( !mainFragment.isVisible) {
                 this.mainFragment = MainFragment()

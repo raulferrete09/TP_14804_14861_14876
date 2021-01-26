@@ -59,7 +59,7 @@
     <string name="mic_sound_icon">Record Audio</string>
     <string name="openNavDrawer">Navigation Drawer Open</string>
     <string name="closeNavDrawer">Navigation Drawer Close</string>
-    
+
     <string-array name="numbers">
         <item>One</item>
         <item>Two</item>

@@ -59,7 +59,7 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
     lateinit var audioBase64: String
 
 
-    lateinit var mr: MediaRecorder
+    var mr: MediaRecorder? = null
     lateinit var record_btn_list: Button
     lateinit var record_btn_start: Button
     lateinit var timer_chromo_counter: Chronometer
@@ -243,13 +243,13 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         val pathname = name + "_" + "M" + text_spinner_machine + "_" + timeStamp + ".mp3"
         val path = Environment.getExternalStorageDirectory().toString() + "/HVAC/Audios/" + pathname
         println(path)
-        mr.setAudioSource(MediaRecorder.AudioSource.MIC)
-        mr.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-        mr.setMaxDuration(10000)
-        mr.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-        mr.setOutputFile(path)
-        mr.prepare()
-        mr.start()
+        mr!!.setAudioSource(MediaRecorder.AudioSource.MIC)
+        mr!!.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+        mr!!.setMaxDuration(10000)
+        mr!!.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+        mr!!.setOutputFile(path)
+        mr!!.prepare()
+        mr!!.start()
 
         filenametext.text = "\"Recording, File Saved : " + pathname;
 
@@ -267,7 +267,7 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
 
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onFinish() {
-                mr.stop()
+                mr!!.stop()
                 timer_chromo_counter.stop()
                 filenametext.text = "Recording Stopped, File Saved : " + pathname;
                 timer_chromo_counter.text = "Finished"
@@ -299,8 +299,8 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         //Change text on page to file saved
         //filenametext.text = "Recording Stopped, File Saved : " + path
         //Stop media recorder and set it to null for further use to record new audio
-        mr.stop()
-        mr.release()
+        mr!!.stop()
+        mr!!.release()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
