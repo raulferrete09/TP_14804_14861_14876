@@ -1,23 +1,28 @@
 package com.example.tp_14804_14861_14876.Utils
 
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.example.tp_14804_14861_14876.Activitys.uploadPDF
 import com.example.tp_14804_14861_14876.Fragments.MainFragment
 import com.example.tp_14804_14861_14876.R
 import java.io.File
+import java.util.ArrayList
 
 class ReportListAdapter : RecyclerView.Adapter<ReportListAdapter.ReportViewHolder> {
-    private var allFilesReport: Array<File>
+    var uploadPDFS: ArrayList<uploadPDF>
     private lateinit var timeAgo: TimeAgo
     private var onItemListClick: ReportListAdapter.onItemList_Click
 
 
-    constructor(allFilesReport: Array<File>, onItemListClick: MainFragment) {
-        this.allFilesReport = allFilesReport
+    constructor(uploadPDFS: ArrayList<uploadPDF>, onItemListClick: MainFragment) {
+        this.uploadPDFS = uploadPDFS
         this.onItemListClick = onItemListClick!!
     }
 
@@ -30,12 +35,12 @@ class ReportListAdapter : RecyclerView.Adapter<ReportListAdapter.ReportViewHolde
     }
 
     override fun onBindViewHolder(holder: ReportViewHolder, position: Int) {
-        holder.list_tv_titleReport.text = allFilesReport[position].name
-        holder.list_tv_dateReport.text = timeAgo.getTimeAgo(allFilesReport[position].lastModified())
+        holder.list_tv_titleReport.text = uploadPDFS[position].name
+        //holder.list_tv_dateReport.text = timeAgo.getTimeAgo(uploadPDFS[position].lastModified())
     }
 
     override fun getItemCount(): Int {
-        return allFilesReport.size
+        return uploadPDFS.size
     }
 
     inner class ReportViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
@@ -54,13 +59,17 @@ class ReportListAdapter : RecyclerView.Adapter<ReportListAdapter.ReportViewHolde
         }
 
         override fun onClick(v: View?) {
-            onItemListClick.onClickListener(allFilesReport[adapterPosition], adapterPosition)
+            onItemListClick.onClickListener(uploadPDFS[adapterPosition], adapterPosition)
         }
 
     }
 
     interface onItemList_Click {
-        fun onClickListener(file: File, position: Int)
+        fun onClickListener(uploadPDFS: uploadPDF , position: Int){
+
+        }
+
+
     }
 
 }

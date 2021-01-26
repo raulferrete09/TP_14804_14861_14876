@@ -1,6 +1,7 @@
 package com.example.tp_14804_14861_14876.Fragments
 
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -16,11 +17,14 @@ import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tp_14804_14861_14876.Activitys.MainActivity
+import com.example.tp_14804_14861_14876.Activitys.uploadPDF
 import com.example.tp_14804_14861_14876.R
 import com.example.tp_14804_14861_14876.Utils.ReportListAdapter
 import com.example.tp_14804_14861_14876.Utils.TimeAgo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -58,6 +62,11 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
     lateinit var dashboard_layout: ConstraintLayout
     lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
     lateinit var adpater_number: ArrayAdapter<CharSequence>
+
+    lateinit var myPDFListView: ListView
+    var databaseReference: DatabaseReference? = null
+    var uploadPDFS: ArrayList<uploadPDF>? = null
+    var uploadPDFS1: ArrayList<uploadPDF>? = null
 
 
     // TODO: Rename and change types of parameters
@@ -113,6 +122,10 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
         dashboard_tv_anomaly = view.findViewById<TextView>(R.id.dasboard_tv_anomaly)
         dashboard_layout = view.findViewById<ConstraintLayout>(R.id.dasboard_layout)
 
+        myPDFListView = view.findViewById<ListView>(R.id.myListView)
+        uploadPDFS = ArrayList()
+        uploadPDFS1 = ArrayList()
+        viewAllFiles()
 
         adpater_number = ArrayAdapter.createFromResource(
             requireContext(),
@@ -124,20 +137,31 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
         dashboard_spinner_machine.adapter = adpater_number
         dashboard_spinner_machine.onItemSelectedListener = this
 
-        reportlist = view.findViewById<RecyclerView>(R.id.report_list_view)
+        //reportlist = view.findViewById<RecyclerView>(R.id.report_list_view)
 
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         val path = Environment.getExternalStorageDirectory().toString() + "/HVAC/Reports/"
         val directory = File(path)
-        allFilesReport = directory.listFiles()
+        //allFilesReport = directory.listFiles()
 
-        reportListAdapter = ReportListAdapter(allFilesReport, this)
+        //reportListAdapter = ReportListAdapter(allFilesReport, this)
 
-        reportlist.setHasFixedSize(true)
-        reportlist.layoutManager = LinearLayoutManager(context)
-        reportlist.adapter = reportListAdapter
+        //reportlist.setHasFixedSize(true)
+        //reportlist.layoutManager = LinearLayoutManager(context)
+        //reportlist.adapter = reportListAdapter
 
         add_btn_submission.setOnClickListener(this)
+
+        myPDFListView.setOnItemClickListener { parent, view, position, id ->
+            println(position)
+            println(uploadPDFS1)
+            println(uploadPDFS)
+            val uploadPDF = uploadPDFS!![position]
+            val intent = Intent()
+            intent.type = Intent.ACTION_VIEW
+            intent.data = Uri.parse(uploadPDF.getUrl())
+            startActivity(intent)
+        }
 
     }
 
@@ -153,7 +177,7 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
         }
     }
 
-    override fun onClickListener(file: File, position: Int) {
+    fun onClickListener(file: File, position: Int) {
 
         //For pdf file
         val file = file
@@ -173,5 +197,38 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
         TODO("Not yet implemented")
     }
 
+    private fun viewAllFiles() {
+        databaseReference = FirebaseDatabase.getInstance().getReference("Reports")
+        databaseReference!!.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                uploadPDFS = ArrayList()
+                for (postSnapshot in snapshot.children) {
+                    val uploadPDF = postSnapshot.getValue(uploadPDF::class.java)
+                    uploadPDFS!!.add(uploadPDF!!)
+                }
+                val uploads = arrayOfNulls<String>(uploadPDFS!!.size)
+                for (i in uploads.indices) {
+                    uploads[i] = uploadPDFS!![i]!!.getName()
+                }
+                val adapter: ArrayAdapter<String?> = object : ArrayAdapter<String?>(
+                    requireActivity(), android.R.layout.simple_list_item_1, uploads
+                ) {
+                    override fun getView(
+                        position: Int,
+                        convertView: View?,
+                        parent: ViewGroup
+                    ): View {
+                        val view = super.getView(position, convertView, parent)
+                        val mytext = view.findViewById<View>(android.R.id.text1) as TextView
+                        mytext.setTextColor(Color.BLACK)
+                        return super.getView(position, convertView, parent)
+                    }
+                }
+                myPDFListView!!.adapter = adapter
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
 
 }
