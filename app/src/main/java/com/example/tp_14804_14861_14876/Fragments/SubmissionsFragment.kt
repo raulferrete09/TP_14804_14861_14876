@@ -88,11 +88,12 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
     var lista_sounds = ArrayList<String>()
     var photo_url_check = 0
     var sound_url_check = 0
-    lateinit var pathname: String
     lateinit var timeStamp:String
+    lateinit var data:String
     lateinit var text_spinner_machine: String
     lateinit var text_spinner_intervation: String
     lateinit var text_reportanomaly: String
+    var pathfile:String = ""
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -193,13 +194,10 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         profile_tv_name.text = name
         profile_tv_id.text = uid
 
-        //get text
-        text_spinner_machine = submission_spinner_machine.selectedItem.toString()
-        text_spinner_intervation = submission_spinner_intervation.selectedItem.toString()
-        text_reportanomaly = report_ed_anomaly.text.toString()
-
+        //get timeStamp
         timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        pathname = "Report" + "_" +"M"+ text_spinner_machine + "_" + text_spinner_intervation + "_" + timeStamp
+        data = timeStamp.substring(0, 4) + "/" + timeStamp.substring(4, 6) + "/" + timeStamp.substring(6, 8) + " at " + timeStamp.substring(9,11) + "h" + timeStamp.substring(11,13)
+        getpathname()
 
         // rounded corner image
         try {
@@ -216,6 +214,9 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
     override fun onClick(v: View) {
         when (v.id) {
             R.id.submission_btn_firebase -> {
+                if(pathfile == ""){
+                    pathfile = getpathname()
+                }
                 if (checkPermissions()) {
                     globallist_photos()
                     globallist_sound()
@@ -237,13 +238,18 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
                 }
             }
             R.id.submission_iv_addphoto -> {
+                if(pathfile == ""){
+                    pathfile = getpathname()
+                }
                 if (checkPermissions()) {
                     selector = 0
                     selectFile(selector)
-
                 }
             }
             R.id.submission_iv_addaudio -> {
+                if(pathfile == ""){
+                    pathfile = getpathname()
+                }
                 if (checkPermissions()) {
                     selector = 1
                     selectFile(selector)
@@ -252,9 +258,20 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         }
     }
 
+    private fun getpathname(): String {
+        //get text
+        text_spinner_machine = submission_spinner_machine.selectedItem.toString()
+        text_spinner_intervation = submission_spinner_intervation.selectedItem.toString()
+        text_reportanomaly = report_ed_anomaly.text.toString()
+
+        val pathname = "Report" + "_" +"M"+ text_spinner_machine + "_" + text_spinner_intervation + "_" + timeStamp
+
+        return pathname
+    }
+
     private fun selectFile(selector: Int) {
         var intent= Intent(Intent.ACTION_PICK)
-        intent.setType("*/*")
+        intent.type = "*/*"
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
         intent.action = Intent.ACTION_GET_CONTENT
         if(selector == 0) {
@@ -269,10 +286,10 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         return submission_spinner_machine.toString().isNotEmpty() && submission_spinner_intervation.toString().isNotEmpty() && report_ed_anomaly.text.isNotEmpty()
     }
 
-    private fun savePDF(email: String, name: String) {
+    private fun savePDF(email: String, name: String, pathname: String) {
+
         //create object of Document class
         doc = com.itextpdf.text.Document()
-        val data = timeStamp.substring(0, 4) + "/" + timeStamp.substring(4, 6) + "/" + timeStamp.substring(6, 8) + " at " + timeStamp.substring(9,11) + "h" + timeStamp.substring(11,13)
         var path = Environment.getExternalStorageDirectory().toString() + "/" + "HVAC/Reports/" + pathname + ".pdf"
 
         try {
@@ -353,7 +370,7 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         }
     }
     private fun shareData() {
-
+        val pathname = pathfile
         val pathFile = File(Environment.getExternalStorageDirectory().toString() + "/" + "HVAC/Reports/" + pathname + ".pdf")
         val pathUri = FileProvider.getUriForFile(requireContext(),
             "com.example.tp_14804_14861_14876.provider",
@@ -416,10 +433,10 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
                 sendData_Sound()
             }
         }
-
     }
 
     private fun globallist_photos(){
+        val pathname= pathfile
         for (i in 0 until count){
             var file = images!![i]
             photo_name = file.toString()
@@ -445,6 +462,7 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
     }
 
     private fun globallist_sound(){
+        val pathname = pathfile
         for (i in 0 until sound_count){
             var file = audios!![i]
 
@@ -472,6 +490,7 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
     }
 
     private fun sendData_Image() {
+       val pathname = pathfile
         //Image
         for(i in 0 until 2){
             for (i in 0 until count) {
@@ -501,6 +520,7 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
     }
 
     private fun sendData_Sound(){
+        val pathname = pathfile
         //Sounds
         for (i in 0 until 1) {
             for (i in 0 until sound_count) {
@@ -589,6 +609,7 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
     }
 
     fun saveAllPDF() {
+        val pathname = pathfile
         var saveallpdf = FirebaseStorage.getInstance().reference.child("Reports").child("$uid").child("$pathname").child("PDF").child("$pathname")
         var database = FirebaseDatabase.getInstance().reference.child("Reports").child("$pathname")
         saveallpdf.downloadUrl.addOnSuccessListener { task ->
@@ -608,7 +629,7 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         builder.setCancelable(false)
         builder.setPositiveButton("Confirm") { dialogInterface: DialogInterface, i: Int ->
             try {
-                savePDF(email, name)
+                savePDF(email, name, pathfile)
                 val splashtime: Long = 1000
                 Handler().postDelayed({
                     saveAllPDF()
