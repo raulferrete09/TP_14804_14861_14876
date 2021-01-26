@@ -14,17 +14,12 @@ import android.os.Environment
 import android.os.Environment.getExternalStorageDirectory
 import android.provider.MediaStore
 import android.view.View
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.ActivityChooserView
-import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -38,7 +33,6 @@ import com.facebook.GraphRequest
 import com.facebook.HttpMethod
 import com.facebook.login.LoginManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -46,11 +40,6 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.Request
-import com.squareup.picasso.Transformation
-import jp.wasabeef.picasso.transformations.RoundedCornersTransformation
-import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -66,7 +55,6 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
     lateinit var user_tv_name: TextView
     lateinit var user_tv_id: TextView
     lateinit var hview: View
-    lateinit var transformation: Transformation
 
     lateinit var mainFragment: MainFragment
     lateinit var recordFragment: RecordFragment
@@ -75,7 +63,6 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
     lateinit var accerelometerFragment: AccerelometerFragment
     lateinit var settingsFragment: SettingsFragment
 
-    lateinit var mGoogleSignInClient: GoogleSignInClient
     var auth : FirebaseAuth? = null
     var image_uri: Uri? = null
     lateinit var fileref: StorageReference
@@ -84,7 +71,6 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
     private val IMAGE_CAPTURE_CODE = 1001
     private val PERMISSION_CODE = 1000
 
-    lateinit var btn_view:Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -109,10 +95,6 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         drawer_layout = findViewById<DrawerLayout>(R.id.drawer_layout)
         navigationview = findViewById<NavigationView>(R.id.nav_view)
         hview = navigationview.getHeaderView(0)
-
-        //btn_view = findViewById<Button>(R.id.btn_view)
-        //btn_view.setOnClickListener {
-        //}
 
         user_tv_id = hview.findViewById<TextView>(R.id.user_tv_id)
         user_tv_name = hview.findViewById<TextView>(R.id.user_tv_name)
@@ -219,7 +201,6 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                             )
                         if (!folder.exists()) {
                             folder.mkdirs()
-                            //Toast.makeText(this@MainActivity, "Successful", Toast.LENGTH_SHORT).show()
                             var openGalleryIntent = Intent(
                                 Intent.ACTION_VIEW,
                                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -421,8 +402,6 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
             PERMISSION_CODE -> {
                 if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openCamera()
-                } else {
-                    //Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
                 }
             }
         }

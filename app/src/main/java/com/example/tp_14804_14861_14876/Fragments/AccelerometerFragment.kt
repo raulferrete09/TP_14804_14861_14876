@@ -40,7 +40,6 @@ class AccerelometerFragment : Fragment(), AdapterView.OnItemSelectedListener {
     var accelerometer_status: Any? = null
     private lateinit var database: FirebaseDatabase
 
-
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -97,20 +96,13 @@ class AccerelometerFragment : Fragment(), AdapterView.OnItemSelectedListener {
             R.array.numbers,
             android.R.layout.simple_spinner_item
         )
-        accelerometer_x = "1"
-        accelerometer_y = "1"
-        accelerometer_z = "1"
-        accelerometer_status = "1"
+        accelerometer_x = ""
+        accelerometer_y = ""
+        accelerometer_z = ""
+        accelerometer_status = ""
         adpater_number.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         accelerometer_spinner_machine.adapter = adpater_number
         accelerometer_spinner_machine.onItemSelectedListener = this
-
-
-
-
-
-
-
 
     }
 
@@ -148,7 +140,7 @@ class AccerelometerFragment : Fragment(), AdapterView.OnItemSelectedListener {
                                 accelerometer_progress_bar.indeterminateDrawable.setColorFilter(Color.argb(255,44,174,49), PorterDuff.Mode.SRC_IN)
                                 accelerometer_tv_x.text = "x = " + accelerometer_x.toString()
                                 accelerometer_tv_y.text = "y = " + accelerometer_y.toString()
-                                accelerometer_tv_z.text = "x = " + accelerometer_z.toString()
+                                accelerometer_tv_z.text = "z = " + accelerometer_z.toString()
 
 
                             } else {

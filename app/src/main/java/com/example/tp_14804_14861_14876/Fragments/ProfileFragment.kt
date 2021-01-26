@@ -2,21 +2,17 @@ package com.example.tp_14804_14861_14876.Fragments
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.FragmentTransaction
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.tp_14804_14861_14876.Activitys.MainActivity
 import com.example.tp_14804_14861_14876.R
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
@@ -188,7 +184,6 @@ class ProfileFragment : Fragment(), View.OnClickListener {
                     val url = downloadUrl.toString()
                     val map = HashMap<String, Any>()
                     map["photo"] = url
-                    //userReference!!.updateChildren(map)
                     FirebaseDatabase.getInstance()
                             .reference
                             .child("users")
@@ -197,9 +192,7 @@ class ProfileFragment : Fragment(), View.OnClickListener {
 
                     fileref.downloadUrl.addOnSuccessListener { task ->
                         Glide.with(this).load(task).override(300,300).apply(RequestOptions.circleCropTransform()).into(profile_iv_photo)
-                     //   Glide.with(mainFragment).load(task).override(300,300).apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
-                     //   user_iv_photo.setImageResource(task);
-                    }
+                     }
                 }
             }
         }

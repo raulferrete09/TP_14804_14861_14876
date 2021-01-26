@@ -1,6 +1,5 @@
 package com.example.tp_14804_14861_14876.Fragments
 
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -9,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.view.ViewCompat.setBackgroundTintList
 import com.example.tp_14804_14861_14876.R
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError

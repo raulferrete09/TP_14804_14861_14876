@@ -1,8 +1,6 @@
 package com.example.tp_14804_14861_14876.Fragments
 
-import android.content.ContentValues.TAG
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,15 +10,8 @@ import androidx.fragment.app.FragmentTransaction
 import com.example.tp_14804_14861_14876.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation
-
-/*lateinit var settings_iv_photo: ImageView
-lateinit var settings_et_name: EditText
-lateinit var settings_et_email: EditText
-lateinit var settings_btn_save: Button
-lateinit var settings_btn_reset_password: Button*/
 
 lateinit var mainFragment: MainFragment
 lateinit var profileFragment: ProfileFragment
@@ -97,16 +88,6 @@ class SettingsFragment : Fragment(), View.OnClickListener {
         change_tv_password.setOnClickListener(this)
         forget_tv_password.setOnClickListener(this)
 
-        /*settings_et_email = view.findViewById<EditText>(R.id.settings_et_email)
-        settings_et_name = view.findViewById<EditText>(R.id.settings_et_name)
-        settings_iv_photo = view.findViewById<ImageView>(R.id.settings_iv_photo)
-
-        settings_btn_save = view.findViewById<Button>(R.id.settings_btn_save)
-        settings_btn_reset_password = view.findViewById<Button>(R.id.settings_btn_reset_password)
-
-        settings_btn_save.setOnClickListener(this)
-        settings_btn_reset_password.setOnClickListener(this)*/
-
         //Firebase info
         auth = FirebaseAuth.getInstance()
         val user: FirebaseUser? = auth?.currentUser
@@ -115,16 +96,12 @@ class SettingsFragment : Fragment(), View.OnClickListener {
         val email:String? = user?.email
         var photo = user?.photoUrl
 
-        //settings_tv_name.text = name
-        //settings_tv_email.text = email
-
 // rounded corner image
         val radius = 50
         val margin = 5
         transformation = RoundedCornersTransformation(radius, margin)
-        //Picasso.get().load(photo).transform(transformation).into(settings_iv_photo)
-
     }
+
     override fun onClick(v: View) {
         when (v.id) {
             R.id.change_tv_profile -> {
@@ -152,25 +129,6 @@ class SettingsFragment : Fragment(), View.OnClickListener {
     private fun changePhoto() {
         TODO("Not yet implemented")
     }
-
-    /*private fun changeName() {
-        val namereset = settings_et_name.text.toString()
-        println(namereset)
-    }
-
-    private fun changeEmail() {
-        auth = FirebaseAuth.getInstance()
-        val emailreset = settings_et_email.text.toString()
-        val user = auth?.currentUser
-
-        user!!.updatePassword(emailreset)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Log.d(TAG, "User password updated.")
-                    }
-                }
-    }*/
-
 
     private fun resetPassword() {
         auth = FirebaseAuth.getInstance()

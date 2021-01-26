@@ -7,9 +7,6 @@ import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.net.Uri
 import android.os.*
-import android.provider.MediaStore
-import android.util.Base64.DEFAULT
-import android.util.Base64.encodeToString
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,19 +16,13 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.NavController
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.example.tp_14804_14861_14876.Activitys.MainActivity
 import com.example.tp_14804_14861_14876.R
-import com.google.android.gms.tasks.Continuation
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.StorageTask
-import com.google.firebase.storage.UploadTask
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
@@ -51,7 +42,6 @@ private const val ARG_PARAM2 = "param2"
 class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelectedListener {
 
 
-    var navController: NavController? = null
     var isRecording = true
     var counter = 0
     var progresscounter = 0
@@ -123,7 +113,6 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //navController = Navigation.findNavController(view)
         record_btn_list = view.findViewById<Button>(R.id.record_btn_list)
         record_btn_start = view.findViewById<Button>(R.id.record_btn_start)
         record_spinner_machine = view.findViewById<Spinner>(R.id.record_spinner_machine)
@@ -286,9 +275,6 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
                 var base64 = encodeAudio(path)
                 sendData(base64, audioname,path)
 
-                /*var map = mutableMapOf<String,Any>()
-                map["mp3 file"] = base64
-                println(map)*/
             }
         }
         timer.start()

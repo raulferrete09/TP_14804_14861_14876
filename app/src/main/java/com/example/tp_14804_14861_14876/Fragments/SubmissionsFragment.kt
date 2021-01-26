@@ -199,9 +199,9 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         text_reportanomaly = report_ed_anomaly.text.toString()
 
         timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        pathname = "Report" + "_" + text_spinner_intervation + "_" + timeStamp
+        pathname = "Report" + "_" +"M"+ text_spinner_machine + "_" + text_spinner_intervation + "_" + timeStamp
 
-// rounded corner image
+        // rounded corner image
         try {
             fileref?.downloadUrl?.addOnSuccessListener { task ->
                 Glide.with(this).load(task).override(300,300).apply(RequestOptions.circleCropTransform()).into(profile_iv_photo)
@@ -223,14 +223,12 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
                     if (!folder.exists()) {
                         folder.mkdirs()
                         if (checkInformation()) {
-                            //shareData()
                             showAlertConfirmation()
                         } else {
                             showAlertError()
                         }
                     } else {
                         if (checkInformation()) {
-                            //shareData()
                             showAlertConfirmation()
                         } else {
                             showAlertError()
@@ -275,7 +273,6 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         //create object of Document class
         doc = com.itextpdf.text.Document()
         val data = timeStamp.substring(0, 4) + "/" + timeStamp.substring(4, 6) + "/" + timeStamp.substring(6, 8) + " at " + timeStamp.substring(9,11) + "h" + timeStamp.substring(11,13)
-        //val data = timeStamp.substring(0, 4) + "/" + timeStamp.substring(5, 6) + "/" + timeStamp.substring(7, 8) + " at " + timeStamp.substring(9,10) + ":" + timeStamp.substring(11,12)
         var path = Environment.getExternalStorageDirectory().toString() + "/" + "HVAC/Reports/" + pathname + ".pdf"
 
         try {
@@ -374,7 +371,6 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
 
     override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
         val text = parent.getItemAtPosition(position).toString()
-        //Toast.makeText(parent.context, text, Toast.LENGTH_SHORT).show()
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {}

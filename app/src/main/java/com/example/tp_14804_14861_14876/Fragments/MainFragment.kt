@@ -2,10 +2,8 @@ package com.example.tp_14804_14861_14876.Fragments
 
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
@@ -14,13 +12,9 @@ import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import androidx.navigation.NavController
-import androidx.recyclerview.widget.RecyclerView
 import com.example.tp_14804_14861_14876.Activitys.MainActivity
-import com.example.tp_14804_14861_14876.Activitys.uploadPDF
 import com.example.tp_14804_14861_14876.R
 import com.example.tp_14804_14861_14876.Utils.ReportsPDF
-import com.example.tp_14804_14861_14876.Utils.TimeAgo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
@@ -30,8 +24,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.*
-import java.io.File
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -50,12 +42,10 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
     lateinit var add_btn_submission: FloatingActionButton
     lateinit var submissionsFragment: SubmissionsFragment
     lateinit var transaction: FragmentTransaction
-    lateinit var dashboadinformation: Layout
     lateinit var dashboard_tv_oknok: TextView
     lateinit var dashboard_tv_anomaly: TextView
     lateinit var dashboard_spinner_machine: Spinner
     lateinit var dashboard_layout: ConstraintLayout
-    lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
     lateinit var adpater_number: ArrayAdapter<CharSequence>
     private lateinit var database: FirebaseDatabase
     var status_temperature: Any? = null
