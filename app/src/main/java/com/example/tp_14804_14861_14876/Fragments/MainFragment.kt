@@ -47,6 +47,7 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
     lateinit var dashboard_spinner_machine: Spinner
     lateinit var dashboard_layout: ConstraintLayout
     lateinit var adpater_number: ArrayAdapter<CharSequence>
+    lateinit var machine: String
     private lateinit var database: FirebaseDatabase
     var status_temperature: Any? = null
     var status_accelerometer: Any? = null
@@ -152,6 +153,7 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
 
     override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
         val text = parent.getItemAtPosition(position).toString()
+        machine = dashboard_spinner_machine.selectedItem.toString()
         CheckData()
     }
 
@@ -208,7 +210,9 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
                         if (snapshot.value != null) {
                             var map = snapshot.value as Map<String, Any?>
                             status_temperature = map["status"]
-                            updateData()
+                            if (MachineNumber == machine){
+                                updateData()
+                            }
                         }
                     }
 
@@ -225,7 +229,9 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
                         if (snapshot.value != null) {
                             var map = snapshot.value as Map<String, Any?>
                             status_accelerometer = map["status"]
-                            updateData()
+                            if (MachineNumber == machine){
+                                updateData()
+                            }
                         }
                     }
 
@@ -246,13 +252,13 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
                         if (snapshot.value != null) {
                             var map = snapshot.value as Map<String, Any?>
                             status_audio = map["anomaly"]
-                            updateData()
+                            if (MachineNumber == machine){
+                                updateData()
+                            }
                         }
                     }
 
                 })
-
-
     }
 
     private fun updateData() {
