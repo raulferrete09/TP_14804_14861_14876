@@ -8,6 +8,11 @@ import retrofit2.http.Body
 import retrofit2.http.Headers
 import retrofit2.http.POST
 
+/*
+    Here we request our notification with some retrofit functions
+    Retrofit is one of the dependencies that can be searched on build.gradle
+ */
+
 interface NotificationAPI {
 
     @Headers("Authorization:key=$SERVER_KEY", "Content-Type:$CONTENT_TYPE")

@@ -1,5 +1,11 @@
 package com.example.tp_14804_14861_14876.Utils
 
+/*
+    Class which saves the URL, Firebase project key and a content type
+
+ */
+
+
 class Constants {
 
     companion object{

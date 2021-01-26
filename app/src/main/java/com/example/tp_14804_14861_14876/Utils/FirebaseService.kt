@@ -21,8 +21,12 @@ import kotlin.random.Random
 private const val CHANNEL_ID = "my_channel"
 
 
+
 class FirebaseService: FirebaseMessagingService() {
 
+    /*
+    Code if we want to just receive the notification in one device where the user is logged
+     */
     companion object {
         var sharedPref: SharedPreferences? = null
 
@@ -39,7 +43,13 @@ class FirebaseService: FirebaseMessagingService() {
         super.onNewToken(newToken)
         token = newToken
     }
-
+/*
+    Function to create a service for our notification information
+    After that, some costum information for the notification, things like:
+    - Icon of the project
+    - Title of the notification
+    - Text of the notification
+ */
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
@@ -64,7 +74,9 @@ class FirebaseService: FirebaseMessagingService() {
 
         notificationManager.notify(notificationID, notification)
     }
-
+/*
+Call API function to prepare the notification channel when called
+ */
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel(notificationManager: NotificationManager) {
         val channelName = "channelName"

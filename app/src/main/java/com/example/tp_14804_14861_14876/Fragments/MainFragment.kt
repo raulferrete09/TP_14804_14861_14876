@@ -41,7 +41,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 const val TOPIC = "/topics/myTopic"
-var anomalyPast:String? = null
+
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -80,7 +80,8 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
     var status_accelerometer: Any? = null
     var status_audio: Any? = null
     var auth: FirebaseAuth? = null
-
+    var anomalyPast:String? = null
+    var MachineNumberPast:String? = null
 
 
     // TODO: Rename and change types of parameters
@@ -95,6 +96,8 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
         }
         FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
     }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -276,7 +279,7 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
             dashboard_layout.setBackgroundColor(resources.getColor(R.color.red))
 
             val MachineNumber = dashboard_spinner_machine.selectedItem.toString()
-            if(anomalyPast != anomaly) {
+            if(anomalyPast != anomaly || MachineNumberPast != MachineNumber) {
                 val title = "ANOMALY"
                 val message = "Machine: " + MachineNumber + " - " + anomaly
 
@@ -287,13 +290,17 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
                     sendNotification(it)
                 }
                 anomalyPast = anomaly
+                MachineNumberPast = MachineNumber
             }
 
 
 
         }
     }
-
+/*
+    Function to detect what kind of anomaly the system have, which can have three different
+    anomalys
+ */
     private fun typeAnomaly():String {
         if(status_accelerometer != "OK" && status_temperature != "OK" && status_audio != ""){
             dashboard_tv_anomaly.text = "Accelerometer, Temperature and Audio"
@@ -317,7 +324,9 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
 
 
     }
-
+/*
+    Function which elaborate our notification
+ */
     private fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
         try {
             val response = RetrofitInstance.api.postNotification(notification)

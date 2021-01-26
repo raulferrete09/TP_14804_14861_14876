@@ -67,7 +67,10 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
 
 
 
-
+/*
+This function will check every action on buttons and also the token to make the google login
+with success
+ */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -120,7 +123,9 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
         callbackManager = CallbackManager.Factory.create()
 
     }
-    //NFDt/SXshxmq1FhkMKa3tkEgyDI=
+    /*
+    Function to check Internet connection
+     */
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         if(!isConnected){
@@ -129,35 +134,29 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
             alert.showAlert(builder,this)
         }
     }
-
+    /*
+    Function that takes the user to the activity related to "Sign Up", with the startActivity
+     */
     fun signupaccount(){
         startActivity(Intent(this, SignUpActivity::class.java))
     }
-
+    /*
+    Function that takes the user to the activity related to "forget password", with the startActivity
+     */
     fun forgetpassword(){
         startActivity(Intent(this, ForgotPasswordActivity::class.java))
     }
 
-    fun printHashKey() {
-        try {
-            val info = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
-            for (signature in info.signatures) {
-                val md = MessageDigest.getInstance("SHA")
-                md.update(signature.toByteArray())
-                val hashKey = String(Base64.encode(md.digest(), 0))
-                Log.i("TAG", "printHashKey() Hash Key: $hashKey")
-            }
-        } catch (e: NoSuchAlgorithmException) {
-            Log.e("TAG", "printHashKey()", e)
-        } catch (e: Exception) {
-            Log.e("TAG", "printHashKey()", e)
-        }
-    }
+    /*
+        Function to check info of Google Login
+     */
     fun googleLogin() {
         var signInIntent = googleSignInClient?.signInIntent
         startActivityForResult(signInIntent,GOOGLE_LOGIN_CODE)
     }
-
+/*
+Function to check the permissions necessary for the login phase
+ */
     fun facebookLogin(){
         LoginManager.getInstance()
                 .logInWithReadPermissions(this, Arrays.asList("public_profile","email"))
@@ -179,6 +178,9 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
 
                 })
     }
+    /*
+    Function to communicate Facebook Login with Firebase and do the Login Facebook in case of success
+     */
     fun handleFacebookAccessToken(token : AccessToken?){
         var credential = FacebookAuthProvider.getCredential(token?.token!!)
         auth?.signInWithCredential(credential)
@@ -195,6 +197,9 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
                     }
                 }
     }
+    /*
+    Function to check Google credentials with Firebase
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         callbackManager?.onActivityResult(requestCode,resultCode,data)
@@ -211,6 +216,9 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
         }
     }
 
+    /*
+    Function to communicate Google Login with Firebase and do the Login Google in case of success
+     */
     fun firebaseAuthWithGoogle(account: GoogleSignInAccount?) {
         var credential = GoogleAuthProvider.getCredential(account?.idToken,null)
         auth?.signInWithCredential(credential)
@@ -225,7 +233,9 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
                     }
                 }
     }
-
+    /*
+    Function for the sign in with user credentials
+     */
     fun signinAndSignup(){
         if(login_et_email.text.toString().isNotEmpty() && login_et_password.text.toString().isNotEmpty()) {
             auth?.createUserWithEmailAndPassword(
@@ -248,6 +258,9 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
             showAlert()
         }
     }
+    /*
+    Function for the login with Emails created by the users
+     */
     fun signinEmail(){
         auth?.signInWithEmailAndPassword(login_et_email.text.toString(),login_et_password.text.toString())
             ?.addOnCompleteListener {
@@ -261,6 +274,9 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
                 }
             }
     }
+    /*
+    Function to move us from Activity after the login
+     */
     fun moveMainPage(user:FirebaseUser?){
         if(user != null){
             progressDialog()
@@ -269,6 +285,9 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
             finish()
         }
     }
+    /*
+    Function to give us the option of watching the password
+     */
     fun showPassword(isShow:Boolean) {
         if (isShow){
             login_et_password.transformationMethod = HideReturnsTransformationMethod.getInstance()
@@ -279,6 +298,9 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
         }
         login_et_password.setSelection(login_et_password.text.toString().length)
     }
+    /*
+    Function to alert the user if something is wrong with requirements necessary
+     */
     fun showAlert(){
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Error")
@@ -287,7 +309,9 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
         val dialog: AlertDialog =builder.create()
         dialog.show()
     }
-
+/*
+Function for the transition between activities
+ */
     private fun progressDialog() {
         //Initialize Progress Dialog
         progressDialog = ProgressDialog(this)
@@ -298,11 +322,15 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
         //Set Transparent background
         progressDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
-
+/*
+Function to stop the loading from the previous function
+ */
     override fun onBackPressed() {
         progressDialog.dismiss()
     }
-
+/*
+Function to save data from the user
+ */
     private fun sendData(){
         val person = auth?.currentUser
         val uid = person?.uid

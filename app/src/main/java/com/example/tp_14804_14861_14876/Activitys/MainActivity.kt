@@ -301,6 +301,9 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                         openCamera()
                     }
                 }
+                /*
+                Button to open settings
+                 */
                 R.id.settings_icon -> {
                     settingsFragment = SettingsFragment()
                     supportFragmentManager
@@ -310,6 +313,9 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                         )
                         .commit()
                 }
+                /*
+                Button to log out
+                 */
                 R.id.logout_icon -> {
                     disconnectFromGoogle()
                     disconnectFromFacebook()
@@ -340,7 +346,9 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         //camera intent
         startActivityForResult(cameraintent, IMAGE_CAPTURE_CODE)
     }
-
+/*
+Function that checks permissions, using the requestPermissions as his auxiliary
+ */
     private fun checkPermissions(): Boolean {
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -363,7 +371,9 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         }
 
     }
-
+    /*
+    Function to disconnect the user from Facebook Account
+     */
     private fun disconnectFromFacebook() {
         if (AccessToken.getCurrentAccessToken() == null) {
             return  // already logged out
@@ -377,7 +387,9 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                 LoginManager.getInstance().logOut()
             }).executeAsync()
     }
-
+    /*
+    Function to disconnect the user from Google Account
+     */
     private fun disconnectFromGoogle() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(this.getString(R.string.default_web_client_id))
@@ -387,7 +399,9 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         val googleSignInClient = GoogleSignIn.getClient(this, gso)
         googleSignInClient.signOut()
     }
-
+/*
+    Function that checks the Internet connection
+ */
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         if(!isConnected){
             var alert = Alert()
@@ -395,7 +409,9 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
             alert.showAlert(builder, this)
         }
     }
-
+/*
+Function to request the permissions necessary to app tasks
+ */
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
