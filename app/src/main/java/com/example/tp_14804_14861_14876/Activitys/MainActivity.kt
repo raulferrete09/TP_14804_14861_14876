@@ -152,27 +152,34 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                 Glide.with(this).load(task).override(300,300).apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
             }
         }catch (e: Exception){
-            e.printStackTrace()
             Glide.with(this).load(image).override(300,300).apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
+            e.printStackTrace()
         }
 
-        /*r.addValueEventListener(object : ValueEventListener{
+        r.addValueEventListener(object : ValueEventListener{
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
-                var map = snapshot.value as Map<String, Any>
-                user_tv_name.text = map["name"].toString()
-                var photo = map["photo"].toString()
-                var photo_uri = Uri.parse(photo)
-                if(map["photo"] == null){
-                    Glide.with(baseContext).load(image).override(300, 300).apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
-                }else {
-                    Glide.with(baseContext).load(photo_uri).override(300, 300).apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
+                if(snapshot.value != null) {
+                    var map = snapshot.value as Map<String, Any>
+                    user_tv_name.text = map["name"].toString()
+                    var photo = map["photo"].toString()
+                    var photo_uri = Uri.parse(photo)
+                    if (map["photo"] == null) {
+                        Glide.with(baseContext).load(image).override(300, 300)
+                            .apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
+                    } else {
+                        Glide.with(baseContext).load(photo_uri).override(300, 300)
+                            .apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
+                    }
+                }else{
+                    Glide.with(baseContext).load(image).override(300, 300)
+                        .apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
                 }
             }
-        })*/
+        })
 
         actionBarDrawerToggle = ActionBarDrawerToggle(
             this,

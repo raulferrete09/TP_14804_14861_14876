@@ -7,13 +7,10 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
-import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,27 +18,18 @@ import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.tp_14804_14861_14876.R
-import com.google.android.gms.tasks.Continuation
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.itextpdf.text.*
 import com.itextpdf.text.pdf.PdfWriter
-import com.itextpdf.text.pdf.parser.Line
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.StorageTask
-import com.google.firebase.storage.UploadTask
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.Transformation
-import jp.wasabeef.picasso.transformations.RoundedCornersTransformation
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -64,7 +52,6 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
     lateinit var profile_tv_name: TextView
     lateinit var profile_tv_id: TextView
     lateinit var report_ed_anomaly: EditText
-    lateinit var transformation: Transformation
     lateinit var submission_btn_firebase: Button
     lateinit var submission_spinner_machine: Spinner
     lateinit var submission_spinner_intervation: Spinner
@@ -80,7 +67,6 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
     lateinit var adpater_intervation: ArrayAdapter<CharSequence>
 
     var auth : FirebaseAuth? = null
-    private val PERMISSION_CODE = 1000
     lateinit var name: String
     lateinit var email: String
     lateinit var uid: String
@@ -298,9 +284,6 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
             //open the document for writing
             doc.open()
 
-
-
-            //
             val font_title: Font = Font(FontFactory.getFont(FontFactory.TIMES_BOLD, 20.0f))
             val font_text: Font = Font(FontFactory.getFont(FontFactory.TIMES_BOLD, 14.0f))
             val title = Chunk("Intervention report of $data", font_title)
@@ -343,7 +326,6 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
                 doc.add(anchor)
                 doc.add(Paragraph(" "))
             }
-            //doc.add(Paragraph("https://translate.google.com/?sl=pt&tl=en&text=Criar%20a%20estrutura%20do%20PDF&op=translate"))
             doc.add(Paragraph(" "))
             //add uri videos
             doc.add(Paragraph(Chunk(text_audio)))
@@ -362,7 +344,6 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
                     .child("$pathname")
 
             var pathpdf = Uri.fromFile(File(path))
-            println("NOME DO FICHEIRO PDF " + pathpdf)
             if (pathpdf != null) {
                 savePDF.putFile(pathpdf)
             }
@@ -499,8 +480,6 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         for(i in 0 until 2){
             for (i in 0 until count) {
                 var file = images!![i]
-                println("VAI APARECER AQUI")
-                println(file)
                 var file_string = file.toString()
                 var file_string_modified = file_string
                 val total_count = file_string.length
@@ -584,11 +563,9 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
             fileref.downloadUrl.addOnSuccessListener{ task ->
                 url = task.toString()+".html"
                 lista_images.add(url)
-                println("Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa  IMAGE " + url)
                 if (lista_images.size == count){
                     //Chamar função que usa os links
                     photo_url_check = 1
-                    println("PHOTO DONE " + photo_url_check)
                 }
 
             }
@@ -605,9 +582,7 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
             fileref.downloadUrl.addOnSuccessListener{ task ->
                 url_sound = task.toString()+".html"
                 lista_sounds.add(url_sound)
-                println("Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa  AUDIO  " + url_sound)
                 if (lista_sounds.size == count){
-                    //Chamar função que usa os links
                     sound_url_check = 1
                 }
             }
@@ -619,11 +594,10 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
 
     fun saveAllPDF() {
         var saveallpdf = FirebaseStorage.getInstance().reference.child("Reports").child("$uid").child("$pathname").child("PDF").child("$pathname")
-        var database = FirebaseDatabase.getInstance().reference.child("uploads").child("$pathname")
+        var database = FirebaseDatabase.getInstance().reference.child("Reports").child("$pathname")
         saveallpdf.downloadUrl.addOnSuccessListener { task ->
             var url_pdf = task.toString()
             var map = mutableMapOf<String, Any?>()
-            println("Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa  AUDIO  " + url_pdf)
             map["name"] = pathname
             map["url"] = url_pdf
             database.updateChildren(map)
@@ -639,7 +613,6 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         builder.setPositiveButton("Confirm") { dialogInterface: DialogInterface, i: Int ->
             try {
                 savePDF(email, name)
-                //ir buscar o url e lá fazer o codigo
                 val splashtime: Long = 1000
                 Handler().postDelayed({
                     saveAllPDF()
