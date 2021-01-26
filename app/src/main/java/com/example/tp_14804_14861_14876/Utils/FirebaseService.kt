@@ -57,6 +57,7 @@ class FirebaseService: FirebaseMessagingService() {
             .setContentTitle(message.data["title"])
             .setContentText(message.data["message"])
             .setSmallIcon(R.drawable.hvac_logo)
+            //.setStyle(NotificationCompat.BigTextStyle())
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
             .build()

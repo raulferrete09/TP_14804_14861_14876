@@ -41,7 +41,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 const val TOPIC = "/topics/myTopic"
-
+var anomalyPast:String? = null
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -80,6 +80,8 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
     var status_accelerometer: Any? = null
     var status_audio: Any? = null
     var auth: FirebaseAuth? = null
+
+
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -269,20 +271,24 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
             dashboard_layout.setBackgroundColor(resources.getColor(R.color.green))
         } else {
             val anomaly = typeAnomaly()
+
             dashboard_tv_oknok.text = "ANOMALY"
             dashboard_layout.setBackgroundColor(resources.getColor(R.color.red))
 
             val MachineNumber = dashboard_spinner_machine.selectedItem.toString()
+            if(anomalyPast != anomaly) {
+                val title = "ANOMALY"
+                val message = "Machine: " + MachineNumber + " - " + anomaly
 
-            val title = "ANOMALY"
-            val message = "Anomaly found on the machine: " + MachineNumber + " - " + anomaly
-
-            PushNotification(
-                NotificationData(title, message),
-                TOPIC
-            ).also {
-                sendNotification(it)
+                PushNotification(
+                    NotificationData(title, message),
+                    TOPIC
+                ).also {
+                    sendNotification(it)
+                }
+                anomalyPast = anomaly
             }
+
 
 
         }
