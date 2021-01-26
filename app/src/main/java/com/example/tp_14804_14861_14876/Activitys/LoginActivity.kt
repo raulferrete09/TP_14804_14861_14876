@@ -310,13 +310,13 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
         val uid = person?.uid
         var name = person?.displayName
         var email = person?.email
-        var map = mutableMapOf<String,String?>()
+        var map = mutableMapOf<String,Any?>()
 
         map["name"]=name
         map["email"]=email
         database.reference
             .child("users")
             .child("$uid")
-            .setValue(map)
+            .updateChildren(map)
     }
 }

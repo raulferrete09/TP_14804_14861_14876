@@ -11,6 +11,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
@@ -354,9 +355,12 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
                 doc.add(Paragraph(" "))
             }
             doc.close()
+
             var savePDF = storageReference!!
                     .child("$pathname")
+                    .child("PDF")
                     .child("$pathname")
+
             var pathpdf = Uri.fromFile(File(path))
             println("NOME DO FICHEIRO PDF " + pathpdf)
             if (pathpdf != null) {
@@ -485,7 +489,7 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
                     .child("$uid")
                     .child("$pathname")
                     .child("Audios")
-            ImageRef = UstorageReference!!.child("$sound_name")
+                ImageRef = UstorageReference!!.child("$sound_name")
             uploadSound(file, ImageRef,sound_count)
         }
     }
@@ -613,6 +617,19 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         }
     }
 
+    fun saveAllPDF() {
+        var saveallpdf = FirebaseStorage.getInstance().reference.child("Reports").child("$uid").child("$pathname").child("PDF").child("$pathname")
+        var database = FirebaseDatabase.getInstance().reference.child("uploads").child("$pathname")
+        saveallpdf.downloadUrl.addOnSuccessListener { task ->
+            var url_pdf = task.toString()
+            var map = mutableMapOf<String, Any?>()
+            println("Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa  AUDIO  " + url_pdf)
+            map["name"] = pathname
+            map["url"] = url_pdf
+            database.updateChildren(map)
+        }
+    }
+
     fun showAlertConfirmation(){
         var choose:Int = 0
         val builder = AlertDialog.Builder(requireContext())
@@ -622,6 +639,11 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         builder.setPositiveButton("Confirm") { dialogInterface: DialogInterface, i: Int ->
             try {
                 savePDF(email, name)
+                //ir buscar o url e lá fazer o codigo
+                val splashtime: Long = 1000
+                Handler().postDelayed({
+                    saveAllPDF()
+                },splashtime)
                 shareData()
                 mainFragment = MainFragment()
                 transaction = fragmentManager?.beginTransaction()!!
