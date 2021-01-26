@@ -14,16 +14,14 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.NavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tp_14804_14861_14876.Activitys.MainActivity
 import com.example.tp_14804_14861_14876.Activitys.uploadPDF
 import com.example.tp_14804_14861_14876.R
-import com.example.tp_14804_14861_14876.Utils.ReportListAdapter
+import com.example.tp_14804_14861_14876.Utils.ReportsPDF
 import com.example.tp_14804_14861_14876.Utils.TimeAgo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import java.io.File
 import java.text.SimpleDateFormat
@@ -40,17 +38,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [MainFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemList_Click,
-    AdapterView.OnItemSelectedListener {
-
-    var navController: NavController? = null
-
-    lateinit var reportlist: RecyclerView
-
-    //var allFiles: Array<File>? = null
-    private lateinit var allFilesReport: Array<File>
-    lateinit var timeAgo: TimeAgo
-    private var reportListAdapter: ReportListAdapter? = null
+class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClickListener {
 
     lateinit var add_btn_submission: FloatingActionButton
     lateinit var submissionsFragment: SubmissionsFragment
@@ -65,8 +53,7 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
 
     lateinit var myPDFListView: ListView
     var databaseReference: DatabaseReference? = null
-    var uploadPDFS: ArrayList<uploadPDF>? = null
-    var uploadPDFS1: ArrayList<uploadPDF>? = null
+    var reportsPDF: ArrayList<ReportsPDF>? = null
 
 
     // TODO: Rename and change types of parameters
@@ -123,8 +110,7 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
         dashboard_layout = view.findViewById<ConstraintLayout>(R.id.dasboard_layout)
 
         myPDFListView = view.findViewById<ListView>(R.id.myListView)
-        uploadPDFS = ArrayList()
-        uploadPDFS1 = ArrayList()
+        reportsPDF = ArrayList()
         viewAllFiles()
 
         adpater_number = ArrayAdapter.createFromResource(
@@ -137,26 +123,11 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
         dashboard_spinner_machine.adapter = adpater_number
         dashboard_spinner_machine.onItemSelectedListener = this
 
-        //reportlist = view.findViewById<RecyclerView>(R.id.report_list_view)
-
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val path = Environment.getExternalStorageDirectory().toString() + "/HVAC/Reports/"
-        val directory = File(path)
-        //allFilesReport = directory.listFiles()
-
-        //reportListAdapter = ReportListAdapter(allFilesReport, this)
-
-        //reportlist.setHasFixedSize(true)
-        //reportlist.layoutManager = LinearLayoutManager(context)
-        //reportlist.adapter = reportListAdapter
 
         add_btn_submission.setOnClickListener(this)
 
         myPDFListView.setOnItemClickListener { parent, view, position, id ->
-            println(position)
-            println(uploadPDFS1)
-            println(uploadPDFS)
-            val uploadPDF = uploadPDFS!![position]
+            val uploadPDF = reportsPDF!![position]
             val intent = Intent()
             intent.type = Intent.ACTION_VIEW
             intent.data = Uri.parse(uploadPDF.getUrl())
@@ -177,18 +148,6 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
         }
     }
 
-    fun onClickListener(file: File, position: Int) {
-
-        //For pdf file
-        val file = file
-        //For pdf file
-        val path = Environment.getExternalStorageDirectory().toString() + "/HVAC/Reports/"
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.type = "application/*"
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        startActivity(intent)
-    }
-
     override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
         val text = parent.getItemAtPosition(position).toString()
   }
@@ -201,14 +160,14 @@ class MainFragment : Fragment(), View.OnClickListener, ReportListAdapter.onItemL
         databaseReference = FirebaseDatabase.getInstance().getReference("Reports")
         databaseReference!!.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                uploadPDFS = ArrayList()
+                reportsPDF = ArrayList()
                 for (postSnapshot in snapshot.children) {
-                    val uploadPDF = postSnapshot.getValue(uploadPDF::class.java)
-                    uploadPDFS!!.add(uploadPDF!!)
+                    val ReportsPDF = postSnapshot.getValue(ReportsPDF::class.java)
+                    reportsPDF!!.add(ReportsPDF!!)
                 }
-                val uploads = arrayOfNulls<String>(uploadPDFS!!.size)
+                val uploads = arrayOfNulls<String>(reportsPDF!!.size)
                 for (i in uploads.indices) {
-                    uploads[i] = uploadPDFS!![i]!!.getName()
+                    uploads[i] = reportsPDF!![i]!!.getName()
                 }
                 val adapter: ArrayAdapter<String?> = object : ArrayAdapter<String?>(
                     requireActivity(), android.R.layout.simple_list_item_1, uploads
