@@ -34,6 +34,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.messaging.FirebaseMessagingService
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.*
@@ -83,17 +84,22 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
         baseContext.registerReceiver(ConnectionReceiver(),IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         ReceiverConnection.instance.setConnectionListener(this)
 
+        stopService(Intent(this, FirebaseMessagingService::class.java))
 
         login_btn_signin.setOnClickListener {
+            //startFirebaseService()
             signinAndSignup()
         }
         login_btn_gmail.setOnClickListener {
+            //startFirebaseService()
             googleLogin()
         }
         login_btn_facebook.setOnClickListener {
+            //startFirebaseService()
             facebookLogin()
         }
         login_tv_signup.setOnClickListener {
+            //startFirebaseService()
             signupaccount()
         }
         login_tv_forgpass.setOnClickListener {
@@ -111,6 +117,13 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
         googleSignInClient = GoogleSignIn.getClient(this,gso)
         callbackManager = CallbackManager.Factory.create()
 
+    }
+    /*
+        Function to check start Firebase Service
+    */
+    private fun startFirebaseService() {
+        val intent = Intent(this, FirebaseMessagingService::class.java)
+        startService(intent)
     }
     /*
         Function to check Internet connection

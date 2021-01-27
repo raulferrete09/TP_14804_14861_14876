@@ -177,8 +177,8 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
         val splashtime: Long = 1000
         Handler().postDelayed({
             val MachineNumber = dashboard_spinner_machine.selectedItem.toString()
-            if (anomalyPast != dashboard_tv_anomaly.text.toString() && dashboard_tv_anomaly.text.toString() != "") {
-                if (MachineNumber != machinePast) {
+            if (anomalyPast != dashboard_tv_anomaly.text.toString() || MachineNumber != machinePast) {
+                if (dashboard_tv_anomaly.text.toString() != "") {
                     val title = "ANOMALY"
                     val message =
                         "Machine: " + MachineNumber + " - " + dashboard_tv_anomaly.text.toString()
@@ -192,7 +192,6 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
                     anomalyPast = dashboard_tv_anomaly.text.toString()
                     machinePast = MachineNumber
                 }
-
             }
         }, splashtime)
     }

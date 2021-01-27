@@ -37,7 +37,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.File
@@ -76,14 +80,12 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         setContentView(R.layout.activity_main)
 
         //Internet Connection
-        baseContext.registerReceiver(
-            ConnectionReceiver(),
-            IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-        )
+        baseContext.registerReceiver(ConnectionReceiver(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         ReceiverConnection.instance.setConnectionListener(this)
+        val intent = Intent(this, FirebaseMessagingService::class.java)
+        startService(intent)
         setUpNavigationDrawer()
     }
-
     private fun setUpNavigationDrawer() {
         toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.main_toolbar)
         toolbar.title = ""
@@ -153,7 +155,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
-                if(snapshot.value != null) {
+                if (snapshot.value != null) {
                     var map = snapshot.value as Map<String, Any>
                     user_tv_name.text = map["name"].toString()
                     var photo = map["photo"].toString()
@@ -165,7 +167,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                         Glide.with(baseContext).load(photo_uri).override(300, 300)
                             .apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
                     }
-                }else{
+                } else {
                     Glide.with(baseContext).load(image).override(300, 300)
                         .apply(RequestOptions.circleCropTransform()).into(user_iv_photo)
                 }
@@ -193,7 +195,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         navigationview.setNavigationItemSelectedListener{
             when (it.itemId) {
                 R.id.photo_icon -> {
-                    if (checkPermissions()){
+                    if (checkPermissions()) {
                         val folder =
                             File(
                                 getExternalStorageDirectory()
@@ -299,7 +301,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                     }
                 }
                 /*
-                Button to open settings
+                    Button to open settings
                  */
                 R.id.settings_icon -> {
                     settingsFragment = SettingsFragment()
@@ -311,13 +313,14 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                         .commit()
                 }
                 /*
-                Button to log out
+                    Button to log out
                  */
                 R.id.logout_icon -> {
                     disconnectFromGoogle()
                     disconnectFromFacebook()
                     FirebaseAuth.getInstance().signOut()
-                    val intent = Intent(this, LoginActivity::class.java)
+                    stopService(Intent(this, FirebaseMessagingService::class.java))
+                    val intent = Intent(this, SplashScreenActivity::class.java)
                     startActivity(intent)
                 }
             }
@@ -410,10 +413,10 @@ Function that checks permissions, using the requestPermissions as his auxiliary
 Function to request the permissions necessary to app tasks
  */
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    requestCode: Int,
+    permissions: Array<out String>,
+    grantResults: IntArray
+) {
         when (requestCode) {
             PERMISSION_CODE -> {
                 if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

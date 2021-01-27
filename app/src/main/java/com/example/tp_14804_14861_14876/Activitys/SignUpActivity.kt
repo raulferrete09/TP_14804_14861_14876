@@ -33,9 +33,10 @@ import java.lang.Exception
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.messaging.FirebaseMessagingService
 import java.util.regex.Pattern
 
-    const val TOPIC = "/topics/myTopic"
+const val TOPIC = "/topics/myTopic"
 
 class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverListener, View.OnClickListener {
 
@@ -59,13 +60,14 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
     lateinit var password_iv_confirmshow: ImageView
     lateinit var signup_et_confirmpassword: EditText
     lateinit var progressDialog: ProgressDialog
+    lateinit var id: String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
 
-        //Internet Connection
+         //Internet Connection
         baseContext.registerReceiver(ConnectionReceiver(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         ReceiverConnection.instance.setConnectionListener(this)
 
@@ -108,10 +110,15 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
             showConfirmPassword(misshowconfirmpass)
         }
         signup_tv_signin.setOnClickListener{
-            ToLoginPage()
+            startActivity(Intent(this, LoginActivity::class.java))
         }
 
-
+        FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener {
+            FirebaseService.token = it.token
+            id = FirebaseAuth.getInstance().uid.toString()
+            val token = it.token
+            println(token)
+        }
         FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
 
     }
@@ -176,12 +183,12 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
                         && validationpassword == "false") {
                     FirebaseAuth.getInstance().createUserWithEmailAndPassword(signup_et_email.text.toString(), signup_et_password.text.toString()).addOnCompleteListener {
                         if (it.isSuccessful) {
+                            //startFirebaseService()
                             ToLoginPage()
                             progressDialog()
-
                             val title = "Sign Up"
                             val message = "Account created successfully"
-
+                            if (FirebaseAuth.getInstance().uid == id)
                             PushNotification(
                                 NotificationData(title, message),
                                 TOPIC
@@ -311,5 +318,12 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
      */
     override fun onBackPressed() {
         progressDialog.dismiss()
+    }
+    /*
+        Function to check start Firebase Service
+    */
+    private fun startFirebaseService() {
+        val intent = Intent(this, FirebaseMessagingService::class.java)
+        startService(intent)
     }
 }
