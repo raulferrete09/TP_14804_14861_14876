@@ -58,10 +58,10 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
 
 
 
-/*
-This function will check every action on buttons and also the token to make the google login
-with success
- */
+    /*
+        This function will check every action on buttons and also the token to make the google login
+        with success
+    */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)

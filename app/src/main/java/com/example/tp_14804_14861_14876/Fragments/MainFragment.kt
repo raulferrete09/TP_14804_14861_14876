@@ -1,8 +1,12 @@
 package com.example.tp_14804_14861_14876.Fragments
 
 import android.content.Intent
+import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.text.Layout
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,6 +63,7 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
     lateinit var adpater_number: ArrayAdapter<CharSequence>
     lateinit var machine: String
     private lateinit var database: FirebaseDatabase
+    var machinePast = ""
     var status_temperature: Any? = null
     var status_accelerometer: Any? = null
     var status_audio: Any? = null
@@ -169,6 +174,27 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
         val text = parent.getItemAtPosition(position).toString()
         machine = dashboard_spinner_machine.selectedItem.toString()
         CheckData()
+        val splashtime: Long = 1000
+        Handler().postDelayed({
+            val MachineNumber = dashboard_spinner_machine.selectedItem.toString()
+            if (anomalyPast != dashboard_tv_anomaly.text.toString() && dashboard_tv_anomaly.text.toString() != "") {
+                if (MachineNumber != machinePast) {
+                    val title = "ANOMALY"
+                    val message =
+                        "Machine: " + MachineNumber + " - " + dashboard_tv_anomaly.text.toString()
+
+                    PushNotification(
+                        NotificationData(title, message),
+                        TOPIC
+                    ).also {
+                        sendNotification(it)
+                    }
+                    anomalyPast = dashboard_tv_anomaly.text.toString()
+                    machinePast = MachineNumber
+                }
+
+            }
+        }, splashtime)
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -288,15 +314,6 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
 
             val MachineNumber = dashboard_spinner_machine.selectedItem.toString()
             if(anomalyPast != anomaly || MachineNumberPast != MachineNumber) {
-                val title = "ANOMALY"
-                val message = "Machine: " + MachineNumber + " - " + anomaly
-
-                PushNotification(
-                    NotificationData(title, message),
-                    TOPIC
-                ).also {
-                    sendNotification(it)
-                }
                 anomalyPast = anomaly
                 MachineNumberPast = MachineNumber
             }
@@ -325,7 +342,7 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
             // Do nothing
         }
 
-        return dashboard_tv_anomaly.toString()
+        return dashboard_tv_anomaly.text.toString()
 
     }
     /*
