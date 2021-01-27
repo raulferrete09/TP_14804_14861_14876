@@ -1,8 +1,6 @@
 package com.example.tp_14804_14861_14876.Fragments
 
 import android.content.Intent
-import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
 import android.text.Layout
 import android.view.LayoutInflater
@@ -13,8 +11,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.example.tp_14804_14861_14876.Activitys.MainActivity
+import com.example.tp_14804_14861_14876.Activitys.TOPIC
 import com.example.tp_14804_14861_14876.R
 import com.example.tp_14804_14861_14876.Utils.ReportsPDF
+import com.example.tp_14804_14861_14876.Utils.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
@@ -24,8 +24,17 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.*
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.File
+import java.lang.Exception
+import java.text.SimpleDateFormat
 import java.util.*
 
+const val TOPIC = "/topics/myTopic"
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -39,6 +48,7 @@ private const val ARG_PARAM2 = "param2"
  */
 class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClickListener {
 
+    val TAG = "MainFragment"
     lateinit var add_btn_submission: FloatingActionButton
     lateinit var submissionsFragment: SubmissionsFragment
     lateinit var transaction: FragmentTransaction
@@ -53,6 +63,9 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
     var status_accelerometer: Any? = null
     var status_audio: Any? = null
     var auth: FirebaseAuth? = null
+    var anomalyPast:String? = null
+    var MachineNumberPast:String? = null
+
 
     lateinit var myPDFListView: ListView
     var databaseReference: DatabaseReference? = null
@@ -69,6 +82,7 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+        FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
     }
 
     override fun onCreateView(
@@ -215,8 +229,8 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
                             }
                         }
                     }
-
                 })
+
         database = FirebaseDatabase.getInstance()
         database.reference.child("Accelerometer")
                 .child("M" + "$MachineNumber")
@@ -234,7 +248,6 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
                             }
                         }
                     }
-
                 })
         auth = FirebaseAuth.getInstance()
         val user: FirebaseUser? = auth?.currentUser
@@ -257,7 +270,6 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
                             }
                         }
                     }
-
                 })
     }
 
@@ -270,14 +282,31 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
             dashboard_tv_anomaly.text = ""
             dashboard_layout.setBackgroundColor(resources.getColor(R.color.green))
         } else {
-            typeAnomaly()
+            val anomaly = typeAnomaly()
             dashboard_tv_oknok.text = "ANOMALY"
             dashboard_layout.setBackgroundColor(resources.getColor(R.color.red))
 
+            val MachineNumber = dashboard_spinner_machine.selectedItem.toString()
+            if(anomalyPast != anomaly || MachineNumberPast != MachineNumber) {
+                val title = "ANOMALY"
+                val message = "Machine: " + MachineNumber + " - " + anomaly
+
+                PushNotification(
+                    NotificationData(title, message),
+                    TOPIC
+                ).also {
+                    sendNotification(it)
+                }
+                anomalyPast = anomaly
+                MachineNumberPast = MachineNumber
+            }
         }
     }
-
-    private fun typeAnomaly(){
+    /*
+        Function to detect what kind of anomaly the system have, which can have three different
+        anomalys
+    */
+    private fun typeAnomaly():String {
         if(status_accelerometer != "OK" && status_temperature != "OK" && status_audio != ""){
             dashboard_tv_anomaly.text = "Accelerometer, Temperature and Audio"
         }else if(status_temperature != "OK" && status_audio != ""){
@@ -296,9 +325,24 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
             // Do nothing
         }
 
+        return dashboard_tv_anomaly.toString()
 
-
-
+    }
+    /*
+        Function which elaborate our notification
+    */
+    private fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val response = RetrofitInstance.api.postNotification(notification)
+            if(response.isSuccessful) {
+                Log.d(TAG, "Response: ${Gson().toJson(response)}")
+            }
+            else {
+                Log.e(TAG, response.errorBody().toString())
+            }
+        }catch (e: Exception) {
+            Log.e(TAG, e.toString())
+        }
     }
 
 }

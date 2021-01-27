@@ -1,8 +1,12 @@
 package com.example.tp_14804_14861_14876.Activitys
 
 import android.app.AlertDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.app.ProgressDialog
 import android.content.Intent
+import android.os.Build
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
@@ -11,22 +15,32 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
+import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.example.tp_14804_14861_14876.R
-import com.example.tp_14804_14861_14876.Utils.Alert
-import com.example.tp_14804_14861_14876.Utils.ConnectionReceiver
-import com.example.tp_14804_14861_14876.Utils.ReceiverConnection
+import com.example.tp_14804_14861_14876.Utils.*
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.lang.Exception
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import java.util.regex.Pattern
 
+    const val TOPIC = "/topics/myTopic"
+
 class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverListener, View.OnClickListener {
+
+    val TAG = "SignUpActivity"
+
 
     var misshowpass = false
     var misshowconfirmpass = false
@@ -97,13 +111,36 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
             ToLoginPage()
         }
 
-    }
 
+        FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
+
+    }
+    /*
+    Function which elaborate our notification
+     */
+    private fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val response = RetrofitInstance.api.postNotification(notification)
+            if(response.isSuccessful) {
+                Log.d(TAG, "Response: ${Gson().toJson(response)}")
+            }
+            else {
+                Log.e(TAG, response.errorBody().toString())
+            }
+        }catch (e: Exception) {
+            Log.e(TAG, e.toString())
+        }
+    }
+    /*
+    Function which sends the info to the firebase, and returns the user to the Login Activity
+     */
     private fun ToLoginPage() {
         sendData()
         startActivity(Intent(this, LoginActivity::class.java))
     }
-
+    /*
+    Function to save data from the user
+     */
     private fun sendData() {
         val user = auth?.currentUser
         val uid = user?.uid
@@ -121,7 +158,14 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
         user!!.updateProfile(profileUpdates)
     }
 
-
+    /*
+    This function is the most important of the Sign Up Activity
+    - Check if any textView is empty and check if the password is validated (send an alert, in
+    case of one this problems happen
+    - If there's no problem in the credentials, the user account is created, the app returns to
+    Login Activity and send a notification telling the user that the account was
+    created successfully
+     */
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.signup_btn_signup ->
@@ -134,6 +178,18 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
                         if (it.isSuccessful) {
                             ToLoginPage()
                             progressDialog()
+
+                            val title = "Sign Up"
+                            val message = "Account created successfully"
+
+                            PushNotification(
+                                NotificationData(title, message),
+                                TOPIC
+                            ).also {
+                                sendNotification(it)
+                            }
+
+
                         }
                     }
                 }else {
@@ -166,7 +222,9 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
             }
         }
     }
-
+    /*
+    Function to show user an alert in case of any problem relative with credentials errors
+     */
     fun showAlert(x:Int){
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Error")
@@ -182,7 +240,9 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
         val dialog: AlertDialog =builder.create()
         dialog.show()
     }
-
+    /*
+    These two consecutive functions, allows user to check password and confirm password credentials
+     */
     fun showPassword(isShow:Boolean) {
         if (isShow){
             signup_et_password.transformationMethod = HideReturnsTransformationMethod.getInstance()
@@ -204,7 +264,9 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
         }
         signup_et_confirmpassword.setSelection(signup_et_confirmpassword.text.toString().length)
     }
-
+    /*
+    Function to check Internet connection
+     */
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         if(!isConnected){
             var alert = Alert()
@@ -212,6 +274,10 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
             alert.showAlert(builder,this)
         }
     }
+    /*
+    Function that validates the password with the necessary credentials
+    -At least one upper case, one lower case, one number, and a combination of 8 or more characters
+     */
     fun validatePassword(password: String): String? {
         val upperCase = Pattern.compile("[A-Z]")
         val lowerCase = Pattern.compile("[a-z]")
@@ -227,7 +293,9 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
         }
         return validate
     }
-
+    /*
+    Function for the transition between activities
+    */
     private fun progressDialog() {
         //Initialize Progress Dialog
         progressDialog = ProgressDialog(this)
@@ -238,7 +306,9 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
         //Set Transparent background
         progressDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
-
+    /*
+    Function for the transition between activities
+     */
     override fun onBackPressed() {
         progressDialog.dismiss()
     }

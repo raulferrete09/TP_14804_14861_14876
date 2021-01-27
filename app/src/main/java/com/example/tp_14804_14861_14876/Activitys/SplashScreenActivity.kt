@@ -6,7 +6,12 @@ import android.os.Bundle
 import android.os.Handler
 import com.example.tp_14804_14861_14876.R
 import com.google.firebase.auth.FirebaseAuth
-
+/*
+Class that allows a splash screen while the app isn't started
+After the splash screen, the app checks if any account is logged
+if one account is logged, the app automatically moves to Main Activity
+otherwise, the app starts in Login Activity to let the user log in his account
+ */
 class SplashScreenActivity : AppCompatActivity() {
 
     var auth : FirebaseAuth? = null

@@ -36,7 +36,9 @@ class ForgotPasswordActivity : AppCompatActivity(), ConnectionReceiver.Connectio
              SendPassword()
             }
     }
-
+/*
+Function that sends the password credentials to the user email
+ */
     fun SendPassword(){
         val email = fp_et_email.text.toString()
 
@@ -50,11 +52,16 @@ class ForgotPasswordActivity : AppCompatActivity(), ConnectionReceiver.Connectio
 
             }
     }
-
+/*
+Function to go back for the Login Activity
+ */
     fun ReturnMain(){
         startActivity(Intent(this, LoginActivity::class.java))
     }
 
+    /*
+    Function to check Internet connection
+     */
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         if(!isConnected){
             var alert = Alert()
