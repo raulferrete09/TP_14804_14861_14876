@@ -356,6 +356,7 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         TODO("Not yet implemented")
     }
 
+
     /*
         The function sendData() we send the status of the audio and the base64 to database.
      */
