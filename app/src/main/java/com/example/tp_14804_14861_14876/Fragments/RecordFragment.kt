@@ -361,7 +361,7 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         var map1 = mutableMapOf<String,Any>()
         var database = FirebaseDatabase.getInstance()
         map["base64"] = base64
-        map["anomaly"] = ""
+        map["status"] = ""
         database.reference
                 .child("Audio")
                 .child("M"+"$text_spinner_machine")
