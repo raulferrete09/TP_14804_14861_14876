@@ -51,6 +51,7 @@ import java.util.*
 
 class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverListener {
 
+    // Inicialization of the Project variables
     lateinit var drawer_layout: DrawerLayout
     lateinit var navigationview: NavigationView
     lateinit var toolbar: androidx.appcompat.widget.Toolbar
@@ -115,7 +116,6 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         var RESULT_GALLERY = 0
 
         user_iv_photo.setOnClickListener {
-            //startActivity(Intent(this, View_PDF_Files_Activity::class.java))
 
             //Checks whether the Main Fragment is displayed. If it is not displayed, it shows
             if ( !mainFragment.isVisible) {
@@ -136,7 +136,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         val name:String? = user?.displayName
         val id:String? = user?.uid
         val image = user?.photoUrl
-        val r = database!!.getReference("users").child("$id")
+        val firedabase = database!!.getReference("users").child("$id")
 
         storageReference = FirebaseStorage.getInstance().reference.child("Users Image").child("$id")
         fileref = storageReference!!.child("picture.jpg")
@@ -155,7 +155,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
             e.printStackTrace()
         }
 
-        r.addValueEventListener(object : ValueEventListener{
+        firedabase.addValueEventListener(object : ValueEventListener{
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
             }
@@ -198,8 +198,15 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
             .commit()
 
+        /*Button Fuctions
+        here the function is defined for each button
+         */
         navigationview.setNavigationItemSelectedListener{
             when (it.itemId) {
+                /*
+                On the R.id.photo_icon and  R.id.audio_list_icon the app checks the permission to create the folder HVAC in the DCIM folder
+                If the app already have the permission its possible to see the photos present in the phone
+                 */
                 R.id.photo_icon -> {
                     if (checkPermissions()) {
                         val folder =

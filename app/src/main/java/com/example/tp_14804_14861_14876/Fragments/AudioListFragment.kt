@@ -35,6 +35,7 @@ private const val ARG_PARAM2 = "param2"
  */
 class AudioListFragment : Fragment(), AudioListAdapter.onItemList_Click {
 
+    // Inicialization of the Project variables
     lateinit var playerSheet: ConstraintLayout
     lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
     lateinit var audiolist: RecyclerView
@@ -164,7 +165,6 @@ class AudioListFragment : Fragment(), AudioListAdapter.onItemList_Click {
 
         if (isPlaying) {
             pauseAudio()
-            //playAudio(filetoplay)
         } else {
             player_btn_play.isEnabled = true
             player_seekbar.isEnabled = true

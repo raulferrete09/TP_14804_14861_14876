@@ -38,6 +38,8 @@ private const val ARG_PARAM2 = "param2"
  */
 class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClickListener {
 
+    // Inicialization of the Project variables
+
     lateinit var add_btn_submission: FloatingActionButton
     lateinit var submissionsFragment: SubmissionsFragment
     lateinit var transaction: FragmentTransaction
@@ -105,8 +107,6 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        //navController = Navigation.findNavController(view)
 
         (requireActivity() as MainActivity).supportActionBar!!.hide()
 
@@ -198,10 +198,13 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
             override fun onCancelled(error: DatabaseError) {}
         })
     }
+
+    /*
+    On the fun CheckData()
+     */
     private fun CheckData() {
         val MachineNumber = dashboard_spinner_machine.selectedItem.toString()
-        println(MachineNumber)
-        // Verification Temperature
+        // Temperature Verification
         database = FirebaseDatabase.getInstance()
         database.reference.child("Temperature")
                 .child("M" + "$MachineNumber")
@@ -262,6 +265,10 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
                     }
                 })
     }
+    /*
+      The function shows the user if exist or not an anomaly
+   */
+
     private fun updateData() {
         println(status_accelerometer)
         println(status_temperature)
@@ -282,7 +289,7 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
         }
     }
     /*
-        Function to detect what kind of anomaly the system have, which can have three different
+        The Function to detect what kind of anomaly the system have, which can have three different
         anomalys
     */
     private fun typeAnomaly():String {

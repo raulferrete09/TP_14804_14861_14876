@@ -41,6 +41,7 @@ private const val ARG_PARAM2 = "param2"
  */
 class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelectedListener {
 
+    // Inicialization of the Project variables
 
     var isRecording = true
     var counter = 0
@@ -231,7 +232,8 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         val audioname = name + "_" + "M" + text_spinner_machine + "_" + timeStamp
         val pathname = name + "_" + "M" + text_spinner_machine + "_" + timeStamp + ".mp3"
         val path = Environment.getExternalStorageDirectory().toString() + "/HVAC/Audios/" + pathname
-        println(path)
+
+        // Here are the code to convert the audio to base 64
         mr!!.setAudioSource(MediaRecorder.AudioSource.MIC)
         mr!!.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
         mr!!.setMaxDuration(10000)
@@ -354,6 +356,9 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         TODO("Not yet implemented")
     }
 
+    /*
+        The function sendData() we send the status of the audio and the base64 to database.
+     */
     private fun sendData(base64: String, audioname: String,path: String){
         val person = auth?.currentUser
         val uid = person?.uid
