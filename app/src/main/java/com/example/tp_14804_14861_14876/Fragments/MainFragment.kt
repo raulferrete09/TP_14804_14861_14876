@@ -4,9 +4,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.text.Layout
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,11 +12,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.example.tp_14804_14861_14876.Activitys.MainActivity
-import com.example.tp_14804_14861_14876.Activitys.TOPIC
+import com.example.tp_14804_14861_14876.Notification.TOPIC
 import com.example.tp_14804_14861_14876.R
 import com.example.tp_14804_14861_14876.Utils.ReportsPDF
-import com.example.tp_14804_14861_14876.Utils.*
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -29,16 +24,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.*
 import com.google.firebase.messaging.FirebaseMessaging
-import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.io.File
-import java.lang.Exception
-import java.text.SimpleDateFormat
 import java.util.*
-
-const val TOPIC = "/topics/myTopic"
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -52,7 +38,6 @@ private const val ARG_PARAM2 = "param2"
  */
 class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClickListener {
 
-    val TAG = "MainFragment"
     lateinit var add_btn_submission: FloatingActionButton
     lateinit var submissionsFragment: SubmissionsFragment
     lateinit var transaction: FragmentTransaction
@@ -174,26 +159,6 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
         val text = parent.getItemAtPosition(position).toString()
         machine = dashboard_spinner_machine.selectedItem.toString()
         CheckData()
-        val splashtime: Long = 1000
-        Handler().postDelayed({
-            val MachineNumber = dashboard_spinner_machine.selectedItem.toString()
-            if (anomalyPast != dashboard_tv_anomaly.text.toString() || MachineNumber != machinePast) {
-                if (dashboard_tv_anomaly.text.toString() != "") {
-                    val title = "ANOMALY"
-                    val message =
-                        "Machine: " + MachineNumber + " - " + dashboard_tv_anomaly.text.toString()
-
-                    PushNotification(
-                        NotificationData(title, message),
-                        TOPIC
-                    ).also {
-                        sendNotification(it)
-                    }
-                    anomalyPast = dashboard_tv_anomaly.text.toString()
-                    machinePast = MachineNumber
-                }
-            }
-        }, splashtime)
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -222,8 +187,8 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
                         parent: ViewGroup
                     ): View {
                         val view = super.getView(position, convertView, parent)
-                        val mytext = view.findViewById<View>(android.R.id.text1) as TextView
-                        mytext.setTextColor(Color.BLACK)
+                        val reportext = view.findViewById<View>(android.R.id.text1) as TextView
+                        reportext.setTextColor(Color.BLACK)
                         return super.getView(position, convertView, parent)
                     }
                 }
@@ -289,7 +254,7 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
                     override fun onDataChange(snapshot: DataSnapshot) {
                         if (snapshot.value != null) {
                             var map = snapshot.value as Map<String, Any?>
-                            status_audio = map["anomaly"]
+                            status_audio = map["status"]
                             if (MachineNumber == machine){
                                 updateData()
                             }
@@ -297,7 +262,6 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
                     }
                 })
     }
-
     private fun updateData() {
         println(status_accelerometer)
         println(status_temperature)
@@ -309,8 +273,7 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
         } else {
             val anomaly = typeAnomaly()
             dashboard_tv_oknok.text = "ANOMALY"
-            dashboard_layout.setBackgroundColor(resources.getColor(R.color.red))
-
+            dashboard_layout.setBackgroundResource(R.color.red)
             val MachineNumber = dashboard_spinner_machine.selectedItem.toString()
             if(anomalyPast != anomaly || MachineNumberPast != MachineNumber) {
                 anomalyPast = anomaly
@@ -340,25 +303,6 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
         }else{
             // Do nothing
         }
-
         return dashboard_tv_anomaly.text.toString()
-
     }
-    /*
-        Function which elaborate our notification
-    */
-    private fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
-        try {
-            val response = RetrofitInstance.api.postNotification(notification)
-            if(response.isSuccessful) {
-                Log.d(TAG, "Response: ${Gson().toJson(response)}")
-            }
-            else {
-                Log.e(TAG, response.errorBody().toString())
-            }
-        }catch (e: Exception) {
-            Log.e(TAG, e.toString())
-        }
-    }
-
 }

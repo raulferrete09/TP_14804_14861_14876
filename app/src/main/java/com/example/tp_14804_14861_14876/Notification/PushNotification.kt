@@ -1,4 +1,4 @@
-package com.example.tp_14804_14861_14876.Utils
+package com.example.tp_14804_14861_14876.Notification
 
 /*
     Class for the notification with the data of the notification choosed by the user

@@ -1,12 +1,8 @@
 package com.example.tp_14804_14861_14876.Activitys
 
 import android.app.AlertDialog
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.app.ProgressDialog
 import android.content.Intent
-import android.os.Build
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
@@ -18,8 +14,7 @@ import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.View
 import android.widget.*
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
+import com.example.tp_14804_14861_14876.Notification.*
 import com.example.tp_14804_14861_14876.R
 import com.example.tp_14804_14861_14876.Utils.*
 import com.google.firebase.auth.FirebaseAuth
@@ -35,8 +30,6 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessagingService
 import java.util.regex.Pattern
-
-const val TOPIC = "/topics/myTopic"
 
 class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverListener, View.OnClickListener {
 

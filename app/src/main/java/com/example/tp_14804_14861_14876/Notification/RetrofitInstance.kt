@@ -1,6 +1,6 @@
-package com.example.tp_14804_14861_14876.Utils
+package com.example.tp_14804_14861_14876.Notification
 
-import com.example.tp_14804_14861_14876.Utils.Constants.Companion.BASE_URL
+import com.example.tp_14804_14861_14876.Notification.Constants.Companion.BASE_URL
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

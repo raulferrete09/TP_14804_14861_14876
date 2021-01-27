@@ -1,4 +1,4 @@
-package com.example.tp_14804_14861_14876.Utils
+package com.example.tp_14804_14861_14876.Notification
 
 /*
     Class which saves the URL, Firebase project key and a content type

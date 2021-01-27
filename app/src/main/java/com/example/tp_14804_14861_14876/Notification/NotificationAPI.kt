@@ -1,8 +1,7 @@
-package com.example.tp_14804_14861_14876.Utils
+package com.example.tp_14804_14861_14876.Notification
 
-import com.example.tp_14804_14861_14876.Utils.Constants.Companion.CONTENT_TYPE
-import com.example.tp_14804_14861_14876.Utils.Constants.Companion.SERVER_KEY
-import com.google.android.gms.common.api.Response
+import com.example.tp_14804_14861_14876.Notification.Constants.Companion.CONTENT_TYPE
+import com.example.tp_14804_14861_14876.Notification.Constants.Companion.SERVER_KEY
 import okhttp3.ResponseBody
 import retrofit2.http.Body
 import retrofit2.http.Headers

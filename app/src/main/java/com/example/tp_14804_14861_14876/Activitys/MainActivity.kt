@@ -28,6 +28,7 @@ import com.example.tp_14804_14861_14876.R
 import com.example.tp_14804_14861_14876.Utils.Alert
 import com.example.tp_14804_14861_14876.Utils.ConnectionReceiver
 import com.example.tp_14804_14861_14876.Utils.ReceiverConnection
+import com.example.tp_14804_14861_14876.Notification.ServiceNotification
 import com.facebook.AccessToken
 import com.facebook.GraphRequest
 import com.facebook.HttpMethod
@@ -41,7 +42,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.File
@@ -74,6 +74,9 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
     private var database: FirebaseDatabase? = null
     private val IMAGE_CAPTURE_CODE = 1001
     private val PERMISSION_CODE = 1000
+    lateinit var audioServiceIntent: Intent
+    lateinit var temperatureServiceIntent: Intent
+    lateinit var accelerometerServiceIntent: Intent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,9 +85,12 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         //Internet Connection
         baseContext.registerReceiver(ConnectionReceiver(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         ReceiverConnection.instance.setConnectionListener(this)
-        val intent = Intent(this, FirebaseMessagingService::class.java)
-        startService(intent)
+
+        audioServiceIntent = Intent(this, ServiceNotification::class.java)
+        startService(audioServiceIntent)
+
         setUpNavigationDrawer()
+
     }
     private fun setUpNavigationDrawer() {
         toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.main_toolbar)
@@ -319,8 +325,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                     disconnectFromGoogle()
                     disconnectFromFacebook()
                     FirebaseAuth.getInstance().signOut()
-                    stopService(Intent(this, FirebaseMessagingService::class.java))
-                    val intent = Intent(this, SplashScreenActivity::class.java)
+                    val intent = Intent(this, LoginActivity::class.java)
                     startActivity(intent)
                 }
             }
