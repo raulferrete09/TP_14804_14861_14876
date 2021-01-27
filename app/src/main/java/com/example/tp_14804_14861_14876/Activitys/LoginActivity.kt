@@ -40,6 +40,8 @@ import java.security.NoSuchAlgorithmException
 import java.util.*
 
 class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverListener {
+
+    // Inicialization of the Project variables
     var auth : FirebaseAuth? = null
     var googleSignInClient: GoogleSignInClient? = null
     var GOOGLE_LOGIN_CODE = 12502
@@ -87,19 +89,15 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
         stopService(Intent(this, FirebaseMessagingService::class.java))
 
         login_btn_signin.setOnClickListener {
-            //startFirebaseService()
             signinAndSignup()
         }
         login_btn_gmail.setOnClickListener {
-            //startFirebaseService()
             googleLogin()
         }
         login_btn_facebook.setOnClickListener {
-            //startFirebaseService()
             facebookLogin()
         }
         login_tv_signup.setOnClickListener {
-            //startFirebaseService()
             signupaccount()
         }
         login_tv_forgpass.setOnClickListener {

@@ -26,6 +26,7 @@ private const val ARG_PARAM2 = "param2"
  */
 class AccerelometerFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
+    // Inicialization of the Project variables
     lateinit var accelerometer_iv_icon: ImageView
     lateinit var accelerometer_tv_anomaly: TextView
     lateinit var accelerometer_progress_bar: ProgressBar
@@ -133,7 +134,8 @@ class AccerelometerFragment : Fragment(), AdapterView.OnItemSelectedListener {
                             accelerometer_y = map["y"]
                             accelerometer_z = map["z"]
                             accelerometer_status = map["status"]
-                            // get text firebase
+
+                            //Define the attributes of the layout so that the user is able to distinguish if an anomaly occurs
                             if (accelerometer_status == "OK") {
                                 accelerometer_tv_anomaly.text = "OK"
                                 accelerometer_tv_anomaly.setTextColor(Color.argb(255,44,174,49))

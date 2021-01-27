@@ -29,6 +29,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class PasswordFragment : Fragment(), View.OnClickListener {
+    // Inicialization of the Project variables
 
     var currentmisshowpass = false
     var misshowpass = false
@@ -149,6 +150,7 @@ class PasswordFragment : Fragment(), View.OnClickListener {
                 val user = auth?.currentUser
                 if(user != null && user.email != null) {
                     val credential = EmailAuthProvider.getCredential(user.email!!, settings_et_currentpassword.text.toString())
+
                     // Prompt the user to re-provide their sign-in credentials
                     user?.reauthenticate(credential)
                         ?.addOnCompleteListener {
@@ -161,7 +163,6 @@ class PasswordFragment : Fragment(), View.OnClickListener {
                                             auth?.signOut()
                                             startActivity(intent)
                                         }
-                                        //Toast.makeText(activity,"User Password update.", Toast.LENGTH_LONG).show()
                                     }
                             } else {
                                 Toast.makeText(activity,"Re-Authentication failed",Toast.LENGTH_SHORT).show()
@@ -223,11 +224,16 @@ class PasswordFragment : Fragment(), View.OnClickListener {
         }
         return validate
     }
+
+    /*
+        The Function showAlert() brings to the user the possible error that occurred exists 2 options the first one "An authentication error has occurred. Unfilled passwords and/or passwords do not match."
+        and the second one "A password verification error has occurred. Please choose a password with 8 or more characters including uppercase, lowercase, and digits."
+     */
     private fun showAlert(x:Int){
         val builder = AlertDialog.Builder(requireContext())
         when(x) {
             1 -> builder.setMessage("An authentication error has occurred. Unfilled passwords and/or passwords do not match.")
-            2 -> builder.setMessage("An password verification error has occurred. Please choose a password with 8 or more characters including uppercase, lowercase and digits.")
+            2 -> builder.setMessage("A password verification error has occurred. Please choose a password with 8 or more characters including uppercase, lowercase and digits.")
         }
         builder.setPositiveButton("Accept",null)
         val dialog: AlertDialog =builder.create()

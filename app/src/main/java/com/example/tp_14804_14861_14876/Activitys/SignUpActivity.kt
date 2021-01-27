@@ -33,9 +33,9 @@ import java.util.regex.Pattern
 
 class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverListener, View.OnClickListener {
 
+    // Inicialization of the Project variables
+
     val TAG = "SignUpActivity"
-
-
     var misshowpass = false
     var misshowconfirmpass = false
     var validationpassword: String? = "false"
@@ -87,6 +87,7 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
 
             override fun afterTextChanged(s: Editable) {}
         })
+
         signup_et_name.setOnClickListener(this)
         signup_et_surname.setOnClickListener(this)
         signup_et_email.setOnClickListener(this)

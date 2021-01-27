@@ -36,6 +36,8 @@ private const val ARG_PARAM2 = "param2"
  */
 class ProfileFragment : Fragment(), View.OnClickListener {
 
+    // Inicialization of the Project variables
+
     lateinit var profile_iv_photo: ImageView
     lateinit var profile_et_name: EditText
     lateinit var settings_btn_change_profile: Button
