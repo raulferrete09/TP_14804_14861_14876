@@ -7,6 +7,9 @@ import android.content.Intent
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 
+/*
+Class created to show a alert in case of problems on the app
+ */
 class Alert: AppCompatActivity() {
     fun showAlert(builder: AlertDialog.Builder, context: Context){
         var choose:Int = 0

@@ -3,6 +3,9 @@ package com.example.tp_14804_14861_14876.Utils
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+/*
+This class was developed to show the user how long ago the action was performed by the handler
+ */
 class TimeAgo {
     fun getTimeAgo(duration: Long): String {
         val now = Date()

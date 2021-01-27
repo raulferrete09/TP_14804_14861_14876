@@ -257,7 +257,9 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
             }
         }
     }
-
+    /*
+    Function which returns the path of report file
+     */
     private fun getpathname(): String {
         //get text
         text_spinner_machine = submission_spinner_machine.selectedItem.toString()
@@ -269,6 +271,9 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         return pathname
     }
 
+    /*
+    Function that open the file when the user clicks on his path
+     */
     private fun selectFile(selector: Int) {
         var intent= Intent(Intent.ACTION_PICK)
         intent.type = "*/*"
@@ -286,6 +291,9 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         return submission_spinner_machine.toString().isNotEmpty() && submission_spinner_intervation.toString().isNotEmpty() && report_ed_anomaly.text.isNotEmpty()
     }
 
+    /*
+    Function to save report in format PDF
+     */
     private fun savePDF(email: String, name: String, pathname: String) {
 
         //create object of Document class
@@ -369,6 +377,10 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
             Toast.makeText(activity, e.message, Toast.LENGTH_SHORT).show()
         }
     }
+
+    /*
+    Share data function
+     */
     private fun shareData() {
         val pathname = pathfile
         val pathFile = File(Environment.getExternalStorageDirectory().toString() + "/" + "HVAC/Reports/" + pathname + ".pdf")
@@ -434,7 +446,9 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
             }
         }
     }
-
+    /*
+    List of all photos saved
+     */
     private fun globallist_photos(){
         val pathname= pathfile
         for (i in 0 until count){
@@ -460,7 +474,9 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
             uploadImage(file, ImageRef,count)
         }
     }
-
+    /*
+    List of all audios saved
+     */
     private fun globallist_sound(){
         val pathname = pathfile
         for (i in 0 until sound_count){
@@ -489,6 +505,9 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         }
     }
 
+    /*
+    Function to send photo information
+     */
     private fun sendData_Image() {
        val pathname = pathfile
         //Image
@@ -519,6 +538,9 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         }
     }
 
+    /*
+    Function to send sound information
+     */
     private fun sendData_Sound(){
         val pathname = pathfile
         //Sounds
@@ -550,7 +572,9 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         }
     }
 
-
+    /*
+    Function to check permissions on user phone
+     */
     private fun checkPermissions(): Boolean {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
@@ -572,6 +596,9 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         }
     }
 
+    /*
+    Function to upload image taken
+     */
     fun uploadImage(File_Photo_Sound: Uri?,fileref: StorageReference, count: Int){
 
         if (File_Photo_Sound != null){
@@ -591,6 +618,9 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         }
     }
 
+    /*
+    Function to upload sound taken
+     */
     fun uploadSound(File_Photo_Sound: Uri?,fileref: StorageReference, count: Int){
 
         if (File_Photo_Sound != null){
@@ -608,6 +638,9 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         }
     }
 
+    /*
+    Function that saves all PDFS on a path
+     */
     fun saveAllPDF() {
         val pathname = pathfile
         var saveallpdf = FirebaseStorage.getInstance().reference.child("Reports").child("$uid").child("$pathname").child("PDF").child("$pathname")
@@ -621,6 +654,9 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         }
     }
 
+    /*
+    Function to confirm when show alert pop up
+     */
     fun showAlertConfirmation(){
         var choose:Int = 0
         val builder = AlertDialog.Builder(requireContext())
@@ -653,6 +689,9 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         val dialog: AlertDialog = builder.create()
         dialog.show()
     }
+    /*
+    Function that shows a alert error
+     */
     fun showAlertError(){
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Error")

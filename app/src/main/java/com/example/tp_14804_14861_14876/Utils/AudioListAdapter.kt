@@ -9,6 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.tp_14804_14861_14876.R
 import java.io.File
 
+/*
+Here, this class shows a costum adapter to the ListView
+ */
 class AudioListAdapter : RecyclerView.Adapter<AudioListAdapter.AudioViewHolder> {
     private var allFiles: Array<File>
     private lateinit var timeAgo: TimeAgo

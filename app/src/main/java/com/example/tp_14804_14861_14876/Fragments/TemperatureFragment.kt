@@ -105,7 +105,9 @@ class TemperatureFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onNothingSelected(parent: AdapterView<*>?) {
         TODO("Not yet implemented")
     }
-
+    /*
+    Function that always update data in Firebase
+     */
     private fun updateData(){
         val MachineNumber = temperature_spinner_machine.selectedItem.toString()
         println(MachineNumber)

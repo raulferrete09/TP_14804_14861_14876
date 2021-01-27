@@ -12,6 +12,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
+/*
+Class for a Service that will send the notification information
+ */
 class ServiceNotification : Service() {
 
     val TAG = "Service"

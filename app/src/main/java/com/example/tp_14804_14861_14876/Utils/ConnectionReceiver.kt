@@ -5,6 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 
+/*
+Class related with network connection
+ */
 class ConnectionReceiver: BroadcastReceiver() {
     
     override fun onReceive(context: Context, intent: Intent?) {
@@ -30,7 +33,9 @@ class ConnectionReceiver: BroadcastReceiver() {
             return (activeNetwork != null && activeNetwork.isConnectedOrConnecting)
         }
     }
-
+    /*
+    Function to check network connection
+     */
     private fun checkConnection(context: Context): Boolean {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 

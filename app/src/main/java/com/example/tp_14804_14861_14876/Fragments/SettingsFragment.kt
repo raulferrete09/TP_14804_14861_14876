@@ -128,7 +128,9 @@ class SettingsFragment : Fragment(), View.OnClickListener {
     private fun changePhoto() {
         TODO("Not yet implemented")
     }
-
+    /*
+    Function to reset Password, which send a email to the user email
+     */
     private fun resetPassword() {
         auth = FirebaseAuth.getInstance()
         val user: FirebaseUser? = auth?.currentUser

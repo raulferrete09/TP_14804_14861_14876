@@ -1,5 +1,8 @@
 package com.example.tp_14804_14861_14876.Utils
 
+/*
+Class to report the anomalys in a pdf file
+ */
 class ReportsPDF {
     internal var name: String? = null
     private var url: String? = null
