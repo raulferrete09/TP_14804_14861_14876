@@ -1,18 +1,28 @@
 package com.example.tp_14804_14861_14876.Fragments
 
+import android.app.Activity
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.FragmentTransaction
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.tp_14804_14861_14876.R
+import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.StorageTask
+import com.google.firebase.storage.UploadTask
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -29,11 +39,16 @@ class ProfileFragment : Fragment(), View.OnClickListener {
     lateinit var profile_iv_photo: ImageView
     lateinit var profile_et_name: EditText
     lateinit var settings_btn_change_profile: Button
+    var imageUri: Uri? = null
 
     lateinit var mainFragment: MainFragment
-    lateinit var settingsFragment: SettingsFragment
-    lateinit var temperatureFragment: TemperatureFragment
     lateinit var transaction: FragmentTransaction
+
+    var auth : FirebaseAuth? = null
+    var uid: String? = null
+    lateinit var fileref: StorageReference
+    private var storageReference: StorageReference? = null
+    private lateinit var database: FirebaseDatabase
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -45,6 +60,12 @@ class ProfileFragment : Fragment(), View.OnClickListener {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+        database = FirebaseDatabase.getInstance()
+        auth = FirebaseAuth.getInstance()
+        val user = auth?.currentUser
+        uid = user?.uid
+        storageReference = FirebaseStorage.getInstance().reference.child("Users Image").child("$uid")
+        fileref = storageReference!!.child("picture.jpg")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -80,27 +101,34 @@ class ProfileFragment : Fragment(), View.OnClickListener {
         settings_btn_change_profile = view.findViewById<Button>(R.id.settings_btn_change_profile)
 
 
+        val user = auth?.currentUser
+        val image = user?.photoUrl
+        mainFragment = MainFragment()
         profile_et_name.setOnClickListener(this)
         profile_iv_photo.setOnClickListener(this)
         settings_btn_change_profile.setOnClickListener(this)
+
+        try {
+            fileref?.downloadUrl?.addOnSuccessListener { task ->
+                Glide.with(this).load(task).override(300,300).apply(RequestOptions.circleCropTransform()).into(profile_iv_photo)
+            }
+        }catch (e: Exception){
+            e.printStackTrace()
+            Glide.with(this).load(image).override(300,300).apply(RequestOptions.circleCropTransform()).into(profile_iv_photo)
+        }
+
+        Glide.with(this).load(image).override(300,300).apply(RequestOptions.circleCropTransform()).into(profile_iv_photo)
     }
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.profile_et_name -> {
-                temperatureFragment = TemperatureFragment()
-                transaction = fragmentManager?.beginTransaction()!!
-                transaction.replace(R.id.drawable_frameLayout, temperatureFragment)
-                transaction.commit()
-            }
             R.id.profile_iv_photo ->{
-                settingsFragment = SettingsFragment()
-                transaction = fragmentManager?.beginTransaction()!!
-                transaction.replace(R.id.drawable_frameLayout, settingsFragment)
-                transaction.commit()
+                var openGalleryIntent= Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                startActivityForResult(openGalleryIntent,1000)
+
             }
             R.id.settings_btn_change_profile -> {
-                //updateProfile()
+                updateProfile()
                 mainFragment = MainFragment()
                 transaction = fragmentManager?.beginTransaction()!!
                 transaction.replace(R.id.drawable_frameLayout, mainFragment)
@@ -111,8 +139,63 @@ class ProfileFragment : Fragment(), View.OnClickListener {
     }
 
     private fun updateProfile() {
-        //auth.currentUser?.let {
-          //  val username =profile_et_name.text.toString()
-            //val photoURI = Uri.parse("android.resource://$packageName/${R.drawable.logo_black_square}")
+        val user = auth?.currentUser
+        val name = profile_et_name.text.toString()
+
+        if(name.isNotEmpty()) {
+            val profile_name_Updates = UserProfileChangeRequest.Builder()
+                    .setDisplayName("$name")
+                    .build()
+            user!!.updateProfile(profile_name_Updates)
+            var map = HashMap<String,Any>()
+            map["name"]=name
+            FirebaseDatabase.getInstance().reference
+                    .child("users")
+                    .child("$uid")
+                    .updateChildren(map)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == 1000 && resultCode == Activity.RESULT_OK) {
+            imageUri = data?.data
+            println(imageUri)
+            uploadImage()
+        }
+    }
+
+    private fun uploadImage(){
+        if (imageUri != null){
+
+            var uploadTask: StorageTask<*>
+            uploadTask = fileref.putFile(imageUri!!)
+
+            uploadTask.continueWithTask(Continuation <UploadTask.TaskSnapshot, Task<Uri>> Contiuation@{ task ->
+                if(!task.isSuccessful ){
+                    task.exception?.let{
+                        throw it
+                    }
+                }
+                return@Contiuation fileref.downloadUrl
+            }).addOnCompleteListener {task ->
+                if(task.isSuccessful){
+                    val downloadUrl = task.result
+                    val url = downloadUrl.toString()
+                    val map = HashMap<String, Any>()
+                    map["photo"] = url
+                    FirebaseDatabase.getInstance()
+                            .reference
+                            .child("users")
+                            .child("$uid")
+                            .updateChildren(map)
+
+                    fileref.downloadUrl.addOnSuccessListener { task ->
+                        Glide.with(this).load(task).override(300,300).apply(RequestOptions.circleCropTransform()).into(profile_iv_photo)
+                     }
+                }
+            }
+        }
     }
 }
+

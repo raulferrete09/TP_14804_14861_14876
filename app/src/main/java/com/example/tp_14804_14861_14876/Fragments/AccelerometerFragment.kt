@@ -21,19 +21,23 @@ private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [TemperatureFragment.newInstance] factory method to
+ * Use the [AccerelometerFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class TemperatureFragment : Fragment(), AdapterView.OnItemSelectedListener {
+class AccerelometerFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
-    lateinit var temperature_iv_icon: ImageView
-    lateinit var temperature_tv_anomaly: TextView
-    lateinit var temperature_progress_bar: ProgressBar
-    lateinit var temperature_tv_temperature: TextView
-    lateinit var temperature_spinner_machine: Spinner
+    lateinit var accelerometer_iv_icon: ImageView
+    lateinit var accelerometer_tv_anomaly: TextView
+    lateinit var accelerometer_progress_bar: ProgressBar
+    lateinit var accelerometer_tv_x: TextView
+    lateinit var accelerometer_tv_y: TextView
+    lateinit var accelerometer_tv_z: TextView
+    lateinit var accelerometer_spinner_machine: Spinner
     lateinit var adpater_number: ArrayAdapter<CharSequence>
-    var status: Any? = null
-    var temperature: Any? = null
+    var accelerometer_x: Any? = null
+    var accelerometer_y: Any? = null
+    var accelerometer_z: Any? = null
+    var accelerometer_status: Any? = null
     private lateinit var database: FirebaseDatabase
 
     // TODO: Rename and change types of parameters
@@ -53,7 +57,7 @@ class TemperatureFragment : Fragment(), AdapterView.OnItemSelectedListener {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_temperature, container, false)
+        return inflater.inflate(R.layout.fragment_accelerometer, container, false)
     }
 
     companion object {
@@ -63,12 +67,12 @@ class TemperatureFragment : Fragment(), AdapterView.OnItemSelectedListener {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment TemperatureFragment.
+         * @return A new instance of fragment AccerelometerFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            TemperatureFragment().apply {
+            AccerelometerFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)
@@ -79,21 +83,26 @@ class TemperatureFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        temperature_iv_icon = view.findViewById<ImageView>(R.id.temperature_iv_icon)
-        temperature_tv_anomaly = view.findViewById<TextView>(R.id.temperature_tv_anomaly)
-        temperature_progress_bar = view.findViewById<ProgressBar>(R.id.temperature_progress_bar)
-        temperature_tv_temperature = view.findViewById<TextView>(R.id.temperature_tv_temperature)
-        temperature_spinner_machine = view.findViewById<Spinner>(R.id.temperature_spinner_machine)
+        accelerometer_iv_icon = view.findViewById<ImageView>(R.id.accelerometer_iv_icon)
+        accelerometer_tv_anomaly = view.findViewById<TextView>(R.id.accelerometer_tv_anomaly)
+        accelerometer_progress_bar = view.findViewById<ProgressBar>(R.id.accelerometer_progress_bar)
+        accelerometer_tv_x = view.findViewById<TextView>(R.id.accelerometer_tv_x)
+        accelerometer_tv_y = view.findViewById<TextView>(R.id.accelerometer_tv_y)
+        accelerometer_tv_z = view.findViewById<TextView>(R.id.accelerometer_tv_z)
+        accelerometer_spinner_machine = view.findViewById<Spinner>(R.id.accelerometer_spinner_machine)
 
         adpater_number = ArrayAdapter.createFromResource(
             requireContext(),
             R.array.numbers,
             android.R.layout.simple_spinner_item
         )
-
+        accelerometer_x = ""
+        accelerometer_y = ""
+        accelerometer_z = ""
+        accelerometer_status = ""
         adpater_number.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        temperature_spinner_machine.adapter = adpater_number
-        temperature_spinner_machine.onItemSelectedListener = this
+        accelerometer_spinner_machine.adapter = adpater_number
+        accelerometer_spinner_machine.onItemSelectedListener = this
 
     }
 
@@ -107,12 +116,12 @@ class TemperatureFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun updateData(){
-        val MachineNumber = temperature_spinner_machine.selectedItem.toString()
+        val MachineNumber = accelerometer_spinner_machine.selectedItem.toString()
         println(MachineNumber)
         database = FirebaseDatabase.getInstance()
-        database.reference.child("Temperature")
+        database.reference.child("Accelerometer")
                 .child("M"+"$MachineNumber")
-                .addValueEventListener(object: ValueEventListener {
+                .addValueEventListener(object: ValueEventListener{
                     override fun onCancelled(error: DatabaseError) {
                         TODO("Not yet implemented")
                     }
@@ -120,30 +129,32 @@ class TemperatureFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         if(snapshot.value != null) {
                             var map = snapshot.value as Map<String, Any?>
-                            status = map["status"]
-                            temperature = map["Temperature"]
-
+                            accelerometer_x = map["x"]
+                            accelerometer_y = map["y"]
+                            accelerometer_z = map["z"]
+                            accelerometer_status = map["status"]
                             // get text firebase
-                            if (status == "OK") {
-                                temperature_tv_anomaly.text = "OK"
-                                temperature_tv_anomaly.setTextColor(Color.argb(255,44,174,49))
-                                temperature_progress_bar.indeterminateDrawable.setColorFilter(Color.argb(255,44,174,49), PorterDuff.Mode.SRC_IN)
-                                temperature_tv_temperature.text = temperature.toString() + "ºC"
-
+                            if (accelerometer_status == "OK") {
+                                accelerometer_tv_anomaly.text = "OK"
+                                accelerometer_tv_anomaly.setTextColor(Color.argb(255,44,174,49))
+                                accelerometer_progress_bar.indeterminateDrawable.setColorFilter(Color.argb(255,44,174,49), PorterDuff.Mode.SRC_IN)
+                                accelerometer_tv_x.text = "x = " + accelerometer_x.toString()
+                                accelerometer_tv_y.text = "y = " + accelerometer_y.toString()
+                                accelerometer_tv_z.text = "z = " + accelerometer_z.toString()
 
 
                             } else {
-                                temperature_tv_anomaly.text = "Anomaly"
-                                temperature_tv_anomaly.setTextColor(Color.argb(255,234,16,67))
-                                temperature_progress_bar.indeterminateDrawable.setColorFilter(Color.argb(255,234,16,67), PorterDuff.Mode.SRC_IN)
-                                temperature_tv_temperature.text = temperature.toString() + "ºC"
-
+                                accelerometer_tv_anomaly.text = "Anomaly"
+                                accelerometer_tv_anomaly.setTextColor(Color.argb(255,234,16,67))
+                                accelerometer_progress_bar.indeterminateDrawable.setColorFilter(Color.argb(255,234,16,67), PorterDuff.Mode.SRC_IN)
+                                accelerometer_tv_x.text = "x = " + accelerometer_x.toString()
+                                accelerometer_tv_y.text = "y = " + accelerometer_y.toString()
+                                accelerometer_tv_z.text = "z = " + accelerometer_z.toString()
                             }
                         }
                     }
 
                 })
     }
-
 
 }

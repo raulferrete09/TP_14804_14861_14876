@@ -60,4 +60,17 @@
     <string name="openNavDrawer">Navigation Drawer Open</string>
     <string name="closeNavDrawer">Navigation Drawer Close</string>
 
+    <string-array name="numbers">
+        <item>One</item>
+        <item>Two</item>
+        <item>Three</item>
+        <item>Four</item>
+        <item>Five</item>
+    </string-array>
+    <string-array name="type_of_intervation">
+        <item>Maintenance</item>
+        <item>Breakdown</item>
+        <item>Other</item>
+    </string-array>
+
 </resources>

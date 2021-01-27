@@ -135,7 +135,7 @@
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/login_et"
                 android:ems="10"
-                android:hint="Forget Password"
+                android:hint="Forgot Password"
                 android:textSize="16sp"
                 android:inputType="textPassword"
                 android:textColorHint="@color/colorSigninSignup" />
