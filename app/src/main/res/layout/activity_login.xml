@@ -100,7 +100,7 @@
                 android:layout_width="150dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="28dp"
                 android:background="@drawable/singin_btn"
                 android:text="@string/signin_email"
                 android:textColor="@color/colorWhite"/>
@@ -124,6 +124,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="28dp"
                 android:layout_marginStart="8dp"
                 android:background="@drawable/gmail_btn"/>
         </LinearLayout>
