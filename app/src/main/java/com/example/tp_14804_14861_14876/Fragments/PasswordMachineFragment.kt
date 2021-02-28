@@ -98,6 +98,15 @@ class PasswordMachineFragment : Fragment(), View.OnClickListener {
         password_iv_confirmshow = view.findViewById<ImageView>(R.id.password_iv_confirmshow)
         settingsmachine_btn_change_password = view.findViewById<Button>(R.id.settingsmachine_btn_change_password)
 
+        settingsMachine_et_password.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                val pass = settingsMachine_et_password.text.toString()
+                validationpassword = validatePassword(pass)
+            }
+
+            override fun afterTextChanged(s: Editable) {}
+        })
 
         settingsMachine_et_currentpassword.setOnClickListener(this)
         settingsMachine_et_password.setOnClickListener(this)

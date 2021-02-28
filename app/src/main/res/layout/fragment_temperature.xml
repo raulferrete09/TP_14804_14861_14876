@@ -92,7 +92,7 @@
         android:layout_height="87dp"
         android:layout_marginTop ="150dp"
         android:gravity="center"
-        android:text="OK"
+        android:text=""
         android:textSize="60sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
