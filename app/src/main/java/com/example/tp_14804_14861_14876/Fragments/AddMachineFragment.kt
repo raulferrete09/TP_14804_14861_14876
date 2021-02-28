@@ -1,5 +1,6 @@
 package com.example.tp_14804_14861_14876.Fragments
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
@@ -11,6 +12,8 @@ import android.widget.*
 import androidx.fragment.app.FragmentTransaction
 import com.example.tp_14804_14861_14876.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import kotlinx.android.synthetic.main.fragment_add_machine.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -28,14 +31,12 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
     lateinit var settingsMachineFragment: SettingsMachineFragment
     lateinit var transaction: FragmentTransaction
 
-    lateinit var addMachine_et_user: EditText
-    lateinit var addMachine_et_password: EditText
-    lateinit var addMachine_et_confirmpassword: EditText
     lateinit var addMachine_btn_create: Button
     lateinit var addMachine_iv_passwordshow: ImageView
     lateinit var addMachine_iv_confirmpasswordshow: ImageView
     var misshowpass = false
     var misshowconfirmpass = false
+    var x:Int = 0
 
 
     var auth : FirebaseAuth? = null
@@ -85,14 +86,10 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        addMachine_et_user = view.findViewById<EditText>(R.id.addMachine_et_username)
-        addMachine_et_password = view.findViewById<EditText>(R.id.addMachine_et_password)
-        addMachine_et_confirmpassword = view.findViewById<EditText>(R.id.addMachine_et_confirmpassword)
         addMachine_btn_create = view.findViewById<Button>(R.id.addMachine_btn_create)
         addMachine_iv_passwordshow = view.findViewById<ImageView>(R.id.addMachine_iv_passwordshow)
         addMachine_iv_confirmpasswordshow = view.findViewById<ImageView>(R.id.addMachine_iv_confirmpasswordshow)
 
-        addMachine_et_user.setOnClickListener(this)
         addMachine_et_password.setOnClickListener(this)
         addMachine_iv_confirmpasswordshow.setOnClickListener(this)
         addMachine_btn_create.setOnClickListener(this)
@@ -111,6 +108,41 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.addMachine_btn_create -> {
+                if(addMachine_et_nameMachine.text.isNotEmpty()
+                    && addMachine_et_username.text.isNotEmpty()
+                    && addMachine_et_localzation.text.isNotEmpty()
+                    && addMachine_et_password.text.isNotEmpty()
+                    && addMachine_et_confirmpassword.text.isNotEmpty()
+                    && (addMachine_et_password.text.toString() == addMachine_et_confirmpassword.text.toString())){
+                    CreateMachine()
+                }else {
+                    when {
+                        addMachine_et_nameMachine.text.isEmpty() -> {
+                            x = 1
+                            showAlert(x)
+                        }
+                        addMachine_et_username.text.isEmpty() -> {
+                            x = 2
+                            showAlert(x)
+                        }
+                        addMachine_et_localzation.text.isEmpty() -> {
+                            x = 3
+                            showAlert(x)
+                        }
+                        addMachine_et_password.text.isEmpty() -> {
+                            x = 4
+                            showAlert(x)
+                        }
+                        ((addMachine_et_confirmpassword.text.isEmpty()) || (addMachine_et_confirmpassword.text.toString() != addMachine_et_password.text.toString()))-> {
+                            x = 5
+                            showAlert(x)
+                        }
+                        ((addMachine_et_confirmpassword.text.toString() == addMachine_et_password.text.toString()))  -> {
+                            x = 6
+                            showAlert(x)
+                        }
+                    }
+                }
                     settingsMachineFragment = SettingsMachineFragment()
                     transaction = fragmentManager?.beginTransaction()!!
                     transaction.replace(R.id.drawable_frameLayout, settingsMachineFragment)
@@ -156,4 +188,32 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
         }
         addMachine_et_confirmpassword.setSelection(addMachine_et_confirmpassword.text.toString().length)
     }
+
+    private fun CreateMachine(){
+        var map = mutableMapOf<String,Any?>()
+        var database = FirebaseDatabase.getInstance()
+        map["user"]=addMachine_et_username.text.toString()
+        map["password"]=addMachine_et_password.text.toString()
+        database.reference
+            .child("Machines")
+            .child("${addMachine_et_nameMachine.text.toString()}")
+            .updateChildren(map)
+    }
+
+    fun showAlert(x:Int){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Error")
+        when(x) {
+            1 -> builder.setMessage("An authentication error has occurred. Please define a Machine Name.")
+            2 -> builder.setMessage("An authentication error has occurred. Please define a Name.")
+            3 -> builder.setMessage("An authentication error has occurred. Please define a Localization.")
+            4 -> builder.setMessage("An authentication error has occurred. Please define password.")
+            5 -> builder.setMessage("An authentication error has occurred. Passwords do not match.")
+            6 -> builder.setMessage("An password verification error has occurred. Please choose a password with 8 or more characters including uppercase, lowercase and digits.")
+        }
+        builder.setPositiveButton("Accept",null)
+        val dialog: AlertDialog =builder.create()
+        dialog.show()
+    }
+
 }
