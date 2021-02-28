@@ -5,31 +5,64 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray"
-    tools:context=".Fragments.SettingsFragment">
+    tools:context=".Fragments.RestrictedAreaFragment">
 
     <TextView
-        android:id="@+id/settings_tv"
+        android:id="@+id/restrictedArea_tv"
         android:layout_width="309dp"
         android:layout_height="110dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="47dp"
+        android:layout_marginStart="55dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="126dp"
-        android:layout_marginEnd="47dp"
+        android:layout_marginTop="124dp"
+        android:layout_marginEnd="55dp"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="495dp"
+        android:layout_marginBottom="497dp"
         android:background="@color/gray"
         android:gravity="center"
-        android:text="Settings"
+        android:text="Restricted Area"
         android:textColor="@color/colorWhite"
         android:textSize="30sp"
         android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/restrictedArea_iv_lock1"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignStart="@+id/restrictedArea_tv"
+        android:layout_alignTop="@+id/restrictedArea_tv"
+        android:layout_alignEnd="@+id/restrictedArea_tv"
+        android:layout_alignBottom="@+id/restrictedArea_tv"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="38dp"
+        android:layout_marginEnd="264dp"
+        android:layout_marginBottom="38dp"
+        android:gravity="center"
+        android:src="@drawable/lock_icon"
+        app:tint="@color/colorWhite" />
+
+    <ImageView
+        android:id="@+id/restrictedArea_iv_lock2"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignStart="@+id/restrictedArea_tv"
+        android:layout_alignTop="@+id/restrictedArea_tv"
+        android:layout_alignEnd="@+id/restrictedArea_tv"
+        android:layout_alignBottom="@+id/restrictedArea_tv"
+        android:layout_marginStart="264dp"
+        android:layout_marginTop="38dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="38dp"
+        android:gravity="center"
+        android:src="@drawable/lock_icon"
+        app:tint="@color/colorWhite" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -43,8 +76,8 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/change_tv_profile"
+            <EditText
+                android:id="@+id/restrictedArea_et_user"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="60dp"
@@ -52,13 +85,12 @@
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/login_et"
                 android:ems="10"
-                android:hint="Change Profile"
+                android:hint="Username"
                 android:textSize="16sp"
-                android:inputType="textPassword"
                 android:textColorHint="@color/colorSigninSignup" />
 
             <ImageView
-                android:id="@+id/change_iv_profile"
+                android:id="@+id/restrictedArea_iv_user"
                 android:layout_width="37dp"
                 android:layout_height="37dp"
                 android:layout_alignParentTop="true"
@@ -67,25 +99,27 @@
                 android:layout_marginEnd="367dp"
                 android:gravity="center"
                 android:src="@drawable/user_image" />
+
         </RelativeLayout>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:text="Photo, Username"
+            android:text=""
             android:ems="10"
-            android:hint="Email Address"
             android:inputType="textEmailAddress"
             android:textColorHint="@color/colorSigninSignup"/>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/change_tv_password"
+            <EditText
+                android:id="@+id/restrictedArea_et_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="60dp"
@@ -93,64 +127,72 @@
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/login_et"
                 android:ems="10"
-                android:hint="Change Password"
+                android:hint="Password"
                 android:textSize="16sp"
                 android:inputType="textPassword"
                 android:textColorHint="@color/colorSigninSignup" />
 
+
             <ImageView
-                android:id="@+id/change_iv_password"
+                android:id="@+id/restrictedArea_iv_passwordshow"
                 android:layout_width="37dp"
                 android:layout_height="37dp"
+                android:layout_alignTop="@+id/restrictedArea_et_password"
+                android:layout_alignBottom="@+id/addMachine_et_password"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="367dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="22dp"
+                android:layout_marginBottom="4dp"
                 android:gravity="center"
-                android:src="@drawable/lock_icon"
-                app:tint="@color/gray" />
-        </RelativeLayout>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:text="Password"
-            android:ems="10"
-            android:hint="Email Address"
-            android:inputType="textEmailAddress"
-            android:textColorHint="@color/colorSigninSignup"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/forget_tv_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="60dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/login_et"
-                android:ems="10"
-                android:hint="Forgot Password"
-                android:textSize="16sp"
-                android:inputType="textPassword"
-                android:textColorHint="@color/colorSigninSignup" />
+                android:src="@drawable/ic_show_password" />
 
             <ImageView
-                android:id="@+id/password_iv_show"
+                android:id="@+id/restrictedArea_iv_password"
                 android:layout_width="37dp"
                 android:layout_height="37dp"
-                android:layout_alignTop="@+id/login_et_password"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="367dp"
                 android:gravity="center"
                 android:src="@drawable/forget_icon"
-                app:tint="@color/gray"/>
+                app:tint="@color/gray" />
+
+        </RelativeLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text=""
+            android:textColor="@color/colorSigninSignup"
+            android:textStyle="bold"
+            android:textAlignment="textEnd"
+            android:ems="10"
+            android:inputType="textEmailAddress"
+            android:textColorHint="@color/colorSigninSignup"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/restrictedArea_btn_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/singin_btn"
+                android:backgroundTint="@color/red"
+                android:ems="10"
+                android:text="Login"
+                android:textColor="@color/colorWhite"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textColorHint="@color/colorSigninSignup" />
+
         </RelativeLayout>
         <TextView
             android:layout_width="match_parent"
@@ -159,10 +201,9 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="100dp"
-            android:text="Send email to change password"
+            android:text=""
             android:ems="10"
-            android:hint="Email Address"
             android:inputType="textEmailAddress"
             android:textColorHint="@color/colorSigninSignup" />
-   </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>

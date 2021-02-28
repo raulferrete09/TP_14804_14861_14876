@@ -83,7 +83,7 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
     var sound_name: String = ""
     lateinit var url:String
     var url_sound = ""
-    lateinit var doc:Document
+    //lateinit var doc:Document
     var lista_images = ArrayList<String>()
     var lista_sounds = ArrayList<String>()
     var photo_url_check = 0
@@ -197,7 +197,7 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         //get timeStamp
         timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         data = timeStamp.substring(0, 4) + "/" + timeStamp.substring(4, 6) + "/" + timeStamp.substring(6, 8) + " at " + timeStamp.substring(9,11) + "h" + timeStamp.substring(11,13)
-        getpathname()
+        pathfile = getpathname()
 
         // rounded corner image
         try {
@@ -214,9 +214,11 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
     override fun onClick(v: View) {
         when (v.id) {
             R.id.submission_btn_firebase -> {
+                savePDF(email,name,pathfile)
                 if(pathfile == ""){
                     pathfile = getpathname()
                 }
+                pathfile = getpathname()
                 if (checkPermissions()) {
                     globallist_photos()
                     globallist_sound()
@@ -296,14 +298,28 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
      */
     private fun savePDF(email: String, name: String, pathname: String) {
 
+        //get text
+
+        val text_spinner_machine= submission_spinner_machine.selectedItem.toString()
+        val text_spinner_intervation = submission_spinner_intervation.selectedItem.toString()
+        val text_reportanomaly = report_ed_anomaly.text.toString()
+
+        println(text_spinner_machine)
+        println(text_spinner_intervation)
+        println(text_reportanomaly)
+
         //create object of Document class
-        doc = com.itextpdf.text.Document()
-        var path = Environment.getExternalStorageDirectory().toString() + "/" + "HVAC/Reports/" + pathname + ".pdf"
+        val doc = com.itextpdf.text.Document()
+        val path = Environment.getExternalStorageDirectory().toString() + "/" + "HVAC/Reports/" + pathname + ".pdf"
 
         try {
+            println(text_reportanomaly)
+
             //create instance of PDFWriter class
             PdfWriter.getInstance(doc, FileOutputStream(path))
             //open the document for writing
+            println(text_reportanomaly)
+
             doc.open()
 
             val font_title: Font = Font(FontFactory.getFont(FontFactory.TIMES_BOLD, 20.0f))
@@ -359,7 +375,7 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
                 doc.add(Paragraph(" "))
             }
             doc.close()
-
+            println(doc)
             var savePDF = storageReference!!
                     .child("$pathname")
                     .child("PDF")
@@ -374,6 +390,7 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
             Toast.makeText(activity, "$pathname.pdf \nsaved to success", Toast.LENGTH_SHORT).show()
 
         } catch (e: Exception) {
+            println("aaaaaaaaaaaaaaaaa")
             Toast.makeText(activity, e.message, Toast.LENGTH_SHORT).show()
         }
     }

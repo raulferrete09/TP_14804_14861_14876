@@ -36,6 +36,10 @@
 
     <item android:title="APP">
         <menu>
+            <item android:title="Add Machine"
+                android:id="@+id/addMachine_icon"
+                android:icon="@drawable/add_machine_icon"
+                android:iconTint="@color/gray"/>
             <item android:title="Settings"
                 android:id="@+id/settings_icon"
                 android:icon="@drawable/settings_icon"

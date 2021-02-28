@@ -50,7 +50,7 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
     lateinit var audioBase64: String
 
 
-    var mr: MediaRecorder? = null
+    lateinit var mr: MediaRecorder
     lateinit var record_btn_list: Button
     lateinit var record_btn_start: Button
     lateinit var timer_chromo_counter: Chronometer
@@ -234,13 +234,13 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         val path = Environment.getExternalStorageDirectory().toString() + "/HVAC/Audios/" + pathname
 
         // Here are the code to convert the audio to base 64
-        mr!!.setAudioSource(MediaRecorder.AudioSource.MIC)
-        mr!!.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-        mr!!.setMaxDuration(10000)
-        mr!!.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-        mr!!.setOutputFile(path)
-        mr!!.prepare()
-        mr!!.start()
+        mr.setAudioSource(MediaRecorder.AudioSource.MIC)
+        mr.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+        mr.setMaxDuration(10000)
+        mr.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+        mr.setOutputFile(path)
+        mr.prepare()
+        mr.start()
 
         filenametext.text = "\"Recording, File Saved : " + pathname;
 
@@ -258,7 +258,7 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
 
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onFinish() {
-                mr!!.stop()
+                mr.stop()
                 timer_chromo_counter.stop()
                 filenametext.text = "Recording Stopped, File Saved : " + pathname;
                 timer_chromo_counter.text = "Finished"
@@ -268,7 +268,7 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
 
                 counter = 0
                 progresscounter = 0
-                encodeAudio(path)
+                //encodeAudio(path)
 
                 // Change button image and set Recording state to false
                 record_btn_start.setBackgroundResource(R.drawable.record_btn_stopped)
@@ -287,8 +287,8 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         //Change text on page to file saved
         //filenametext.text = "Recording Stopped, File Saved : " + path
         //Stop media recorder and set it to null for further use to record new audio
-        mr!!.stop()
-        mr!!.release()
+        mr.stop()
+        mr.release()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

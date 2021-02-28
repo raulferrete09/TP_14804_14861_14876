@@ -13,18 +13,6 @@ import com.google.firebase.auth.FirebaseUser
 import com.squareup.picasso.Transformation
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation
 
-lateinit var mainFragment: MainFragment
-lateinit var profileFragment: ProfileFragment
-lateinit var passwordFragment: PasswordFragment
-lateinit var transaction: FragmentTransaction
-lateinit var transformation: Transformation
-
-
-lateinit var change_tv_profile: TextView
-lateinit var change_tv_password: TextView
-lateinit var forget_tv_password: TextView
-
-var auth : FirebaseAuth? = null
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -37,6 +25,20 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class SettingsFragment : Fragment(), View.OnClickListener {
+
+    lateinit var mainFragment: MainFragment
+    lateinit var profileFragment: ProfileFragment
+    lateinit var passwordFragment: PasswordFragment
+    lateinit var transaction: FragmentTransaction
+    lateinit var transformation: Transformation
+
+
+    lateinit var change_tv_profile: TextView
+    lateinit var change_tv_password: TextView
+    lateinit var forget_tv_password: TextView
+
+    var auth : FirebaseAuth? = null
+
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
