@@ -72,7 +72,7 @@ class SignUpActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceive
         signup_btn_signup = findViewById<Button>(R.id.signup_btn_signup)
         password_iv_show = findViewById<ImageView>(R.id.password_iv_show)
         password_iv_confirmshow = findViewById<ImageView>(R.id.password_iv_confirmshow)
-        database = FirebaseDatabase.getInstance()
+        x
         referance = database.getReference("Users")
         auth = FirebaseAuth.getInstance()
         signup_et_confirmpassword = findViewById<EditText>(R.id.signup_et_confirmpassword)

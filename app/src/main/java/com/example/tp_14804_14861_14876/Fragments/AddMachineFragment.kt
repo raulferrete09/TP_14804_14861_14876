@@ -14,6 +14,7 @@ import com.example.tp_14804_14861_14876.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.fragment_add_machine.*
+import java.util.regex.Pattern
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -37,6 +38,7 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
     var misshowpass = false
     var misshowconfirmpass = false
     var x:Int = 0
+    var validationpassword: String? = "false"
 
 
     var auth : FirebaseAuth? = null
@@ -108,12 +110,14 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.addMachine_btn_create -> {
+                validationpassword = validatePassword(addMachine_et_password.text.toString())
                 if(addMachine_et_nameMachine.text.isNotEmpty()
                     && addMachine_et_username.text.isNotEmpty()
                     && addMachine_et_localzation.text.isNotEmpty()
                     && addMachine_et_password.text.isNotEmpty()
                     && addMachine_et_confirmpassword.text.isNotEmpty()
-                    && (addMachine_et_password.text.toString() == addMachine_et_confirmpassword.text.toString())){
+                    && (addMachine_et_password.text.toString() == addMachine_et_confirmpassword.text.toString())
+                    && validationpassword == "false"){
                     CreateMachine()
                 }else {
                     when {
@@ -147,14 +151,6 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
                     transaction = fragmentManager?.beginTransaction()!!
                     transaction.replace(R.id.drawable_frameLayout, settingsMachineFragment)
                     transaction.commit()
-//                if(idUser == "nymjU3VGQLck4rWW41J2x83A2CJ3") {
-//                    restrictedAreaFragment = RestrictedAreaFragment()
-//                    transaction = fragmentManager?.beginTransaction()!!
-//                    transaction.replace(R.id.drawable_frameLayout, restrictedAreaFragment)
-//                    transaction.commit()
-//                } else {
-//                    println("nao tem permissão")
-//                }
           }
             R.id.addMachine_iv_passwordshow -> {
                 misshowpass = !misshowpass
@@ -192,7 +188,7 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
     private fun CreateMachine(){
         var map = mutableMapOf<String,Any?>()
         var database = FirebaseDatabase.getInstance()
-        map["user"]=addMachine_et_username.text.toString()
+        map["username"]=addMachine_et_username.text.toString()
         map["password"]=addMachine_et_password.text.toString()
         database.reference
             .child("Machines")
@@ -201,7 +197,7 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
     }
 
     fun showAlert(x:Int){
-        val builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Error")
         when(x) {
             1 -> builder.setMessage("An authentication error has occurred. Please define a Machine Name.")
@@ -214,6 +210,22 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
         builder.setPositiveButton("Accept",null)
         val dialog: AlertDialog =builder.create()
         dialog.show()
+    }
+
+    private fun validatePassword(password: String): String? {
+        val upperCase = Pattern.compile("[A-Z]")
+        val lowerCase = Pattern.compile("[a-z]")
+        val digitCase = Pattern.compile("[0-9]")
+        var validate: String = "false"
+        if (lowerCase.matcher(password).find()
+            && upperCase.matcher(password).find()
+            && digitCase.matcher(password).find()
+            && password.length >= 8) {
+            validate = "false"
+        } else {
+            validate = "true"
+        }
+        return validate
     }
 
 }
