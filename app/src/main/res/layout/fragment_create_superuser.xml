@@ -43,8 +43,8 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/createSuperUser_tv_username"
+            <EditText
+                android:id="@+id/createSuperUser_et_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="60dp"
@@ -67,6 +67,7 @@
                 android:gravity="center"
                 android:src="@drawable/user_image" />
         </RelativeLayout>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -80,8 +81,8 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/createSuperUser_tv_id"
+            <EditText
+                android:id="@+id/createSuperUser_et_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="60dp"
@@ -89,9 +90,9 @@
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/login_et"
                 android:ems="10"
-                android:text="Username id "
+                android:hint="Username id "
                 android:textSize="16sp"
-                android:textColor="@color/colorSigninSignup" />
+                android:textColorHint="@color/colorSigninSignup" />
 
             <ImageView
                 android:id="@+id/createSuperUser_iv_id"
@@ -101,7 +102,9 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="367dp"
                 android:gravity="center"
-                android:src="@drawable/user_image" />
+                android:background="@drawable/id_icon"
+                android:backgroundTint="@color/gray"/>
+
         </RelativeLayout>
         <TextView
             android:layout_width="match_parent"
@@ -117,8 +120,8 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/createSuperUser_tv_id"
+            <EditText
+                android:id="@+id/createSuperUser_et_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="60dp"
@@ -126,49 +129,65 @@
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/login_et"
                 android:ems="10"
-                android:text="Password"
+                android:hint="Password"
                 android:textSize="16sp"
-                android:textColor="@color/colorSigninSignup" />
-
-            <ImageView
-                android:id="@+id/createSuperUser_iv_id"
-                android:layout_width="37dp"
-                android:layout_height="37dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="367dp"
-                android:gravity="center"
-                android:src="@drawable/user_image" />
-        </RelativeLayout>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:text= ""
-            android:ems="10" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/createSuperUser_tv_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="60dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/login_et"
-                android:ems="10"
-                android:text="Confirm Password"
-                android:textSize="16sp"
-                android:textColor="@color/colorSigninSignup" />
+                android:inputType="textPassword"
+                android:textColorHint="@color/colorSigninSignup" />
 
             <ImageView
                 android:id="@+id/createSuperUser_iv_password"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="367dp"
+                android:gravity="center"
+                android:src="@drawable/lock_icon"
+                app:tint="@color/gray" />
+
+            <ImageView
+                android:id="@+id/createSuperUser_iv_passwordshow"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_alignTop="@+id/createSuperUser_et_password"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="19dp"
+                android:gravity="center"
+                android:src="@drawable/ic_show_password" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text= ""
+            android:ems="10" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/createSuperUser_et_confirmpassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/login_et"
+                android:ems="10"
+                android:hint="Confirm Password"
+                android:textSize="16sp"
+                android:inputType="textPassword"
+                android:textColorHint="@color/colorSigninSignup" />
+
+            <ImageView
+                android:id="@+id/createSuperUser_iv_confirmpassword"
                 android:layout_width="37dp"
                 android:layout_height="37dp"
                 android:layout_alignTop="@+id/login_et_password"
@@ -178,6 +197,18 @@
                 android:gravity="center"
                 android:src="@drawable/lock_icon"
                 app:tint="@color/gray"/>
+
+            <ImageView
+                android:id="@+id/createSuperUser_iv_confirmpasswordshow"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_alignTop="@+id/createSuperUser_et_confirmpassword"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="19dp"
+                android:gravity="center"
+                android:src="@drawable/ic_show_password" />
+
         </RelativeLayout>
 
         <TextView
@@ -186,8 +217,29 @@
             android:layout_marginTop="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="100dp"
             android:text=""
             android:ems="10" />
+
+        <Button
+            android:id="@+id/createSuperUser_btn_create"
+            android:layout_width= "match_parent"
+            android:layout_height="43dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="30dp"
+            android:layout_gravity="center"
+            android:background="@drawable/singin_btn"
+            android:backgroundTint="@color/red"
+            android:text="Create"
+            android:textColor="@color/colorWhite"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+
     </LinearLayout>
 </RelativeLayout>

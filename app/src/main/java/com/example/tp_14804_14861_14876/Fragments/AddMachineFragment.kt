@@ -1,5 +1,6 @@
 package com.example.tp_14804_14861_14876.Fragments
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
@@ -11,6 +12,7 @@ import android.widget.*
 import androidx.fragment.app.FragmentTransaction
 import com.example.tp_14804_14861_14876.R
 import com.google.firebase.auth.FirebaseAuth
+import java.util.regex.Pattern
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -28,6 +30,8 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
     lateinit var settingsMachineFragment: SettingsMachineFragment
     lateinit var transaction: FragmentTransaction
 
+    lateinit var addMachine_et_nameMachine: EditText
+    lateinit var addMachine_et_localzation: EditText
     lateinit var addMachine_et_user: EditText
     lateinit var addMachine_et_password: EditText
     lateinit var addMachine_et_confirmpassword: EditText
@@ -37,7 +41,8 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
     var misshowpass = false
     var misshowconfirmpass = false
 
-
+    var x:Int = 0
+    var validationpassword: String? = "false"
     var auth : FirebaseAuth? = null
     var idUser: String? = null
 
@@ -85,6 +90,8 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        addMachine_et_nameMachine = view.findViewById<EditText>(R.id.addMachine_et_nameMachine)
+        addMachine_et_localzation = view.findViewById<EditText>(R.id.addMachine_et_localzation)
         addMachine_et_user = view.findViewById<EditText>(R.id.addMachine_et_username)
         addMachine_et_password = view.findViewById<EditText>(R.id.addMachine_et_password)
         addMachine_et_confirmpassword = view.findViewById<EditText>(R.id.addMachine_et_confirmpassword)
@@ -111,19 +118,23 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.addMachine_btn_create -> {
-                    settingsMachineFragment = SettingsMachineFragment()
-                    transaction = fragmentManager?.beginTransaction()!!
-                    transaction.replace(R.id.drawable_frameLayout, settingsMachineFragment)
-                    transaction.commit()
-//                if(idUser == "nymjU3VGQLck4rWW41J2x83A2CJ3") {
-//                    restrictedAreaFragment = RestrictedAreaFragment()
-//                    transaction = fragmentManager?.beginTransaction()!!
-//                    transaction.replace(R.id.drawable_frameLayout, restrictedAreaFragment)
-//                    transaction.commit()
-//                } else {
-//                    println("nao tem permissão")
-//                }
-          }
+                if(addMachine_et_nameMachine.text.toString().isNotEmpty() && addMachine_et_localzation.text.toString().isNotEmpty() &&
+                    addMachine_et_user.text.toString().isNotEmpty() && addMachine_et_password.text.toString().isNotEmpty() &&
+                    addMachine_et_confirmpassword.text.toString().isNotEmpty()){
+                    if (addMachine_et_password.text.toString() == addMachine_et_confirmpassword.text.toString() && validationpassword == "false") {
+                        settingsMachineFragment = SettingsMachineFragment()
+                        transaction = fragmentManager?.beginTransaction()!!
+                        transaction.replace(R.id.drawable_frameLayout, settingsMachineFragment)
+                        transaction.commit()
+                    } else {
+                        x = 2
+                        showAlert(x)
+                    }
+                } else {
+                    x = 1
+                    showAlert(x)
+                }
+            }
             R.id.addMachine_iv_passwordshow -> {
                 misshowpass = !misshowpass
                 showPassword(misshowpass)
@@ -155,5 +166,37 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
             addMachine_iv_confirmpasswordshow.setImageResource(R.drawable.ic_show_password)
         }
         addMachine_et_confirmpassword.setSelection(addMachine_et_confirmpassword.text.toString().length)
+    }
+
+
+    private fun validatePassword(password: String): String? {
+        val upperCase = Pattern.compile("[A-Z]")
+        val lowerCase = Pattern.compile("[a-z]")
+        val digitCase = Pattern.compile("[0-9]")
+        var validate: String = "false"
+        if (lowerCase.matcher(password).find()
+            && upperCase.matcher(password).find()
+            && digitCase.matcher(password).find()
+            && password.length >= 8) {
+            validate = "false"
+        } else {
+            validate = "true"
+        }
+        return validate
+    }
+
+    /*
+    The Function showAlert() brings to the user the possible error that occurred exists 2 options the first one "An authentication error has occurred. Unfilled passwords and/or passwords do not match."
+    and the second one "A password verification error has occurred. Please choose a password with 8 or more characters including uppercase, lowercase, and digits."
+    */
+    private fun showAlert(x:Int){
+        val builder = AlertDialog.Builder(requireContext())
+        when(x) {
+            1 -> builder.setMessage("An authentication error has occurred. The words do not match or the required fields are missing.")
+            2 -> builder.setMessage("A password verification error has occurred. Please choose a password with 8 or more characters including uppercase, lowercase and digits.")
+        }
+        builder.setPositiveButton("Accept",null)
+        val dialog: AlertDialog =builder.create()
+        dialog.show()
     }
 }
