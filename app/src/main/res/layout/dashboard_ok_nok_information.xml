@@ -59,7 +59,7 @@
         android:id="@+id/dasboard_tv_oknok"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="OK"
+        android:text=""
         android:textSize="55sp"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"

@@ -25,9 +25,9 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.tp_14804_14861_14876.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.*
 import com.itextpdf.text.*
 import com.itextpdf.text.pdf.PdfWriter
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.File
@@ -63,10 +63,11 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
     lateinit var mainFragment: MainFragment
     lateinit var transaction: FragmentTransaction
 
-    lateinit var adpater_number: ArrayAdapter<CharSequence>
+    lateinit var machines: ArrayList<String>
     lateinit var adpater_intervation: ArrayAdapter<CharSequence>
 
     var auth : FirebaseAuth? = null
+    var databaseReference: DatabaseReference? = null
     lateinit var name: String
     lateinit var email: String
     lateinit var uid: String
@@ -153,13 +154,9 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         report_ed_anomaly = view.findViewById<EditText>(R.id.report_ed_anomaly)
         submission_btn_firebase = view.findViewById<Button>(R.id.submission_btn_firebase)
 
-        adpater_number = ArrayAdapter.createFromResource(
-            requireContext(),
-            R.array.numbers,
-            android.R.layout.simple_spinner_item
-        )
-        adpater_number.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        submission_spinner_machine.adapter = adpater_number
+        machines = arrayListOf<String>("")
+        getMachines()
+        submission_spinner_machine.adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1,machines)
         submission_spinner_machine.onItemSelectedListener = this
 
         adpater_intervation = ArrayAdapter.createFromResource(
@@ -717,6 +714,23 @@ class SubmissionsFragment : Fragment(), View.OnClickListener, OnItemSelectedList
         val dialog: AlertDialog =builder.create()
         dialog.show()
     }
+    private fun getMachines() {
+        databaseReference = FirebaseDatabase.getInstance().getReference("Machines")
+        databaseReference!!.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                machines.removeAt(0)
+                for (postSnapshot in snapshot.children) {
+                    val name = postSnapshot.key
+                    machines.add(name.toString())
+                }
+
+            }
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+    }
+
 
 }
 

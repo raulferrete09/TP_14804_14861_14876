@@ -2,6 +2,8 @@ package com.example.tp_14804_14861_14876.Fragments
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import androidx.fragment.app.Fragment
@@ -95,6 +97,16 @@ class CreateSuperUserFragment : Fragment(), View.OnClickListener {
         createSuperUser_btn_create = view.findViewById<Button>(R.id.createSuperUser_btn_create)
         createSuperUser_iv_passwordshow = view.findViewById<ImageView>(R.id.createSuperUser_iv_passwordshow)
         createSuperUser_iv_confirmpasswordshow = view.findViewById<ImageView>(R.id.createSuperUser_iv_confirmpasswordshow)
+
+        createSuperUser_et_password.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                val pass = createSuperUser_et_password.text.toString()
+                validationpassword = validatePassword(pass)
+            }
+
+            override fun afterTextChanged(s: Editable) {}
+        })
 
         createSuperUser_et_username.setOnClickListener(this)
         createSuperUser_et_id.setOnClickListener(this)

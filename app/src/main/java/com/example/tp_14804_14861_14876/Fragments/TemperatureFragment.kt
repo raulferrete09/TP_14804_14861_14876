@@ -9,10 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.example.tp_14804_14861_14876.R
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
+import java.util.ArrayList
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -31,10 +29,11 @@ class TemperatureFragment : Fragment(), AdapterView.OnItemSelectedListener {
     lateinit var temperature_progress_bar: ProgressBar
     lateinit var temperature_tv_temperature: TextView
     lateinit var temperature_spinner_machine: Spinner
-    lateinit var adpater_number: ArrayAdapter<CharSequence>
     var status: Any? = null
     var temperature: Any? = null
     private lateinit var database: FirebaseDatabase
+    var databaseReference: DatabaseReference? = null
+    lateinit var machines: ArrayList<String>
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -85,14 +84,9 @@ class TemperatureFragment : Fragment(), AdapterView.OnItemSelectedListener {
         temperature_tv_temperature = view.findViewById<TextView>(R.id.temperature_tv_temperature)
         temperature_spinner_machine = view.findViewById<Spinner>(R.id.temperature_spinner_machine)
 
-        adpater_number = ArrayAdapter.createFromResource(
-            requireContext(),
-            R.array.numbers,
-            android.R.layout.simple_spinner_item
-        )
-
-        adpater_number.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        temperature_spinner_machine.adapter = adpater_number
+        machines = arrayListOf<String>("")
+        getMachines()
+        temperature_spinner_machine.adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1,machines)
         temperature_spinner_machine.onItemSelectedListener = this
 
     }
@@ -113,7 +107,7 @@ class TemperatureFragment : Fragment(), AdapterView.OnItemSelectedListener {
         println(MachineNumber)
         database = FirebaseDatabase.getInstance()
         database.reference.child("Temperature")
-                .child("M"+"$MachineNumber")
+                .child("$MachineNumber")
                 .addValueEventListener(object: ValueEventListener {
                     override fun onCancelled(error: DatabaseError) {
                         TODO("Not yet implemented")
@@ -146,6 +140,24 @@ class TemperatureFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
                 })
     }
+
+    private fun getMachines() {
+        databaseReference = FirebaseDatabase.getInstance().getReference("Machines")
+        databaseReference!!.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                machines.removeAt(0)
+                for (postSnapshot in snapshot.children) {
+                    val name = postSnapshot.key
+                    machines.add(name.toString())
+                }
+
+            }
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+    }
+
 
 
 }

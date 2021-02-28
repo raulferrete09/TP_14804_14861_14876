@@ -62,6 +62,7 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
     lateinit var myPDFListView: ListView
     var databaseReference: DatabaseReference? = null
     var reportsPDF: ArrayList<ReportsPDF>? = null
+    lateinit var machines: ArrayList<String>
 
 
     // TODO: Rename and change types of parameters
@@ -120,14 +121,9 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
         reportsPDF = ArrayList()
         viewAllFiles()
 
-        adpater_number = ArrayAdapter.createFromResource(
-            requireContext(),
-            R.array.numbers,
-            android.R.layout.simple_spinner_item
-        )
-
-        adpater_number.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        dashboard_spinner_machine.adapter = adpater_number
+        machines = arrayListOf<String>("")
+        getMachines()
+        dashboard_spinner_machine.adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1,machines)
         dashboard_spinner_machine.onItemSelectedListener = this
 
 
@@ -207,7 +203,7 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
         // Temperature Verification
         database = FirebaseDatabase.getInstance()
         database.reference.child("Temperature")
-                .child("M" + "$MachineNumber")
+                .child("$MachineNumber")
                 .addValueEventListener(object : ValueEventListener {
                     override fun onCancelled(error: DatabaseError) {
                         TODO("Not yet implemented")
@@ -311,5 +307,22 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
             // Do nothing
         }
         return dashboard_tv_anomaly.text.toString()
+    }
+
+    private fun getMachines() {
+        databaseReference = FirebaseDatabase.getInstance().getReference("Machines")
+        databaseReference!!.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                machines.removeAt(0)
+                for (postSnapshot in snapshot.children) {
+                    val name = postSnapshot.key
+                    machines.add(name.toString())
+                }
+
+            }
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
     }
 }

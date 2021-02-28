@@ -2,6 +2,8 @@ package com.example.tp_14804_14861_14876.Fragments
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import androidx.fragment.app.Fragment
@@ -98,6 +100,16 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
         addMachine_btn_create = view.findViewById<Button>(R.id.addMachine_btn_create)
         addMachine_iv_passwordshow = view.findViewById<ImageView>(R.id.addMachine_iv_passwordshow)
         addMachine_iv_confirmpasswordshow = view.findViewById<ImageView>(R.id.addMachine_iv_confirmpasswordshow)
+
+        addMachine_et_password.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                val pass = addMachine_et_password.text.toString()
+                validationpassword = validatePassword(pass)
+            }
+
+            override fun afterTextChanged(s: Editable) {}
+        })
 
         addMachine_et_user.setOnClickListener(this)
         addMachine_et_password.setOnClickListener(this)
