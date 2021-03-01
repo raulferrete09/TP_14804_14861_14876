@@ -135,7 +135,7 @@ class RestrictedAreaFragment : Fragment(), View.OnClickListener {
                     val id = postSnapshot.key
                     if(id == idUser){
                         var database = FirebaseDatabase.getInstance()
-                        database.reference.child("Temperature")
+                        database.reference.child("SuperUsers")
                             .child("$idUser")
                             .addValueEventListener(object : ValueEventListener {
                                 override fun onCancelled(error: DatabaseError) {

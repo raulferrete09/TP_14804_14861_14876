@@ -16,6 +16,7 @@ import android.widget.ImageView
 import androidx.fragment.app.FragmentTransaction
 import com.example.tp_14804_14861_14876.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import java.util.regex.Pattern
 
 // TODO: Rename parameter arguments, choose names that match
@@ -35,6 +36,8 @@ class PasswordMachineFragment : Fragment(), View.OnClickListener {
     var misshowconfirmpass = false
     var x:Int = 0
     var validationpassword: String? = "false"
+    var auth : FirebaseAuth? = null
+    var idUser: String? = null
 
     lateinit var settingsMachineFragment: SettingsMachineFragment
     lateinit var transaction: FragmentTransaction
@@ -116,6 +119,10 @@ class PasswordMachineFragment : Fragment(), View.OnClickListener {
         password_iv_confirmshow.setOnClickListener(this)
         settingsmachine_btn_change_password.setOnClickListener(this)
 
+        auth = FirebaseAuth.getInstance()
+        val user = auth?.currentUser
+        idUser = user?.uid
+
     }
 
     override fun onClick(v: View) {
@@ -172,6 +179,7 @@ class PasswordMachineFragment : Fragment(), View.OnClickListener {
         if(settingsMachine_et_currentpassword.text.isNotEmpty() && settingsMachine_et_password.text.isNotEmpty()
             && settingsMachine_et_confirmpassword.text.isNotEmpty()) {
             if (settingsMachine_et_password.text.toString() == settingsMachine_et_confirmpassword.text.toString() && validationpassword == "false") {
+                updatePassword()
                 settingsMachineFragment = SettingsMachineFragment()
                 transaction = fragmentManager?.beginTransaction()!!
                 transaction.replace(R.id.drawable_frameLayout, settingsMachineFragment)
@@ -215,6 +223,16 @@ class PasswordMachineFragment : Fragment(), View.OnClickListener {
         builder.setPositiveButton("Accept",null)
         val dialog: AlertDialog =builder.create()
         dialog.show()
+    }
+
+    private fun updatePassword(){
+        var map = mutableMapOf<String,Any?>()
+        var database = FirebaseDatabase.getInstance()
+        map["password"]=settingsMachine_et_password.text.toString()
+        database.reference
+            .child("SuperUsers")
+            .child("${idUser}")
+            .updateChildren(map)
     }
 
 }
