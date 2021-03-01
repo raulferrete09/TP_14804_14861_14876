@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray"
+    tools:context=".Fragments.AddMachineFragment">
+
+    <TextView
+        android:id="@+id/addMachine_tv"
+        android:layout_width="309dp"
+        android:layout_height="110dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="55dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="124dp"
+        android:layout_marginEnd="55dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="497dp"
+        android:background="@color/gray"
+        android:gravity="center"
+        android:text="Add Machine"
+        android:textColor="@color/colorWhite"
+        android:textSize="30sp"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorWhite"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/addMachine_et_nameMachine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/login_et"
+                android:ems="10"
+                android:hint="Name Machine"
+                android:textSize="16sp"
+                android:textColorHint="@color/colorSigninSignup" />
+
+            <ImageView
+                android:id="@+id/addMachine_iv_nameMachine"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="367dp"
+                android:gravity="center"
+                android:background="@drawable/gear_engineering_icon"
+                android:backgroundTint="@color/grayDark"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="Machine name for later use in the diagnostic device"
+            android:ems="10" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/addMachine_et_localzation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/login_et"
+                android:ems="10"
+                android:hint="Localization"
+                android:textSize="16sp"
+                android:textColorHint="@color/colorSigninSignup" />
+
+            <ImageView
+                android:id="@+id/addMachine_iv_localization"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="367dp"
+                android:gravity="center"
+                android:src="@drawable/localization_icon"
+                app:tint="@color/gray" />
+
+        </RelativeLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="Machine location - company"
+            android:ems="10" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/addMachine_et_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/login_et"
+                android:ems="10"
+                android:hint="Username"
+                android:textSize="16sp"
+                android:textColorHint="@color/colorSigninSignup" />
+
+
+            <ImageView
+                android:id="@+id/addMachine_iv_username"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="367dp"
+                android:gravity="center"
+                android:src="@drawable/user_image" />
+
+        </RelativeLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="Username to access the machine"
+            android:ems="10" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/addMachine_et_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/login_et"
+                android:ems="10"
+                android:hint="Password"
+                android:textSize="16sp"
+                android:inputType="textPassword"
+                android:textColorHint="@color/colorSigninSignup" />
+
+
+            <ImageView
+                android:id="@+id/addMachine_iv_passwordshow"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_alignTop="@+id/addMachine_et_password"
+                android:layout_alignBottom="@+id/addMachine_et_password"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="4dp"
+                android:gravity="center"
+                android:src="@drawable/ic_show_password" />
+
+            <ImageView
+                android:id="@+id/addMachine_iv_password"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="367dp"
+                android:gravity="center"
+                android:src="@drawable/forget_icon"
+                app:tint="@color/gray" />
+
+        </RelativeLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="Password to access the machine"
+            android:ems="10" />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/addMachine_et_confirmpassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/login_et"
+                android:ems="10"
+                android:hint="Confirm Password"
+                android:textSize="16sp"
+                android:inputType="textPassword"
+                android:textColorHint="@color/colorSigninSignup" />
+
+
+            <ImageView
+                android:id="@+id/addMachine_iv_confirmpasswordshow"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_alignTop="@+id/addMachine_et_confirmpassword"
+                android:layout_alignBottom="@+id/addMachine_et_confirmpassword"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="4dp"
+                android:gravity="center"
+                android:src="@drawable/ic_show_password" />
+
+            <ImageView
+                android:id="@+id/addMachine_iv_confirmpassword"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="367dp"
+                android:gravity="center"
+                android:src="@drawable/forget_icon"
+                app:tint="@color/gray" />
+
+        </RelativeLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text=""
+            android:ems="10" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/addMachine_btn_create"
+            android:layout_width= "match_parent"
+            android:layout_height="43dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/singin_btn"
+            android:backgroundTint="@color/red"
+            android:ems="10"
+            android:text="Create"
+            android:textAlignment="center"
+            android:textColor="@color/colorWhite"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

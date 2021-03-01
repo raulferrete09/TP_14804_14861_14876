@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray"
-    tools:context=".Fragments.SettingsFragment">
+    tools:context=".Fragments.CreateSuperUserFragment">
 
     <TextView
-        android:id="@+id/settings_tv"
+        android:id="@+id/createSuperUser_tv"
         android:layout_width="309dp"
         android:layout_height="110dp"
         android:layout_alignParentStart="true"
@@ -23,7 +23,7 @@
         android:layout_marginBottom="495dp"
         android:background="@color/gray"
         android:gravity="center"
-        android:text="Settings"
+        android:text="Create Super User"
         android:textColor="@color/colorWhite"
         android:textSize="30sp"
         android:textStyle="italic"
@@ -43,8 +43,8 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/change_tv_profile"
+            <EditText
+                android:id="@+id/createSuperUser_et_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="60dp"
@@ -52,13 +52,12 @@
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/login_et"
                 android:ems="10"
-                android:hint="Change Profile"
+                android:hint="Username"
                 android:textSize="16sp"
-                android:inputType="textPassword"
                 android:textColorHint="@color/colorSigninSignup" />
 
             <ImageView
-                android:id="@+id/change_iv_profile"
+                android:id="@+id/createSuperUser_iv_username"
                 android:layout_width="37dp"
                 android:layout_height="37dp"
                 android:layout_alignParentTop="true"
@@ -68,24 +67,22 @@
                 android:gravity="center"
                 android:src="@drawable/user_image" />
         </RelativeLayout>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:text="Photo, Username"
             android:ems="10"
-            android:hint="Email Address"
-            android:inputType="textEmailAddress"
-            android:textColorHint="@color/colorSigninSignup"/>
+            android:text="" />
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/change_tv_password"
+            <EditText
+                android:id="@+id/createSuperUser_et_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="60dp"
@@ -93,13 +90,52 @@
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/login_et"
                 android:ems="10"
-                android:hint="Change Password"
+                android:hint="Username id "
+                android:textSize="16sp"
+                android:textColorHint="@color/colorSigninSignup" />
+
+            <ImageView
+                android:id="@+id/createSuperUser_iv_id"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="367dp"
+                android:gravity="center"
+                android:background="@drawable/id_icon"
+                android:backgroundTint="@color/gray"/>
+
+        </RelativeLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text= ""
+            android:ems="10" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/createSuperUser_et_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/login_et"
+                android:ems="10"
+                android:hint="Password"
                 android:textSize="16sp"
                 android:inputType="textPassword"
                 android:textColorHint="@color/colorSigninSignup" />
 
             <ImageView
-                android:id="@+id/change_iv_password"
+                android:id="@+id/createSuperUser_iv_password"
                 android:layout_width="37dp"
                 android:layout_height="37dp"
                 android:layout_alignParentEnd="true"
@@ -108,26 +144,36 @@
                 android:gravity="center"
                 android:src="@drawable/lock_icon"
                 app:tint="@color/gray" />
+
+            <ImageView
+                android:id="@+id/createSuperUser_iv_passwordshow"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_alignTop="@+id/createSuperUser_et_password"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="19dp"
+                android:gravity="center"
+                android:src="@drawable/ic_show_password" />
+
         </RelativeLayout>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:text="Password"
-            android:ems="10"
-            android:hint="Email Address"
-            android:inputType="textEmailAddress"
-            android:textColorHint="@color/colorSigninSignup"/>
+            android:text= ""
+            android:ems="10" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/forget_tv_password"
+            <EditText
+                android:id="@+id/createSuperUser_et_confirmpassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="60dp"
@@ -135,13 +181,13 @@
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/login_et"
                 android:ems="10"
-                android:hint="Forgot Password"
+                android:hint="Confirm Password"
                 android:textSize="16sp"
                 android:inputType="textPassword"
                 android:textColorHint="@color/colorSigninSignup" />
 
             <ImageView
-                android:id="@+id/password_iv_show"
+                android:id="@+id/createSuperUser_iv_confirmpassword"
                 android:layout_width="37dp"
                 android:layout_height="37dp"
                 android:layout_alignTop="@+id/login_et_password"
@@ -149,20 +195,51 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="367dp"
                 android:gravity="center"
-                android:src="@drawable/forget_icon"
+                android:src="@drawable/lock_icon"
                 app:tint="@color/gray"/>
+
+            <ImageView
+                android:id="@+id/createSuperUser_iv_confirmpasswordshow"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_alignTop="@+id/createSuperUser_et_confirmpassword"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="19dp"
+                android:gravity="center"
+                android:src="@drawable/ic_show_password" />
+
         </RelativeLayout>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="100dp"
-            android:text="Send email to change password"
-            android:ems="10"
-            android:hint="Email Address"
-            android:inputType="textEmailAddress"
-            android:textColorHint="@color/colorSigninSignup" />
-   </LinearLayout>
+            android:text=""
+            android:ems="10" />
+
+        <Button
+            android:id="@+id/createSuperUser_btn_create"
+            android:layout_width= "match_parent"
+            android:layout_height="43dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="30dp"
+            android:layout_gravity="center"
+            android:background="@drawable/singin_btn"
+            android:backgroundTint="@color/red"
+            android:text="Create"
+            android:textColor="@color/colorWhite"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+
+    </LinearLayout>
 </RelativeLayout>

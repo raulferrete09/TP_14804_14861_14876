@@ -67,6 +67,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
     lateinit var temperatureFragment: TemperatureFragment
     lateinit var accerelometerFragment: AccerelometerFragment
     lateinit var settingsFragment: SettingsFragment
+    lateinit var restrictedAreaFragment: RestrictedAreaFragment
 
     var auth : FirebaseAuth? = null
     var image_uri: Uri? = null
@@ -312,6 +313,18 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
                     } else {
                         openCamera()
                     }
+                }
+                /*
+                    Button to open add machine
+                */
+                R.id.addMachine_icon -> {
+                    restrictedAreaFragment = RestrictedAreaFragment()
+                    supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.drawable_frameLayout, restrictedAreaFragment, null).addToBackStack(
+                            null
+                        )
+                        .commit()
                 }
                 /*
                     Button to open settings

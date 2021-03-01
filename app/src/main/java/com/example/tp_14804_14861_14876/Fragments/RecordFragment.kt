@@ -20,7 +20,7 @@ import com.example.tp_14804_14861_14876.Activitys.MainActivity
 import com.example.tp_14804_14861_14876.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.ByteArrayOutputStream
@@ -48,9 +48,10 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
     var progresscounter = 0
     var auth : FirebaseAuth? = null
     lateinit var audioBase64: String
+    var databaseReference: DatabaseReference? = null
+    lateinit var machines: ArrayList<String>
 
-
-    var mr: MediaRecorder? = null
+    lateinit var mr: MediaRecorder
     lateinit var record_btn_list: Button
     lateinit var record_btn_start: Button
     lateinit var timer_chromo_counter: Chronometer
@@ -59,7 +60,6 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
     lateinit var record_spinner_machine: Spinner
 
     lateinit var intent:Intent
-    lateinit var adpater_number: ArrayAdapter<CharSequence>
     lateinit var audioListFragment: AudioListFragment
     lateinit var transaction: FragmentTransaction
 
@@ -132,14 +132,11 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
 
         progress_bar.visibility = View.INVISIBLE
 
-        adpater_number = ArrayAdapter.createFromResource(
-            requireContext(),
-            R.array.numbers,
-            android.R.layout.simple_spinner_item
-        )
-        adpater_number.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        record_spinner_machine.adapter = adpater_number
+        machines = arrayListOf<String>("")
+        getMachines()
+        record_spinner_machine.adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1,machines)
         record_spinner_machine.onItemSelectedListener = this
+
         showAlert()
 
     }
@@ -229,18 +226,18 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         //Get app external directory path
         //name -> path = User + timeStamp + ".mp3"
         //val pathname = "Audio.mp3"
-        val audioname = name + "_" + "M" + text_spinner_machine + "_" + timeStamp
-        val pathname = name + "_" + "M" + text_spinner_machine + "_" + timeStamp + ".mp3"
+        val audioname = name + "_" + text_spinner_machine + "_" + timeStamp
+        val pathname = name + "_" + text_spinner_machine + "_" + timeStamp + ".mp3"
         val path = Environment.getExternalStorageDirectory().toString() + "/HVAC/Audios/" + pathname
 
         // Here are the code to convert the audio to base 64
-        mr!!.setAudioSource(MediaRecorder.AudioSource.MIC)
-        mr!!.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-        mr!!.setMaxDuration(10000)
-        mr!!.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-        mr!!.setOutputFile(path)
-        mr!!.prepare()
-        mr!!.start()
+        mr.setAudioSource(MediaRecorder.AudioSource.MIC)
+        mr.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+        mr.setMaxDuration(10000)
+        mr.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+        mr.setOutputFile(path)
+        mr.prepare()
+        mr.start()
 
         filenametext.text = "\"Recording, File Saved : " + pathname;
 
@@ -258,7 +255,7 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
 
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onFinish() {
-                mr!!.stop()
+                mr.stop()
                 timer_chromo_counter.stop()
                 filenametext.text = "Recording Stopped, File Saved : " + pathname;
                 timer_chromo_counter.text = "Finished"
@@ -268,7 +265,7 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
 
                 counter = 0
                 progresscounter = 0
-                encodeAudio(path)
+                //encodeAudio(path)
 
                 // Change button image and set Recording state to false
                 record_btn_start.setBackgroundResource(R.drawable.record_btn_stopped)
@@ -287,8 +284,8 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         //Change text on page to file saved
         //filenametext.text = "Recording Stopped, File Saved : " + path
         //Stop media recorder and set it to null for further use to record new audio
-        mr!!.stop()
-        mr!!.release()
+        mr.stop()
+        mr.release()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -370,7 +367,7 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         map["status"] = ""
         database.reference
                 .child("Audio")
-                .child("M"+"$text_spinner_machine")
+                .child("$text_spinner_machine")
                 .child("$uid")
                 .child("$audioname")
                 .updateChildren(map)
@@ -381,8 +378,25 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         map1["anomaly"] = ""
         database.reference
                 .child("Audio")
-                .child("M"+"$text_spinner_machine")
+                .child("$text_spinner_machine")
                 .updateChildren(map1)
     }
 
+    private fun getMachines() {
+        databaseReference = FirebaseDatabase.getInstance().getReference("Machines")
+        databaseReference!!.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                machines.removeAt(0)
+                for (postSnapshot in snapshot.children) {
+                    val name = postSnapshot.key
+                    machines.add(name.toString())
+                    record_spinner_machine.adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1,machines)
+                }
+
+            }
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+    }
 }
