@@ -151,8 +151,6 @@ class RestrictedAreaFragment : Fragment(), View.OnClickListener {
                                             transaction = fragmentManager?.beginTransaction()!!
                                             transaction.replace(R.id.drawable_frameLayout, settingsMachineFragment)
                                             transaction.commit()
-                                        } else {
-                                            Toast.makeText(activity, "Not have permission to access or wrong password", Toast.LENGTH_SHORT).show()
                                         }
                                     }
                                 }

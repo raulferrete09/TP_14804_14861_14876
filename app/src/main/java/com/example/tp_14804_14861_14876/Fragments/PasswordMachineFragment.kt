@@ -127,6 +127,7 @@ class PasswordMachineFragment : Fragment(), View.OnClickListener {
         val user = auth?.currentUser
         idUser = user?.uid
 
+        getPassword()
     }
 
     override fun onClick(v: View) {
@@ -180,7 +181,6 @@ class PasswordMachineFragment : Fragment(), View.OnClickListener {
         settingsMachine_et_confirmpassword.setSelection(settingsMachine_et_confirmpassword.text.toString().length)
     }
     private fun changePassword() {
-        getPassword()
         if(settingsMachine_et_currentpassword.text.isNotEmpty() && settingsMachine_et_password.text.isNotEmpty()
             && settingsMachine_et_confirmpassword.text.isNotEmpty()) {
             if (settingsMachine_et_password.text.toString() == settingsMachine_et_confirmpassword.text.toString() && validationpassword == "false"
