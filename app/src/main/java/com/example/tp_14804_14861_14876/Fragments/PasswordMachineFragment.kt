@@ -13,10 +13,14 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.fragment.app.FragmentTransaction
 import com.example.tp_14804_14861_14876.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.util.regex.Pattern
 
 // TODO: Rename parameter arguments, choose names that match
@@ -38,10 +42,10 @@ class PasswordMachineFragment : Fragment(), View.OnClickListener {
     var validationpassword: String? = "false"
     var auth : FirebaseAuth? = null
     var idUser: String? = null
+    var oldPassword: Any? = null
 
     lateinit var settingsMachineFragment: SettingsMachineFragment
     lateinit var transaction: FragmentTransaction
-
     lateinit var settingsMachine_et_currentpassword: EditText
     lateinit var settingsMachine_et_password: EditText
     lateinit var settingsMachine_et_confirmpassword: EditText
@@ -176,9 +180,11 @@ class PasswordMachineFragment : Fragment(), View.OnClickListener {
         settingsMachine_et_confirmpassword.setSelection(settingsMachine_et_confirmpassword.text.toString().length)
     }
     private fun changePassword() {
+        getPassword()
         if(settingsMachine_et_currentpassword.text.isNotEmpty() && settingsMachine_et_password.text.isNotEmpty()
             && settingsMachine_et_confirmpassword.text.isNotEmpty()) {
-            if (settingsMachine_et_password.text.toString() == settingsMachine_et_confirmpassword.text.toString() && validationpassword == "false") {
+            if (settingsMachine_et_password.text.toString() == settingsMachine_et_confirmpassword.text.toString() && validationpassword == "false"
+                && settingsMachine_et_currentpassword.text.toString() == oldPassword ) {
                 updatePassword()
                 settingsMachineFragment = SettingsMachineFragment()
                 transaction = fragmentManager?.beginTransaction()!!
@@ -233,6 +239,23 @@ class PasswordMachineFragment : Fragment(), View.OnClickListener {
             .child("SuperUsers")
             .child("${idUser}")
             .updateChildren(map)
+    }
+
+    private fun getPassword(){
+        var database = FirebaseDatabase.getInstance()
+        database.reference.child("SuperUsers")
+            .child("$idUser")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.value != null) {
+                        var map = snapshot.value as Map<String, Any?>
+                        oldPassword = map["password"]
+                    }
+                }
+            })
     }
 
 }
