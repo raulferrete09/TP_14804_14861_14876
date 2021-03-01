@@ -16,6 +16,8 @@ import android.widget.ImageView
 import androidx.fragment.app.FragmentTransaction
 import com.example.tp_14804_14861_14876.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import kotlinx.android.synthetic.main.fragment_add_machine.*
 import java.util.regex.Pattern
 
 // TODO: Rename parameter arguments, choose names that match
@@ -132,6 +134,7 @@ class CreateSuperUserFragment : Fragment(), View.OnClickListener {
                 if(createSuperUser_et_username.text.toString().isNotEmpty() && createSuperUser_et_id.text.toString().isNotEmpty() &&
                     createSuperUser_et_password.text.toString().isNotEmpty() && createSuperUser_et_confirmpassword.text.toString().isNotEmpty()){
                     if (createSuperUser_et_password.text.toString() == createSuperUser_et_confirmpassword.text.toString() && validationpassword == "false") {
+                        Createsuperuser()
                         settingsMachineFragment = SettingsMachineFragment()
                         transaction = fragmentManager?.beginTransaction()!!
                         transaction.replace(R.id.drawable_frameLayout, settingsMachineFragment)
@@ -207,6 +210,17 @@ class CreateSuperUserFragment : Fragment(), View.OnClickListener {
         builder.setPositiveButton("Accept",null)
         val dialog: AlertDialog =builder.create()
         dialog.show()
+    }
+
+    private fun Createsuperuser(){
+        var map = mutableMapOf<String,Any?>()
+        var database = FirebaseDatabase.getInstance()
+        map["username"]=createSuperUser_et_username.text.toString()
+        map["password"]=createSuperUser_et_password.text.toString()
+        database.reference
+            .child("SuperUsers")
+            .child("${createSuperUser_et_id.text.toString()}")
+            .updateChildren(map)
     }
 
 }
