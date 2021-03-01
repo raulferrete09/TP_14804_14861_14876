@@ -7,13 +7,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.FragmentTransaction
 import com.example.tp_14804_14861_14876.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -106,16 +107,7 @@ class RestrictedAreaFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.restrictedArea_btn_login -> {
-                val name  = "joao"
-                val pass = "123"
-                if(idUser == "nymjU3VGQLck4rWW41J2x83A2CJ3" &&  restrictedArea_et_user.text.toString() == name && restrictedArea_et_password.text.toString() == pass) {
-                    settingsMachineFragment = SettingsMachineFragment()
-                    transaction = fragmentManager?.beginTransaction()!!
-                    transaction.replace(R.id.drawable_frameLayout, settingsMachineFragment)
-                    transaction.commit()
-                } else {
-                    Toast.makeText(activity, "Not have permission to access or wrong password", Toast.LENGTH_SHORT).show()
-                }
+                getSuperUsers()
             }
             R.id.restrictedArea_iv_passwordshow -> {
                 misshowpass = !misshowpass
@@ -133,5 +125,45 @@ class RestrictedAreaFragment : Fragment(), View.OnClickListener {
             restrictedArea_iv_passwordshow.setImageResource(R.drawable.ic_show_password)
         }
         restrictedArea_et_password.setSelection(restrictedArea_et_password.text.toString().length)
+    }
+
+    private fun getSuperUsers(){
+        var databaseReference = FirebaseDatabase.getInstance().getReference("SuperUsers")
+        databaseReference!!.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (postSnapshot in snapshot.children) {
+                    val id = postSnapshot.key
+                    if(id == idUser){
+                        var database = FirebaseDatabase.getInstance()
+                        database.reference.child("Temperature")
+                            .child("$idUser")
+                            .addValueEventListener(object : ValueEventListener {
+                                override fun onCancelled(error: DatabaseError) {
+                                    TODO("Not yet implemented")
+                                }
+                                override fun onDataChange(snapshot: DataSnapshot) {
+                                    if (snapshot.value != null) {
+                                        var map = snapshot.value as Map<String, Any?>
+                                        var name = map["username"]
+                                        var password = map["password"]
+                                        if( restrictedArea_et_user.text.toString() == name && restrictedArea_et_password.text.toString() == password) {
+                                            settingsMachineFragment = SettingsMachineFragment()
+                                            transaction = fragmentManager?.beginTransaction()!!
+                                            transaction.replace(R.id.drawable_frameLayout, settingsMachineFragment)
+                                            transaction.commit()
+                                        } else {
+                                            Toast.makeText(activity, "Not have permission to access or wrong password", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                }
+                            })
+                    }
+                }
+
+            }
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
     }
 }

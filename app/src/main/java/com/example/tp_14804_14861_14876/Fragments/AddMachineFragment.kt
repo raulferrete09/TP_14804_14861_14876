@@ -163,7 +163,7 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
                             x = 5
                             showAlert(x)
                         }
-                        ((addMachine_et_confirmpassword.text.toString() == addMachine_et_password.text.toString()))  -> {
+                        ((addMachine_et_confirmpassword.text.toString() != addMachine_et_password.text.toString()))  -> {
                             x = 6
                             showAlert(x)
                         }
@@ -209,13 +209,32 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
 
     private fun CreateMachine(){
         var map = mutableMapOf<String,Any?>()
+        var mapacellerometer = mutableMapOf<String,Any?>()
+        var mapTemperature = mutableMapOf<String,Any?>()
         var database = FirebaseDatabase.getInstance()
-        map["username"]=addMachine_et_username.text.toString()
+        map["username"]=addMachine_et_user.text.toString()
         map["password"]=addMachine_et_password.text.toString()
+        mapacellerometer["status"]=""
+        mapacellerometer["x"]=""
+        mapacellerometer["y"]=""
+        mapacellerometer["z"]=""
+        mapTemperature["Temperature"]=""
+        mapTemperature["status"]=""
+
         database.reference
             .child("Machines")
             .child("${addMachine_et_nameMachine.text.toString()}")
             .updateChildren(map)
+
+        database.reference
+            .child("Accelerometer")
+            .child("${addMachine_et_nameMachine.text.toString()}")
+            .updateChildren(mapacellerometer)
+
+        database.reference
+            .child("Temperature")
+            .child("${addMachine_et_nameMachine.text.toString()}")
+            .updateChildren(mapTemperature)
     }
 
     fun showAlert(x:Int){
