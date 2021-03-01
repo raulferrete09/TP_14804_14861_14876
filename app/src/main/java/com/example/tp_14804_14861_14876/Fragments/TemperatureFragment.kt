@@ -84,7 +84,7 @@ class TemperatureFragment : Fragment(), AdapterView.OnItemSelectedListener {
         temperature_tv_temperature = view.findViewById<TextView>(R.id.temperature_tv_temperature)
         temperature_spinner_machine = view.findViewById<Spinner>(R.id.temperature_spinner_machine)
 
-        machines = arrayListOf<String>("")
+        machines = arrayListOf<String>()
         getMachines()
         temperature_spinner_machine.adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1,machines)
         temperature_spinner_machine.onItemSelectedListener = this
@@ -145,10 +145,10 @@ class TemperatureFragment : Fragment(), AdapterView.OnItemSelectedListener {
         databaseReference = FirebaseDatabase.getInstance().getReference("Machines")
         databaseReference!!.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                machines.removeAt(0)
                 for (postSnapshot in snapshot.children) {
                     val name = postSnapshot.key
                     machines.add(name.toString())
+                    temperature_spinner_machine.adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1,machines)
                 }
 
             }

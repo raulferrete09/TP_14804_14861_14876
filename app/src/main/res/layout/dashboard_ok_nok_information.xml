@@ -23,7 +23,7 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="match_parent"
+            android:layout_width="213dp"
             android:layout_height="wrap_content"
             android:layout_weight="4"
             android:paddingTop="12dp"
@@ -31,13 +31,13 @@
             app:srcCompat="@drawable/gear_engineering_icon" />
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="232dp"
+            android:layout_height="match_parent"
             android:layout_weight="3"
-            android:text="Machine:"
-            android:textAlignment="textEnd"
             android:paddingTop="12dp"
             android:paddingBottom="12dp"
+            android:text="Machine:"
+            android:textAlignment="textEnd"
             android:textColor="@color/colorWhite"
             android:textSize="16sp" />
 

@@ -98,7 +98,7 @@ class AccerelometerFragment : Fragment(), AdapterView.OnItemSelectedListener {
         accelerometer_z = ""
         accelerometer_status = ""
 
-        machines = arrayListOf<String>("")
+        machines = arrayListOf<String>()
         getMachines()
         accelerometer_spinner_machine.adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1,machines)
         accelerometer_spinner_machine.onItemSelectedListener = this
@@ -156,6 +156,7 @@ class AccerelometerFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
                 })
     }
+
     private fun getMachines() {
         databaseReference = FirebaseDatabase.getInstance().getReference("Machines")
         databaseReference!!.addValueEventListener(object : ValueEventListener {
@@ -163,6 +164,7 @@ class AccerelometerFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 for (postSnapshot in snapshot.children) {
                     val name = postSnapshot.key
                     machines.add(name.toString())
+                    accelerometer_spinner_machine.adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1,machines)
                 }
 
             }

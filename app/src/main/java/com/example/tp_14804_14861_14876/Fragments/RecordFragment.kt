@@ -390,6 +390,7 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
                 for (postSnapshot in snapshot.children) {
                     val name = postSnapshot.key
                     machines.add(name.toString())
+                    record_spinner_machine.adapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_list_item_1,machines)
                 }
 
             }
@@ -398,5 +399,4 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
             }
         })
     }
-
 }
