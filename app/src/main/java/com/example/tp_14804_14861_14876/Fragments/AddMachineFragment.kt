@@ -212,6 +212,7 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
         var mapacellerometer = mutableMapOf<String,Any?>()
         var mapTemperature = mutableMapOf<String,Any?>()
         var database = FirebaseDatabase.getInstance()
+        map["localization"] = addMachine_et_localzation.text.toString()
         map["username"]=addMachine_et_user.text.toString()
         map["password"]=addMachine_et_password.text.toString()
         mapacellerometer["status"]=""
