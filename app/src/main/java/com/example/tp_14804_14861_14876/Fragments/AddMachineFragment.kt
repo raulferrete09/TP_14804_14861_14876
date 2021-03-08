@@ -36,6 +36,7 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
 
     lateinit var addMachine_et_nameMachine: EditText
     lateinit var addMachine_et_localzation: EditText
+    lateinit var addMachine_et_diagnostic: EditText
     lateinit var addMachine_et_user: EditText
     lateinit var addMachine_et_password: EditText
     lateinit var addMachine_et_confirmpassword: EditText
@@ -97,6 +98,7 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
 
         addMachine_et_nameMachine = view.findViewById<EditText>(R.id.addMachine_et_nameMachine)
         addMachine_et_localzation = view.findViewById<EditText>(R.id.addMachine_et_localzation)
+        addMachine_et_diagnostic = view.findViewById<EditText>(R.id.addMachine_et_diagnostic)
         addMachine_et_user = view.findViewById<EditText>(R.id.addMachine_et_username)
         addMachine_et_password = view.findViewById<EditText>(R.id.addMachine_et_password)
         addMachine_et_confirmpassword = view.findViewById<EditText>(R.id.addMachine_et_confirmpassword)
@@ -135,6 +137,7 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
             R.id.addMachine_btn_create -> {
                 if(addMachine_et_nameMachine.text.isNotEmpty()
                     && addMachine_et_user.text.isNotEmpty()
+                    && addMachine_et_diagnostic.text.isNotEmpty()
                     && addMachine_et_localzation.text.isNotEmpty()
                     && addMachine_et_password.text.isNotEmpty()
                     && addMachine_et_confirmpassword.text.isNotEmpty()
@@ -213,6 +216,7 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
         var mapTemperature = mutableMapOf<String,Any?>()
         var database = FirebaseDatabase.getInstance()
         map["localization"] = addMachine_et_localzation.text.toString()
+        map["diagnostic"] = addMachine_et_diagnostic.text.toString()
         map["username"]=addMachine_et_user.text.toString()
         map["password"]=addMachine_et_password.text.toString()
         mapacellerometer["status"]=""

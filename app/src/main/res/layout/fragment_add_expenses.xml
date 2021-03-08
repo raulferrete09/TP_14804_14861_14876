@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray"
+    tools:context=".Fragments.AddExpensesFragment">
+
+    <TextView
+        android:id="@+id/password_tv"
+        android:layout_width="309dp"
+        android:layout_height="110dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="47dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="58dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="495dp"
+        android:background="@color/gray"
+        android:gravity="center"
+        android:text="Add Expenses"
+        android:textColor="@color/colorWhite"
+        android:textSize="30sp"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorWhite"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/addExpenses_et_intervation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="49dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/login_et"
+                android:ems="10"
+                android:text="Type of Intervation"
+                android:textColor="#252427"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/temperature_spinner_machine"
+                android:layout_width="198dp"
+                android:layout_height="35dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="51dp"
+                android:layout_toEndOf="@+id/addExpenses_et_intervation"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/temperature_tv_machine"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.874" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/addExpenses_et_expenses"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/login_et"
+                android:ems="10"
+                android:hint="Expenses"
+                android:textColorHint="#252427"
+                android:textSize="16sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/addExpenses_et_nameMachine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/login_et"
+                android:ems="10"
+                android:hint="Name Machine"
+                android:textSize="16sp"
+                android:textColorHint="@color/colorSigninSignup" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/addExpenses_et_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/login_et"
+                android:ems="10"
+                android:hint="Username"
+                android:textSize="16sp"
+                android:textColorHint="@color/colorSigninSignup" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/addExpenses_et_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/login_et"
+                android:ems="10"
+                android:hint="Password"
+                android:textSize="16sp"
+                android:inputType="textPassword"
+                android:textColorHint="@color/colorSigninSignup" />
+
+            <ImageView
+                android:id="@+id/password_iv_show"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_alignTop="@+id/signup_et_password"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="19dp"
+                android:layout_marginEnd="19dp"
+                android:gravity="center"
+                android:src="@drawable/ic_show_password" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/addExpenses_et_confirmpassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/login_et"
+                android:ems="10"
+                android:hint="Confirm Password"
+                android:textSize="16sp"
+                android:inputType="textPassword"
+                android:textColorHint="@color/colorSigninSignup" />
+
+            <ImageView
+                android:id="@+id/password_iv_confirmshow"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_alignTop="@+id/signup_et_confirmpassword"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="19dp"
+                android:layout_marginBottom="70dp"
+                android:gravity="center"
+                android:src="@drawable/ic_show_password" />
+        </RelativeLayout>
+
+
+        <Button
+            android:id="@+id/addExpenses_btn_add"
+            android:layout_width= "match_parent"
+            android:layout_height="43dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="30dp"
+            android:layout_gravity="center"
+            android:background="@drawable/singin_btn"
+            android:backgroundTint="@color/red"
+            android:text="Add Expenses"
+            android:textColor="@color/colorWhite"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </LinearLayout>
+
+</RelativeLayout>
