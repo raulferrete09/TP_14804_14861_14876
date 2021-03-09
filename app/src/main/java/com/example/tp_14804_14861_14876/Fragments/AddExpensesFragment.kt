@@ -26,7 +26,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [AddExpensesFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class AddExpensesFragment : Fragment(), View.OnClickListener {
+class AddExpensesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     var misshowpass = false
     var misshowconfirmpass = false
@@ -42,7 +42,9 @@ class AddExpensesFragment : Fragment(), View.OnClickListener {
     lateinit var password_iv_show: ImageView
     lateinit var password_iv_confirmshow: ImageView
     lateinit var addExpenses_btn_add: Button
+    lateinit var addExpenses_spinner_intervation: Spinner
     lateinit var machines: ArrayList<String>
+    lateinit var adpater_intervation: ArrayAdapter<CharSequence>
     private lateinit var database: FirebaseDatabase
 
     // TODO: Rename and change types of parameters
@@ -96,6 +98,7 @@ class AddExpensesFragment : Fragment(), View.OnClickListener {
         password_iv_show = view.findViewById<ImageView>(R.id.password_iv_show)
         password_iv_confirmshow = view.findViewById<ImageView>(R.id.password_iv_confirmshow)
         addExpenses_btn_add = view.findViewById<Button>(R.id.addExpenses_btn_add)
+        addExpenses_spinner_intervation = view.findViewById<Spinner>(R.id.addExpenses_spinner_intervation)
 
         addExpenses_et_password.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -106,6 +109,17 @@ class AddExpensesFragment : Fragment(), View.OnClickListener {
 
             override fun afterTextChanged(s: Editable) {}
         })
+
+
+        adpater_intervation = ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.type_of_intervation,
+            android.R.layout.simple_spinner_item
+        )
+        adpater_intervation.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        addExpenses_spinner_intervation.adapter = adpater_intervation
+        addExpenses_spinner_intervation.onItemSelectedListener = this
+
         machines = arrayListOf<String>()
         password_iv_show.setOnClickListener(this)
         password_iv_confirmshow.setOnClickListener(this)
@@ -114,10 +128,14 @@ class AddExpensesFragment : Fragment(), View.OnClickListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.addExpenses_btn_add-> {
-                getMachineData()
-                confirmAdd()
-
+            R.id.addExpenses_btn_add -> {
+                if (addExpenses_et_expenses.text.isNotEmpty() && addExpenses_et_nameMachine.text.isNotEmpty()
+                    && addExpenses_et_username.text.isNotEmpty() && addExpenses_et_password.text.isNotEmpty()
+                    && addExpenses_et_confirmpassword.text.isNotEmpty() && validationpassword == "false"
+                ) {
+                    getMachineData()
+                    confirmAdd()
+                }
             }
             R.id.password_iv_show -> {
                 misshowpass = !misshowpass
@@ -131,12 +149,13 @@ class AddExpensesFragment : Fragment(), View.OnClickListener {
     }
 
     private fun confirmAdd() {
-        if(map.isNotEmpty()&&
-           addExpenses_et_password == addExpenses_et_confirmpassword &&
-           addExpenses_et_password == map["password"] &&
-           addExpenses_et_username == map["username"] &&
-           addExpenses_et_expenses.text.isNotEmpty() &&
-           addExpenses_et_confirmpassword.text.isNotEmpty()){//Change to Combo Box !!!!!!!!!!!!!!!!!!!!!!!!
+        if (map.isNotEmpty() &&
+            addExpenses_et_password == addExpenses_et_confirmpassword &&
+            addExpenses_et_password == map["password"] &&
+            addExpenses_et_username == map["username"] &&
+            addExpenses_et_expenses.text.isNotEmpty() &&
+            addExpenses_et_confirmpassword.text.isNotEmpty()
+        ) {//Change to Combo Box !!!!!!!!!!!!!!!!!!!!!!!!
             setExpenseCost()
             settingsMachineFragment = SettingsMachineFragment()
             transaction = fragmentManager?.beginTransaction()!!
@@ -146,8 +165,9 @@ class AddExpensesFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setExpenseCost() {
-        var maps = mutableMapOf<String,Any?>()
-        maps[addExpenses_et_confirmpassword.text.toString()] = addExpenses_et_expenses.text.toString()
+        var maps = mutableMapOf<String, Any?>()
+        maps[addExpenses_et_confirmpassword.text.toString()] =
+            addExpenses_et_expenses.text.toString()
         var refdatabase = FirebaseDatabase.getInstance()
         refdatabase.reference
             .child("Dashboard")
@@ -157,21 +177,26 @@ class AddExpensesFragment : Fragment(), View.OnClickListener {
     }
 
     private fun showPassword(isShow: Boolean) {
-        if (isShow){
-            addExpenses_et_password.transformationMethod = HideReturnsTransformationMethod.getInstance()
+        if (isShow) {
+            addExpenses_et_password.transformationMethod =
+                HideReturnsTransformationMethod.getInstance()
             password_iv_show.setImageResource(R.drawable.ic_hide_password)
         } else {
-            addExpenses_et_password.transformationMethod = PasswordTransformationMethod.getInstance()
+            addExpenses_et_password.transformationMethod =
+                PasswordTransformationMethod.getInstance()
             password_iv_show.setImageResource(R.drawable.ic_show_password)
         }
-        addExpenses_et_password.setSelection(addExpenses_et_password.text.toString().length)    }
+        addExpenses_et_password.setSelection(addExpenses_et_password.text.toString().length)
+    }
 
-    private fun showConfirmPassword(isShow:Boolean) {
-        if (isShow){
-            addExpenses_et_confirmpassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
+    private fun showConfirmPassword(isShow: Boolean) {
+        if (isShow) {
+            addExpenses_et_confirmpassword.transformationMethod =
+                HideReturnsTransformationMethod.getInstance()
             password_iv_confirmshow.setImageResource(R.drawable.ic_hide_password)
         } else {
-            addExpenses_et_confirmpassword.transformationMethod = PasswordTransformationMethod.getInstance()
+            addExpenses_et_confirmpassword.transformationMethod =
+                PasswordTransformationMethod.getInstance()
             password_iv_confirmshow.setImageResource(R.drawable.ic_show_password)
         }
         addExpenses_et_confirmpassword.setSelection(addExpenses_et_confirmpassword.text.toString().length)
@@ -185,7 +210,8 @@ class AddExpensesFragment : Fragment(), View.OnClickListener {
         if (lowerCase.matcher(password).find()
             && upperCase.matcher(password).find()
             && digitCase.matcher(password).find()
-            && password.length >= 8) {
+            && password.length >= 8
+        ) {
             validate = "false"
         } else {
             validate = "true"
@@ -197,7 +223,7 @@ class AddExpensesFragment : Fragment(), View.OnClickListener {
         database = FirebaseDatabase.getInstance()
         database.reference.child("Machines")
             .child("${addExpenses_et_nameMachine.text.toString()}")
-            .addValueEventListener(object: ValueEventListener {
+            .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {
                     TODO("Not yet implemented")
                 }
@@ -210,4 +236,11 @@ class AddExpensesFragment : Fragment(), View.OnClickListener {
             })
     }
 
+    override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+        val text = parent.getItemAtPosition(position).toString()
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+
+    }
 }

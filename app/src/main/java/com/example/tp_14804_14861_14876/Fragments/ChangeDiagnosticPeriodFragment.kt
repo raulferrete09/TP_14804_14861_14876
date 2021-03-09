@@ -119,8 +119,12 @@ class ChangeDiagnosticPeriodFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.changeDiagnostic_btn_changeDiagnostic-> {
-                getMachineData()
-                confirmChange()
+                if(changeDiagnostic_et_diagnostic.text.isNotEmpty() && changeDiagnostic_et_nameMachine.text.isNotEmpty()
+                    && changeDiagnostic_et_username.text.isNotEmpty() && changeDiagnostic_et_password.text.isNotEmpty()
+                    && changeDiagnostic_et_confirmpassword.text.isNotEmpty() && validationpassword == "false") {
+                    getMachineData()
+                    confirmChange()
+                }
             }
             R.id.password_iv_show -> {
                 misshowpass = !misshowpass
@@ -153,9 +157,9 @@ class ChangeDiagnosticPeriodFragment : Fragment(), View.OnClickListener {
         maps[changeDiagnostic_et_confirmpassword.text.toString()] = changeDiagnostic_et_diagnostic.text.toString()
         var refdatabase = FirebaseDatabase.getInstance()
         refdatabase.reference
-            .child("Dashboard")
+            .child("Machines")
             .child("${changeDiagnostic_et_nameMachine.text.toString()}")
-            .child("Cost Predicted")
+            .child("diagnostic")
             .updateChildren(maps)
     }
 

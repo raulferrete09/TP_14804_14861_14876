@@ -144,6 +144,10 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
                     && (addMachine_et_password.text.toString() == addMachine_et_confirmpassword.text.toString())
                     && validationpassword == "false"){
                     CreateMachine()
+                    settingsMachineFragment = SettingsMachineFragment()
+                    transaction = fragmentManager?.beginTransaction()!!
+                    transaction.replace(R.id.drawable_frameLayout, settingsMachineFragment)
+                    transaction.commit()
                 }else {
                     when {
                         addMachine_et_nameMachine.text.isEmpty() -> {
@@ -172,10 +176,6 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
                         }
                     }
                 }
-                    settingsMachineFragment = SettingsMachineFragment()
-                    transaction = fragmentManager?.beginTransaction()!!
-                    transaction.replace(R.id.drawable_frameLayout, settingsMachineFragment)
-                    transaction.commit()
           }
             R.id.addMachine_iv_passwordshow -> {
                 misshowpass = !misshowpass
@@ -211,10 +211,29 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
     }
 
     private fun CreateMachine(){
+        var mapanomaly = mutableMapOf<String,Any?>()
+        var mapaudio = mutableMapOf<String,Any?>()
+        var mapcostpredicted = mutableMapOf<String,Any?>()
+        var mapoperatinghours = mutableMapOf<String,Any?>()
+
         var map = mutableMapOf<String,Any?>()
         var mapacellerometer = mutableMapOf<String,Any?>()
         var mapTemperature = mutableMapOf<String,Any?>()
         var database = FirebaseDatabase.getInstance()
+
+        mapanomaly["Anomaly"] = ""
+        mapaudio["base64"] = "1"
+        mapaudio["record"] = "False"
+        mapaudio["status"] = ""
+
+        mapcostpredicted["maintenance"] = ""
+        mapcostpredicted["other"] = ""
+        mapcostpredicted["breakdown"] = ""
+
+        mapoperatinghours["OFF"] = ""
+        mapoperatinghours["ON"] = ""
+
+
         map["localization"] = addMachine_et_localzation.text.toString()
         map["diagnostic"] = addMachine_et_diagnostic.text.toString()
         map["username"]=addMachine_et_user.text.toString()
@@ -240,6 +259,26 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
             .child("Temperature")
             .child("${addMachine_et_nameMachine.text.toString()}")
             .updateChildren(mapTemperature)
+
+        database.reference
+            .child("Dashboard")
+            .child("${addMachine_et_nameMachine.text.toString()}")
+            .updateChildren(mapanomaly)
+
+        database.reference
+            .child("Dashboard")
+            .child("${addMachine_et_nameMachine.text.toString()}").child("Audio")
+            .updateChildren(mapaudio)
+
+        database.reference
+            .child("Dashboard")
+            .child("${addMachine_et_nameMachine.text.toString()}").child("Cost Predicted")
+            .updateChildren(mapcostpredicted)
+
+        database.reference
+            .child("Dashboard")
+            .child("${addMachine_et_nameMachine.text.toString()}").child("OH")
+            .updateChildren(mapoperatinghours)
     }
 
     fun showAlert(x:Int){

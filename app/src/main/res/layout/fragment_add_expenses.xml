@@ -59,7 +59,7 @@
                 android:textSize="16sp" />
 
             <Spinner
-                android:id="@+id/temperature_spinner_machine"
+                android:id="@+id/addExpenses_spinner_intervation"
                 android:layout_width="198dp"
                 android:layout_height="35dp"
                 android:layout_alignParentTop="true"
