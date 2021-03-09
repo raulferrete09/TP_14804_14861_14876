@@ -15,6 +15,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.FragmentTransaction
 import com.example.tp_14804_14861_14876.R
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.util.regex.Pattern
 
 // TODO: Rename parameter arguments, choose names that match
@@ -43,7 +47,8 @@ class ChangeDiagnosticPeriodFragment : Fragment(), View.OnClickListener {
     lateinit var password_iv_confirmshow: ImageView
     lateinit var settingsMachineFragment: SettingsMachineFragment
     lateinit var transaction: FragmentTransaction
-
+    lateinit var map: Map<String, Any?>
+    private lateinit var database: FirebaseDatabase
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -114,10 +119,8 @@ class ChangeDiagnosticPeriodFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.changeDiagnostic_btn_changeDiagnostic-> {
-                settingsMachineFragment = SettingsMachineFragment()
-                transaction = fragmentManager?.beginTransaction()!!
-                transaction.replace(R.id.drawable_frameLayout, settingsMachineFragment)
-                transaction.commit()
+                getMachineData()
+                confirmChange()
             }
             R.id.password_iv_show -> {
                 misshowpass = !misshowpass
@@ -128,6 +131,32 @@ class ChangeDiagnosticPeriodFragment : Fragment(), View.OnClickListener {
                 showConfirmPassword(misshowconfirmpass)
             }
         }
+    }
+
+    private fun confirmChange() {
+        if(map.isNotEmpty()&&
+            changeDiagnostic_et_password == changeDiagnostic_et_confirmpassword &&
+            changeDiagnostic_et_password == map["password"] &&
+            changeDiagnostic_et_username == map["username"] &&
+            changeDiagnostic_et_diagnostic.text.isNotEmpty() &&
+            changeDiagnostic_et_confirmpassword.text.isNotEmpty()){
+            setChangeDiagnostic()
+            settingsMachineFragment = SettingsMachineFragment()
+            transaction = fragmentManager?.beginTransaction()!!
+            transaction.replace(R.id.drawable_frameLayout, settingsMachineFragment)
+            transaction.commit()
+        }
+    }
+
+    private fun setChangeDiagnostic() {
+        var maps = mutableMapOf<String,Any?>()
+        maps[changeDiagnostic_et_confirmpassword.text.toString()] = changeDiagnostic_et_diagnostic.text.toString()
+        var refdatabase = FirebaseDatabase.getInstance()
+        refdatabase.reference
+            .child("Dashboard")
+            .child("${changeDiagnostic_et_nameMachine.text.toString()}")
+            .child("Cost Predicted")
+            .updateChildren(maps)
     }
 
     private fun showPassword(isShow: Boolean) {
@@ -166,4 +195,22 @@ class ChangeDiagnosticPeriodFragment : Fragment(), View.OnClickListener {
         }
         return validate
     }
+
+    private fun getMachineData() {
+        database = FirebaseDatabase.getInstance()
+        database.reference.child("Machines")
+            .child("${changeDiagnostic_et_nameMachine.text.toString()}")
+            .addValueEventListener(object: ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.value != null) {
+                        map = snapshot.value as Map<String, Any?>
+                    }
+                }
+            })
+    }
+
 }

@@ -187,6 +187,7 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
                         if (!folder.exists()) {
                             folder.mkdirs()
                             //Start record
+                            sendRecordingSignal()
                             startRecording()
                             record_btn_start.background = resources.getDrawable(
                                 R.drawable.record_btn_recording,
@@ -207,6 +208,17 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
             }
         }
 
+    }
+
+    private fun sendRecordingSignal() {
+        var maps = mutableMapOf<String,Any?>()
+        maps["Record"] = "True"
+        var refdatabase = FirebaseDatabase.getInstance()
+        refdatabase.reference
+            .child("Dashboard")
+            .child("${addExpenses_et_nameMachine.text.toString()}")
+            .child("Audio")
+            .updateChildren(maps)
     }
 
 
@@ -244,6 +256,7 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         timer_chromo_counter.base = SystemClock.elapsedRealtime()
         timer_chromo_counter.start()
 
+
         val timer = object : CountDownTimer(11000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
 
@@ -273,12 +286,25 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
                 //record_btn_start.background = resources.getDrawable(R.drawable.record_btn_stopped, null)
                 var base64 = encodeAudio(path)
                 sendData(base64, audioname,path)
-
+                resetPing(base64)
             }
         }
         timer.start()
 
     }
+
+    private fun resetPing(base64: String) {
+        var maps = mutableMapOf<String,Any?>()
+        maps["record"] = "False"
+        maps["base64"] = base64
+        var refdatabase = FirebaseDatabase.getInstance()
+        refdatabase.reference
+            .child("Dashboard")
+            .child("${addExpenses_et_nameMachine.text.toString()}")
+            .child("Audio")
+            .updateChildren(maps)
+    }
+
     private fun stopRecording() {
         //Stop Timer, very obvious
         //Change text on page to file saved

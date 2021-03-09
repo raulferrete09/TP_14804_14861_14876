@@ -9,12 +9,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.FragmentTransaction
 import com.example.tp_14804_14861_14876.R
+import com.google.firebase.database.*
+import java.util.ArrayList
 import java.util.regex.Pattern
 
 // TODO: Rename parameter arguments, choose names that match
@@ -32,7 +31,7 @@ class AddExpensesFragment : Fragment(), View.OnClickListener {
     var misshowpass = false
     var misshowconfirmpass = false
     var validationpassword: String? = "false"
-
+    lateinit var map: Map<String, Any?>
     lateinit var settingsMachineFragment: SettingsMachineFragment
     lateinit var transaction: FragmentTransaction
     lateinit var addExpenses_et_expenses: EditText
@@ -43,6 +42,8 @@ class AddExpensesFragment : Fragment(), View.OnClickListener {
     lateinit var password_iv_show: ImageView
     lateinit var password_iv_confirmshow: ImageView
     lateinit var addExpenses_btn_add: Button
+    lateinit var machines: ArrayList<String>
+    private lateinit var database: FirebaseDatabase
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -105,7 +106,7 @@ class AddExpensesFragment : Fragment(), View.OnClickListener {
 
             override fun afterTextChanged(s: Editable) {}
         })
-
+        machines = arrayListOf<String>()
         password_iv_show.setOnClickListener(this)
         password_iv_confirmshow.setOnClickListener(this)
         addExpenses_btn_add.setOnClickListener(this)
@@ -114,10 +115,9 @@ class AddExpensesFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.addExpenses_btn_add-> {
-                settingsMachineFragment = SettingsMachineFragment()
-                transaction = fragmentManager?.beginTransaction()!!
-                transaction.replace(R.id.drawable_frameLayout, settingsMachineFragment)
-                transaction.commit()
+                getMachineData()
+                confirmAdd()
+
             }
             R.id.password_iv_show -> {
                 misshowpass = !misshowpass
@@ -128,6 +128,32 @@ class AddExpensesFragment : Fragment(), View.OnClickListener {
                 showConfirmPassword(misshowconfirmpass)
             }
         }
+    }
+
+    private fun confirmAdd() {
+        if(map.isNotEmpty()&&
+           addExpenses_et_password == addExpenses_et_confirmpassword &&
+           addExpenses_et_password == map["password"] &&
+           addExpenses_et_username == map["username"] &&
+           addExpenses_et_expenses.text.isNotEmpty() &&
+           addExpenses_et_confirmpassword.text.isNotEmpty()){//Change to Combo Box !!!!!!!!!!!!!!!!!!!!!!!!
+            setExpenseCost()
+            settingsMachineFragment = SettingsMachineFragment()
+            transaction = fragmentManager?.beginTransaction()!!
+            transaction.replace(R.id.drawable_frameLayout, settingsMachineFragment)
+            transaction.commit()
+        }
+    }
+
+    private fun setExpenseCost() {
+        var maps = mutableMapOf<String,Any?>()
+        maps[addExpenses_et_confirmpassword.text.toString()] = addExpenses_et_expenses.text.toString()
+        var refdatabase = FirebaseDatabase.getInstance()
+        refdatabase.reference
+            .child("Dashboard")
+            .child("${addExpenses_et_nameMachine.text.toString()}")
+            .child("Cost Predicted")
+            .updateChildren(maps)
     }
 
     private fun showPassword(isShow: Boolean) {
@@ -166,4 +192,22 @@ class AddExpensesFragment : Fragment(), View.OnClickListener {
         }
         return validate
     }
+
+    private fun getMachineData() {
+        database = FirebaseDatabase.getInstance()
+        database.reference.child("Machines")
+            .child("${addExpenses_et_nameMachine.text.toString()}")
+            .addValueEventListener(object: ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.value != null) {
+                        map = snapshot.value as Map<String, Any?>
+                    }
+                }
+            })
+    }
+
 }
