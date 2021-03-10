@@ -1,6 +1,7 @@
 package com.example.tp_14804_14861_14876.Fragments
 
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.HideReturnsTransformationMethod
@@ -34,6 +35,7 @@ private const val ARG_PARAM2 = "param2"
 class ChangeDiagnosticPeriodFragment : Fragment(), View.OnClickListener {
 
     var misshowpass = false
+    var check = false
     var misshowconfirmpass = false
     var validationpassword: String? = "false"
 
@@ -47,6 +49,8 @@ class ChangeDiagnosticPeriodFragment : Fragment(), View.OnClickListener {
     lateinit var password_iv_confirmshow: ImageView
     lateinit var settingsMachineFragment: SettingsMachineFragment
     lateinit var transaction: FragmentTransaction
+    lateinit var restrictedAreaFragment: RestrictedAreaFragment
+    lateinit var mainFragment: MainFragment
     lateinit var map: Map<String, Any?>
     private lateinit var database: FirebaseDatabase
     // TODO: Rename and change types of parameters
@@ -101,16 +105,6 @@ class ChangeDiagnosticPeriodFragment : Fragment(), View.OnClickListener {
         password_iv_confirmshow = view.findViewById<ImageView>(R.id.password_iv_confirmshow)
         changeDiagnostic_btn_changeDiagnostic = view.findViewById<Button>(R.id.changeDiagnostic_btn_changeDiagnostic)
 
-        changeDiagnostic_et_password.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                val pass = changeDiagnostic_et_password.text.toString()
-                validationpassword = validatePassword(pass)
-            }
-
-            override fun afterTextChanged(s: Editable) {}
-        })
-
         password_iv_show.setOnClickListener(this)
         password_iv_confirmshow.setOnClickListener(this)
         changeDiagnostic_btn_changeDiagnostic.setOnClickListener(this)
@@ -123,7 +117,12 @@ class ChangeDiagnosticPeriodFragment : Fragment(), View.OnClickListener {
                     && changeDiagnostic_et_username.text.isNotEmpty() && changeDiagnostic_et_password.text.isNotEmpty()
                     && changeDiagnostic_et_confirmpassword.text.isNotEmpty() && validationpassword == "false") {
                     getMachineData()
-                    confirmChange()
+                    if (check == true){
+                        settingsMachineFragment = SettingsMachineFragment()
+                        transaction = fragmentManager?.beginTransaction()!!
+                        transaction.replace(R.id.drawable_frameLayout, settingsMachineFragment)
+                        transaction.commit()
+                    }
                 }
             }
             R.id.password_iv_show -> {
@@ -138,28 +137,24 @@ class ChangeDiagnosticPeriodFragment : Fragment(), View.OnClickListener {
     }
 
     private fun confirmChange() {
+        println(map["password"])
         if(map.isNotEmpty()&&
-            changeDiagnostic_et_password == changeDiagnostic_et_confirmpassword &&
-            changeDiagnostic_et_password == map["password"] &&
-            changeDiagnostic_et_username == map["username"] &&
-            changeDiagnostic_et_diagnostic.text.isNotEmpty() &&
-            changeDiagnostic_et_confirmpassword.text.isNotEmpty()){
-            setChangeDiagnostic()
-            settingsMachineFragment = SettingsMachineFragment()
-            transaction = fragmentManager?.beginTransaction()!!
-            transaction.replace(R.id.drawable_frameLayout, settingsMachineFragment)
-            transaction.commit()
+            changeDiagnostic_et_password.text.toString() == changeDiagnostic_et_confirmpassword.text.toString() &&
+            changeDiagnostic_et_password.text.toString() == map["password"] &&
+            changeDiagnostic_et_username.text.toString() == map["username"] &&
+            changeDiagnostic_et_diagnostic.text.isNotEmpty()){
+                setChangeDiagnostic()
+                check = true
         }
     }
 
     private fun setChangeDiagnostic() {
         var maps = mutableMapOf<String,Any?>()
-        maps[changeDiagnostic_et_confirmpassword.text.toString()] = changeDiagnostic_et_diagnostic.text.toString()
+        maps["diagnostic"] = changeDiagnostic_et_diagnostic.text.toString()
         var refdatabase = FirebaseDatabase.getInstance()
         refdatabase.reference
             .child("Machines")
             .child("${changeDiagnostic_et_nameMachine.text.toString()}")
-            .child("diagnostic")
             .updateChildren(maps)
     }
 
@@ -184,22 +179,6 @@ class ChangeDiagnosticPeriodFragment : Fragment(), View.OnClickListener {
         changeDiagnostic_et_confirmpassword.setSelection(changeDiagnostic_et_confirmpassword.text.toString().length)
     }
 
-    private fun validatePassword(password: String): String? {
-        val upperCase = Pattern.compile("[A-Z]")
-        val lowerCase = Pattern.compile("[a-z]")
-        val digitCase = Pattern.compile("[0-9]")
-        var validate: String = "false"
-        if (lowerCase.matcher(password).find()
-            && upperCase.matcher(password).find()
-            && digitCase.matcher(password).find()
-            && password.length >= 8) {
-            validate = "false"
-        } else {
-            validate = "true"
-        }
-        return validate
-    }
-
     private fun getMachineData() {
         database = FirebaseDatabase.getInstance()
         database.reference.child("Machines")
@@ -212,6 +191,7 @@ class ChangeDiagnosticPeriodFragment : Fragment(), View.OnClickListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.value != null) {
                         map = snapshot.value as Map<String, Any?>
+                        confirmChange()
                     }
                 }
             })
