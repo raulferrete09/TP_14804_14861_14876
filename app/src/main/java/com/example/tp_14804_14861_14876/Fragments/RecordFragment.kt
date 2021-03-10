@@ -210,16 +210,17 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
 
     }
 
-//    private fun sendRecordingSignal() {
-//        var maps = mutableMapOf<String,Any?>()
-//        maps["Record"] = "True"
-//        var refdatabase = FirebaseDatabase.getInstance()
-//        refdatabase.reference
-//            .child("Dashboard")
-//            .child("${addExpenses_et_nameMachine.text.toString()}")
-//            .child("Audio")
-//            .updateChildren(maps)
-//    }
+    private fun sendRecordingSignal(base64: String) {
+        var maps = mutableMapOf<String,Any?>()
+        maps["base64"] = base64
+        maps["record"] = "True"
+        var refdatabase = FirebaseDatabase.getInstance()
+        refdatabase.reference
+            .child("Dashboard")
+            .child("${record_spinner_machine.selectedItem.toString()}")
+            .child("Audio")
+            .updateChildren(maps)
+    }
 
 
     private fun startRecording() {
@@ -245,6 +246,7 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
         // Here are the code to convert the audio to base 64
         mr.setAudioSource(MediaRecorder.AudioSource.MIC)
         mr.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+        mr.setAudioChannels(1)
         mr.setMaxDuration(10000)
         mr.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
         mr.setOutputFile(path)
@@ -287,6 +289,8 @@ class RecordFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelec
                 var base64 = encodeAudio(path)
                 sendData(base64, audioname,path)
 //                resetPing(base64)
+
+                sendRecordingSignal(base64)
             }
         }
         timer.start()
