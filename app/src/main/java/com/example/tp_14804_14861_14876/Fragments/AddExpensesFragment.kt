@@ -1,6 +1,7 @@
 package com.example.tp_14804_14861_14876.Fragments
 
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.HideReturnsTransformationMethod
@@ -30,9 +31,11 @@ class AddExpensesFragment : Fragment(), View.OnClickListener, AdapterView.OnItem
 
     var misshowpass = false
     var check = false
+    var z= 0;
+    var y = 1;
     var misshowconfirmpass = false
-    var validationpassword: String? = "false"
     lateinit var map: Map<String, Any?>
+    lateinit var mapcostpredicted : Map<String, String>
     lateinit var settingsMachineFragment: SettingsMachineFragment
     lateinit var transaction: FragmentTransaction
     lateinit var addExpenses_et_expenses: EditText
@@ -114,6 +117,7 @@ class AddExpensesFragment : Fragment(), View.OnClickListener, AdapterView.OnItem
         password_iv_show.setOnClickListener(this)
         password_iv_confirmshow.setOnClickListener(this)
         addExpenses_btn_add.setOnClickListener(this)
+
     }
 
     override fun onClick(v: View) {
@@ -122,6 +126,7 @@ class AddExpensesFragment : Fragment(), View.OnClickListener, AdapterView.OnItem
                 if (addExpenses_et_expenses.text.isNotEmpty() && addExpenses_et_nameMachine.text.isNotEmpty()
                     && addExpenses_et_username.text.isNotEmpty() && addExpenses_et_password.text.isNotEmpty()
                     && addExpenses_et_confirmpassword.text.isNotEmpty()) {
+                    z=1;
                     getMachineData()
                     if(check == true){
                         settingsMachineFragment = SettingsMachineFragment()
@@ -143,7 +148,7 @@ class AddExpensesFragment : Fragment(), View.OnClickListener, AdapterView.OnItem
     }
 
     private fun confirmAdd() {
-        if (map.isNotEmpty() &&
+        if (map.isNotEmpty() && mapcostpredicted.isNotEmpty() &&
             addExpenses_et_password.text.toString() == addExpenses_et_confirmpassword.text.toString() &&
             addExpenses_et_password.text.toString() == map["password"] &&
             addExpenses_et_username.text.toString() == map["username"] &&
@@ -154,14 +159,20 @@ class AddExpensesFragment : Fragment(), View.OnClickListener, AdapterView.OnItem
     }
 
     private fun setExpenseCost() {
-        var maps = mutableMapOf<String, Any?>()
-        maps[addExpenses_spinner_intervation.selectedItem.toString()] = addExpenses_et_expenses.text.toString()
-        var refdatabase = FirebaseDatabase.getInstance()
-        refdatabase.reference
-            .child("Dashboard")
-            .child("${addExpenses_et_nameMachine.text.toString()}")
-            .child("Cost Predicted")
-            .updateChildren(maps)
+        var holdcost = mapcostpredicted[addExpenses_spinner_intervation.selectedItem.toString()]?.toInt()
+        if(z == 1 && y == 1) {
+            var newcost = holdcost?.plus(addExpenses_et_expenses.text.toString().toInt())
+            var maps = mutableMapOf<String, Any?>()
+            maps[addExpenses_spinner_intervation.selectedItem.toString()] = newcost.toString()
+            var refdatabase = FirebaseDatabase.getInstance()
+            refdatabase.reference
+                .child("Dashboard")
+                .child("${addExpenses_et_nameMachine.text.toString()}")
+                .child("Cost Predicted")
+                .updateChildren(maps)
+            z=0;
+            y=2;
+        }
     }
 
     private fun showPassword(isShow: Boolean) {
@@ -191,10 +202,31 @@ class AddExpensesFragment : Fragment(), View.OnClickListener, AdapterView.OnItem
     }
 
     private fun getMachineData() {
+        var i = 0;
+        var j = 0;
         database = FirebaseDatabase.getInstance()
+        database.reference.child("Dashboard")
+            .child("${addExpenses_et_nameMachine.text.toString()}")
+            .child("Cost Predicted")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.value != null) {
+                        mapcostpredicted = snapshot.value as Map<String, String>
+                        i = 1;
+                        if(j == 1){
+                            confirmAdd()
+                        }
+                    }
+                }
+            })
+
         database.reference.child("Machines")
             .child("${addExpenses_et_nameMachine.text.toString()}")
-            .addValueEventListener(object : ValueEventListener {
+            .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {
                     TODO("Not yet implemented")
                 }
@@ -202,7 +234,10 @@ class AddExpensesFragment : Fragment(), View.OnClickListener, AdapterView.OnItem
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.value != null) {
                         map = snapshot.value as Map<String, Any?>
-                        confirmAdd()
+                        j = 1;
+                        if(i == 1 ){
+                            confirmAdd()
+                        }
                     }
                 }
             })

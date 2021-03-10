@@ -226,12 +226,12 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
         mapaudio["record"] = "False"
         mapaudio["status"] = ""
 
-        mapcostpredicted["maintenance"] = ""
-        mapcostpredicted["other"] = ""
-        mapcostpredicted["breakdown"] = ""
+        mapcostpredicted["maintenance"] = "0"
+        mapcostpredicted["other"] = "0"
+        mapcostpredicted["breakdown"] = "0"
 
-        mapoperatinghours["OFF"] = ""
-        mapoperatinghours["ON"] = ""
+        mapoperatinghours["OFF"] = "0"
+        mapoperatinghours["ON"] = "0"
 
 
         map["localization"] = addMachine_et_localzation.text.toString()
