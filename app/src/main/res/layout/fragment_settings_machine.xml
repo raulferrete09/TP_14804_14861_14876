@@ -17,7 +17,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="47dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="126dp"
+        android:layout_marginTop="14dp"
         android:layout_marginEnd="47dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="495dp"
@@ -68,6 +68,7 @@
                 android:background="@drawable/gear_engineering_icon"
                 android:backgroundTint="@color/grayDark"/>
         </RelativeLayout>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -104,6 +105,84 @@
                 android:gravity="center"
                 android:src="@drawable/user_image" />
         </RelativeLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text= ""
+            android:ems="10" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/settingsMachine_tv_addExpenses"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/login_et"
+                android:ems="10"
+                android:text="Add Expenses"
+                android:textSize="16sp"
+                android:textColor="@color/colorSigninSignup" />
+
+            <ImageView
+                android:id="@+id/settingsMachine_iv_addExpenses"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="367dp"
+                android:gravity="center"
+                android:src="@drawable/money_icon"
+                app:tint="@color/gray"/>
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text= ""
+            android:ems="10" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/settingsMachine_tv_changeDiagnostic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/login_et"
+                android:ems="10"
+                android:text="Change Diagnostic Period"
+                android:textSize="16sp"
+                android:textColor="@color/colorSigninSignup" />
+
+            <ImageView
+                android:id="@+id/settingsMachine_iv_changeDiagnostic"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="367dp"
+                android:gravity="center"
+                android:src="@drawable/time_icon"
+                app:tint="@color/gray"/>
+        </RelativeLayout>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"

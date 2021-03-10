@@ -29,10 +29,14 @@ class SettingsMachineFragment : Fragment(), View.OnClickListener {
     lateinit var addMachineFragment: AddMachineFragment
     lateinit var createSuperUserFragment: CreateSuperUserFragment
     lateinit var passwordMachineFragment: PasswordMachineFragment
+    lateinit var addExpensesFragment: AddExpensesFragment
+    lateinit var changeDiagnosticPeriodFragment: ChangeDiagnosticPeriodFragment
     lateinit var transaction: FragmentTransaction
 
     lateinit var settingsMachine_tv_addMachine: TextView
     lateinit var settingsMachine_tv_addSuperUser: TextView
+    lateinit var settingsMachine_tv_addExpenses: TextView
+    lateinit var settingsMachine_tv_changeDiagnostic: TextView
     lateinit var settingsMachine_tv_changePassword: TextView
 
     // TODO: Rename and change types of parameters
@@ -80,10 +84,14 @@ class SettingsMachineFragment : Fragment(), View.OnClickListener {
 
         settingsMachine_tv_addMachine = view.findViewById<TextView>(R.id.settingsMachine_tv_addMachine)
         settingsMachine_tv_addSuperUser = view.findViewById<TextView>(R.id.settingsMachine_tv_addSuperUser)
+        settingsMachine_tv_addExpenses = view.findViewById<TextView>(R.id.settingsMachine_tv_addExpenses)
+        settingsMachine_tv_changeDiagnostic = view.findViewById<TextView>(R.id.settingsMachine_tv_changeDiagnostic)
         settingsMachine_tv_changePassword = view.findViewById<TextView>(R.id.settingsMachine_tv_changePassword)
 
         settingsMachine_tv_addMachine.setOnClickListener(this)
         settingsMachine_tv_addSuperUser.setOnClickListener(this)
+        settingsMachine_tv_addExpenses.setOnClickListener(this)
+        settingsMachine_tv_changeDiagnostic.setOnClickListener(this)
         settingsMachine_tv_changePassword.setOnClickListener(this)
 
 //        //Firebase info
@@ -108,6 +116,18 @@ class SettingsMachineFragment : Fragment(), View.OnClickListener {
                 createSuperUserFragment = CreateSuperUserFragment()
                 transaction = fragmentManager?.beginTransaction()!!
                 transaction.replace(R.id.drawable_frameLayout, createSuperUserFragment)
+                transaction.commit()
+            }
+            R.id.settingsMachine_tv_addExpenses -> {
+                addExpensesFragment = AddExpensesFragment()
+                transaction = fragmentManager?.beginTransaction()!!
+                transaction.replace(R.id.drawable_frameLayout, addExpensesFragment)
+                transaction.commit()
+            }
+            R.id.settingsMachine_tv_changeDiagnostic -> {
+                changeDiagnosticPeriodFragment = ChangeDiagnosticPeriodFragment()
+                transaction = fragmentManager?.beginTransaction()!!
+                transaction.replace(R.id.drawable_frameLayout, changeDiagnosticPeriodFragment)
                 transaction.commit()
             }
             R.id.settingsMachine_tv_changePassword -> {

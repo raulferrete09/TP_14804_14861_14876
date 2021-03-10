@@ -36,6 +36,7 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
 
     lateinit var addMachine_et_nameMachine: EditText
     lateinit var addMachine_et_localzation: EditText
+    lateinit var addMachine_et_diagnostic: EditText
     lateinit var addMachine_et_user: EditText
     lateinit var addMachine_et_password: EditText
     lateinit var addMachine_et_confirmpassword: EditText
@@ -97,6 +98,7 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
 
         addMachine_et_nameMachine = view.findViewById<EditText>(R.id.addMachine_et_nameMachine)
         addMachine_et_localzation = view.findViewById<EditText>(R.id.addMachine_et_localzation)
+        addMachine_et_diagnostic = view.findViewById<EditText>(R.id.addMachine_et_diagnostic)
         addMachine_et_user = view.findViewById<EditText>(R.id.addMachine_et_username)
         addMachine_et_password = view.findViewById<EditText>(R.id.addMachine_et_password)
         addMachine_et_confirmpassword = view.findViewById<EditText>(R.id.addMachine_et_confirmpassword)
@@ -135,12 +137,17 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
             R.id.addMachine_btn_create -> {
                 if(addMachine_et_nameMachine.text.isNotEmpty()
                     && addMachine_et_user.text.isNotEmpty()
+                    && addMachine_et_diagnostic.text.isNotEmpty()
                     && addMachine_et_localzation.text.isNotEmpty()
                     && addMachine_et_password.text.isNotEmpty()
                     && addMachine_et_confirmpassword.text.isNotEmpty()
                     && (addMachine_et_password.text.toString() == addMachine_et_confirmpassword.text.toString())
                     && validationpassword == "false"){
                     CreateMachine()
+                    settingsMachineFragment = SettingsMachineFragment()
+                    transaction = fragmentManager?.beginTransaction()!!
+                    transaction.replace(R.id.drawable_frameLayout, settingsMachineFragment)
+                    transaction.commit()
                 }else {
                     when {
                         addMachine_et_nameMachine.text.isEmpty() -> {
@@ -169,10 +176,6 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
                         }
                     }
                 }
-                    settingsMachineFragment = SettingsMachineFragment()
-                    transaction = fragmentManager?.beginTransaction()!!
-                    transaction.replace(R.id.drawable_frameLayout, settingsMachineFragment)
-                    transaction.commit()
           }
             R.id.addMachine_iv_passwordshow -> {
                 misshowpass = !misshowpass
@@ -208,11 +211,31 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
     }
 
     private fun CreateMachine(){
+        var mapanomaly = mutableMapOf<String,Any?>()
+        var mapaudio = mutableMapOf<String,Any?>()
+        var mapcostpredicted = mutableMapOf<String,Any?>()
+        var mapoperatinghours = mutableMapOf<String,Any?>()
+
         var map = mutableMapOf<String,Any?>()
         var mapacellerometer = mutableMapOf<String,Any?>()
         var mapTemperature = mutableMapOf<String,Any?>()
         var database = FirebaseDatabase.getInstance()
+
+        mapanomaly["Anomaly"] = ""
+        mapaudio["base64"] = "1"
+        mapaudio["record"] = "False"
+        mapaudio["status"] = ""
+
+        mapcostpredicted["maintenance"] = ""
+        mapcostpredicted["other"] = ""
+        mapcostpredicted["breakdown"] = ""
+
+        mapoperatinghours["OFF"] = ""
+        mapoperatinghours["ON"] = ""
+
+
         map["localization"] = addMachine_et_localzation.text.toString()
+        map["diagnostic"] = addMachine_et_diagnostic.text.toString()
         map["username"]=addMachine_et_user.text.toString()
         map["password"]=addMachine_et_password.text.toString()
         mapacellerometer["status"]=""
@@ -236,6 +259,26 @@ class AddMachineFragment : Fragment(), View.OnClickListener {
             .child("Temperature")
             .child("${addMachine_et_nameMachine.text.toString()}")
             .updateChildren(mapTemperature)
+
+        database.reference
+            .child("Dashboard")
+            .child("${addMachine_et_nameMachine.text.toString()}")
+            .updateChildren(mapanomaly)
+
+        database.reference
+            .child("Dashboard")
+            .child("${addMachine_et_nameMachine.text.toString()}").child("Audio")
+            .updateChildren(mapaudio)
+
+        database.reference
+            .child("Dashboard")
+            .child("${addMachine_et_nameMachine.text.toString()}").child("Cost Predicted")
+            .updateChildren(mapcostpredicted)
+
+        database.reference
+            .child("Dashboard")
+            .child("${addMachine_et_nameMachine.text.toString()}").child("OH")
+            .updateChildren(mapoperatinghours)
     }
 
     fun showAlert(x:Int){
