@@ -29,6 +29,7 @@ private const val ARG_PARAM2 = "param2"
 class AddExpensesFragment : Fragment(), View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     var misshowpass = false
+    var check = false
     var misshowconfirmpass = false
     var validationpassword: String? = "false"
     lateinit var map: Map<String, Any?>
@@ -100,17 +101,6 @@ class AddExpensesFragment : Fragment(), View.OnClickListener, AdapterView.OnItem
         addExpenses_btn_add = view.findViewById<Button>(R.id.addExpenses_btn_add)
         addExpenses_spinner_intervation = view.findViewById<Spinner>(R.id.addExpenses_spinner_intervation)
 
-        addExpenses_et_password.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                val pass = addExpenses_et_password.text.toString()
-                validationpassword = validatePassword(pass)
-            }
-
-            override fun afterTextChanged(s: Editable) {}
-        })
-
-
         adpater_intervation = ArrayAdapter.createFromResource(
             requireContext(),
             R.array.type_of_intervation,
@@ -131,10 +121,14 @@ class AddExpensesFragment : Fragment(), View.OnClickListener, AdapterView.OnItem
             R.id.addExpenses_btn_add -> {
                 if (addExpenses_et_expenses.text.isNotEmpty() && addExpenses_et_nameMachine.text.isNotEmpty()
                     && addExpenses_et_username.text.isNotEmpty() && addExpenses_et_password.text.isNotEmpty()
-                    && addExpenses_et_confirmpassword.text.isNotEmpty() && validationpassword == "false"
-                ) {
+                    && addExpenses_et_confirmpassword.text.isNotEmpty()) {
                     getMachineData()
-                    confirmAdd()
+                    if(check == true){
+                        settingsMachineFragment = SettingsMachineFragment()
+                        transaction = fragmentManager?.beginTransaction()!!
+                        transaction.replace(R.id.drawable_frameLayout, settingsMachineFragment)
+                        transaction.commit()
+                    }
                 }
             }
             R.id.password_iv_show -> {
@@ -150,24 +144,18 @@ class AddExpensesFragment : Fragment(), View.OnClickListener, AdapterView.OnItem
 
     private fun confirmAdd() {
         if (map.isNotEmpty() &&
-            addExpenses_et_password == addExpenses_et_confirmpassword &&
-            addExpenses_et_password == map["password"] &&
-            addExpenses_et_username == map["username"] &&
-            addExpenses_et_expenses.text.isNotEmpty() &&
-            addExpenses_et_confirmpassword.text.isNotEmpty()
-        ) {//Change to Combo Box !!!!!!!!!!!!!!!!!!!!!!!!
+            addExpenses_et_password.text.toString() == addExpenses_et_confirmpassword.text.toString() &&
+            addExpenses_et_password.text.toString() == map["password"] &&
+            addExpenses_et_username.text.toString() == map["username"] &&
+            addExpenses_et_expenses.text.isNotEmpty()) { //Change to Combo Box !!!!!!!!!!!!!!!!!!!!!!!!
             setExpenseCost()
-            settingsMachineFragment = SettingsMachineFragment()
-            transaction = fragmentManager?.beginTransaction()!!
-            transaction.replace(R.id.drawable_frameLayout, settingsMachineFragment)
-            transaction.commit()
+            check = true
         }
     }
 
     private fun setExpenseCost() {
         var maps = mutableMapOf<String, Any?>()
-        maps[addExpenses_et_confirmpassword.text.toString()] =
-            addExpenses_et_expenses.text.toString()
+        maps[addExpenses_spinner_intervation.selectedItem.toString()] = addExpenses_et_expenses.text.toString()
         var refdatabase = FirebaseDatabase.getInstance()
         refdatabase.reference
             .child("Dashboard")
@@ -202,23 +190,6 @@ class AddExpensesFragment : Fragment(), View.OnClickListener, AdapterView.OnItem
         addExpenses_et_confirmpassword.setSelection(addExpenses_et_confirmpassword.text.toString().length)
     }
 
-    private fun validatePassword(password: String): String? {
-        val upperCase = Pattern.compile("[A-Z]")
-        val lowerCase = Pattern.compile("[a-z]")
-        val digitCase = Pattern.compile("[0-9]")
-        var validate: String = "false"
-        if (lowerCase.matcher(password).find()
-            && upperCase.matcher(password).find()
-            && digitCase.matcher(password).find()
-            && password.length >= 8
-        ) {
-            validate = "false"
-        } else {
-            validate = "true"
-        }
-        return validate
-    }
-
     private fun getMachineData() {
         database = FirebaseDatabase.getInstance()
         database.reference.child("Machines")
@@ -231,6 +202,7 @@ class AddExpensesFragment : Fragment(), View.OnClickListener, AdapterView.OnItem
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.value != null) {
                         map = snapshot.value as Map<String, Any?>
+                        confirmAdd()
                     }
                 }
             })
