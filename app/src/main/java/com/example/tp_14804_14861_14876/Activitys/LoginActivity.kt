@@ -47,6 +47,7 @@ class LoginActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiver
     var GOOGLE_LOGIN_CODE = 12502
     var callbackManager : CallbackManager? = null
     var misshowpass = false
+    var asd:Boolean= true
     lateinit var login_btn_signin:Button
     lateinit var login_btn_gmail:Button
     lateinit var login_btn_facebook:Button

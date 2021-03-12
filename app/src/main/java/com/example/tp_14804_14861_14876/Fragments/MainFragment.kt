@@ -202,8 +202,8 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
         val MachineNumber = dashboard_spinner_machine.selectedItem.toString()
         // Temperature Verification
         database = FirebaseDatabase.getInstance()
-        database.reference.child("Temperature")
-                .child("$MachineNumber")
+        database.reference.child("Dashboard")
+                .child("${dashboard_spinner_machine.selectedItem.toString()}")
                 .addValueEventListener(object : ValueEventListener {
                     override fun onCancelled(error: DatabaseError) {
                         TODO("Not yet implemented")
@@ -212,7 +212,7 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
                     override fun onDataChange(snapshot: DataSnapshot) {
                         if (snapshot.value != null) {
                             var map = snapshot.value as Map<String, Any?>
-                            status_temperature = map["status"]
+                            status_temperature = map["Anomaly"]
                             if (MachineNumber == machine){
                                 updateData()
                             }
@@ -221,8 +221,8 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
                 })
 
         database = FirebaseDatabase.getInstance()
-        database.reference.child("Accelerometer")
-                .child("M" + "$MachineNumber")
+        database.reference.child("Dashboard")
+                .child("${dashboard_spinner_machine.selectedItem.toString()}")
                 .addValueEventListener(object : ValueEventListener {
                     override fun onCancelled(error: DatabaseError) {
                         TODO("Not yet implemented")
@@ -231,7 +231,7 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
                     override fun onDataChange(snapshot: DataSnapshot) {
                         if (snapshot.value != null) {
                             var map = snapshot.value as Map<String, Any?>
-                            status_accelerometer = map["status"]
+                            status_accelerometer = map["Anomaly"]
                             if (MachineNumber == machine){
                                 updateData()
                             }
@@ -243,8 +243,8 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
         var uid = user?.uid
 
         database = FirebaseDatabase.getInstance()
-        database.reference.child("Audio")
-                .child("M" + "$MachineNumber")
+        database.reference.child("Dashboard")
+                .child("${dashboard_spinner_machine.selectedItem.toString()}").child("Audio")
                 .addValueEventListener(object : ValueEventListener {
                     override fun onCancelled(error: DatabaseError) {
                         TODO("Not yet implemented")
@@ -289,17 +289,17 @@ class MainFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClic
         anomalys
     */
     private fun typeAnomaly():String {
-        if(status_accelerometer != "OK" && status_temperature != "OK" && status_audio != ""){
+        if(status_accelerometer != "1" && status_temperature != "1" && status_audio != ""){
             dashboard_tv_anomaly.text = "Accelerometer, Temperature and Audio"
-        }else if(status_temperature != "OK" && status_audio != ""){
+        }else if(status_temperature != "1" && status_audio != ""){
             dashboard_tv_anomaly.text = "Temperature and Audio"
-        }else if(status_accelerometer != "OK" && status_audio != ""){
+        }else if(status_accelerometer != "1" && status_audio != ""){
             dashboard_tv_anomaly.text = "Accelerometer and Audio"
-        }else if(status_accelerometer != "OK" && status_temperature != "OK"){
+        }else if(status_accelerometer != "1" && status_temperature != "1"){
             dashboard_tv_anomaly.text = "Accelerometer and Temperature"
-        }else if(status_accelerometer != "OK") {
+        }else if(status_accelerometer != "1") {
             dashboard_tv_anomaly.text = "Accelerometer"
-        }else if(status_temperature != "OK"){
+        }else if(status_temperature != "1"){
             dashboard_tv_anomaly.text = "Temperature"
         }else if (status_audio != ""){
             dashboard_tv_anomaly.text = "Audio"
